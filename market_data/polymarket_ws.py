@@ -30,7 +30,7 @@ async def connect_market(asset_id: str):
 
             data = json.loads(message)
 
-            recorder.record(data)
+            recorder.record(data, asset_id=asset_id)
 
             print(data)
 

@@ -5,8 +5,10 @@ import pandas as pd
 
 class ParquetWriter:
 
-    def __init__(self, path="data/processed/market_data.parquet"):
-
+    def __init__(
+        self,
+        path="data/processed/market_data.parquet"
+    ):
         self.path = Path(path)
 
         self.path.parent.mkdir(
