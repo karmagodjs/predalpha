@@ -1,0 +1,11 @@
+{
+  "timestamp_utc": "2026-10-01T16:31:07.095608+00:00",
+  "iterations": 10000,
+  "unit": "nanoseconds",
+  "mean": 11705.43,
+  "median": 11400.0,
+  "p95": 11900.0,
+  "p99": 18900.0,
+  "max": 103700,
+  "note": "Local Python benchmark; excludes network and exchange latency."
+}
