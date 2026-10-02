@@ -1,0 +1,235 @@
+============================================================
+PREDALPHA TRANSFORMER TRAINING
+============================================================
+
+Device: cpu
+
+Train rows: 156
+Validation rows: 33
+
+Train sequences: 146
+Validation sequences: 23
+
+Model parameters: 70211
+
+Class counts:
+label
+0    30
+1    71
+2    55
+Name: count, dtype: int64
+
+Class weights: tensor([1.7333, 0.7324, 0.9455])
+
+Epoch 01/30
+Train Loss: 1.140249
+Train Accuracy: 0.4384
+Val Loss: 1.146643
+Val Accuracy: 0.3913
+Γ£ô Best model saved.
+
+Epoch 02/30
+Train Loss: 1.126275
+Train Accuracy: 0.4658
+Val Loss: 1.134555
+Val Accuracy: 0.3913
+Γ£ô Best model saved.
+
+Epoch 03/30
+Train Loss: 1.118266
+Train Accuracy: 0.4452
+Val Loss: 1.123836
+Val Accuracy: 0.3913
+Γ£ô Best model saved.
+
+Epoch 04/30
+Train Loss: 1.094400
+Train Accuracy: 0.4452
+Val Loss: 1.114862
+Val Accuracy: 0.3913
+Γ£ô Best model saved.
+
+Epoch 05/30
+Train Loss: 1.089311
+Train Accuracy: 0.4863
+Val Loss: 1.108108
+Val Accuracy: 0.3913
+Γ£ô Best model saved.
+
+Epoch 06/30
+Train Loss: 1.073903
+Train Accuracy: 0.4521
+Val Loss: 1.102716
+Val Accuracy: 0.3913
+Γ£ô Best model saved.
+
+Epoch 07/30
+Train Loss: 1.063623
+Train Accuracy: 0.4521
+Val Loss: 1.097443
+Val Accuracy: 0.3913
+Γ£ô Best model saved.
+
+Epoch 08/30
+Train Loss: 1.064825
+Train Accuracy: 0.5137
+Val Loss: 1.092631
+Val Accuracy: 0.3478
+Γ£ô Best model saved.
+
+Epoch 09/30
+Train Loss: 1.043770
+Train Accuracy: 0.5000
+Val Loss: 1.088088
+Val Accuracy: 0.3478
+Γ£ô Best model saved.
+
+Epoch 10/30
+Train Loss: 1.048250
+Train Accuracy: 0.4658
+Val Loss: 1.084157
+Val Accuracy: 0.3478
+Γ£ô Best model saved.
+
+Epoch 11/30
+Train Loss: 1.044183
+Train Accuracy: 0.3904
+Val Loss: 1.080604
+Val Accuracy: 0.5217
+Γ£ô Best model saved.
+
+Epoch 12/30
+Train Loss: 1.022573
+Train Accuracy: 0.4521
+Val Loss: 1.077340
+Val Accuracy: 0.5217
+Γ£ô Best model saved.
+
+Epoch 13/30
+Train Loss: 1.027574
+Train Accuracy: 0.4384
+Val Loss: 1.074676
+Val Accuracy: 0.4783
+Γ£ô Best model saved.
+
+Epoch 14/30
+Train Loss: 1.030302
+Train Accuracy: 0.4178
+Val Loss: 1.072522
+Val Accuracy: 0.4783
+Γ£ô Best model saved.
+
+Epoch 15/30
+Train Loss: 1.011726
+Train Accuracy: 0.5137
+Val Loss: 1.070560
+Val Accuracy: 0.4783
+Γ£ô Best model saved.
+
+Epoch 16/30
+Train Loss: 1.009489
+Train Accuracy: 0.4178
+Val Loss: 1.068741
+Val Accuracy: 0.4783
+Γ£ô Best model saved.
+
+Epoch 17/30
+Train Loss: 1.022148
+Train Accuracy: 0.4384
+Val Loss: 1.067392
+Val Accuracy: 0.4783
+Γ£ô Best model saved.
+
+Epoch 18/30
+Train Loss: 0.999679
+Train Accuracy: 0.4589
+Val Loss: 1.066452
+Val Accuracy: 0.4783
+Γ£ô Best model saved.
+
+Epoch 19/30
+Train Loss: 1.007577
+Train Accuracy: 0.3973
+Val Loss: 1.065254
+Val Accuracy: 0.4783
+Γ£ô Best model saved.
+
+Epoch 20/30
+Train Loss: 0.993515
+Train Accuracy: 0.4726
+Val Loss: 1.064206
+Val Accuracy: 0.4783
+Γ£ô Best model saved.
+
+Epoch 21/30
+Train Loss: 1.001049
+Train Accuracy: 0.4452
+Val Loss: 1.063287
+Val Accuracy: 0.4783
+Γ£ô Best model saved.
+
+Epoch 22/30
+Train Loss: 0.988110
+Train Accuracy: 0.3699
+Val Loss: 1.062937
+Val Accuracy: 0.4783
+Γ£ô Best model saved.
+
+Epoch 23/30
+Train Loss: 0.993758
+Train Accuracy: 0.4452
+Val Loss: 1.062214
+Val Accuracy: 0.4783
+Γ£ô Best model saved.
+
+Epoch 24/30
+Train Loss: 0.984387
+Train Accuracy: 0.4452
+Val Loss: 1.061176
+Val Accuracy: 0.4783
+Γ£ô Best model saved.
+
+Epoch 25/30
+Train Loss: 0.986838
+Train Accuracy: 0.4452
+Val Loss: 1.060092
+Val Accuracy: 0.4783
+Γ£ô Best model saved.
+
+Epoch 26/30
+Train Loss: 0.973534
+Train Accuracy: 0.4795
+Val Loss: 1.059580
+Val Accuracy: 0.4783
+Γ£ô Best model saved.
+
+Epoch 27/30
+Train Loss: 0.974113
+Train Accuracy: 0.4589
+Val Loss: 1.059408
+Val Accuracy: 0.4783
+Γ£ô Best model saved.
+
+Epoch 28/30
+Train Loss: 0.963053
+Train Accuracy: 0.5274
+Val Loss: 1.059154
+Val Accuracy: 0.4783
+Γ£ô Best model saved.
+
+Epoch 29/30
+Train Loss: 0.961935
+Train Accuracy: 0.4521
+Val Loss: 1.058459
+Val Accuracy: 0.4783
+Γ£ô Best model saved.
+
+Epoch 30/30
+Train Loss: 0.960032
+Train Accuracy: 0.5205
+Val Loss: 1.057603
+Val Accuracy: 0.4783
+Γ£ô Best model saved.
+
+Training complete.
+Checkpoint: checkpoints\best_orderbook_transformer.pt

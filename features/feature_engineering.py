@@ -1,121 +1,76 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 
-def build_features(df):
+FEATURES = [
+    "best_bid",
+    "best_ask",
+    "mid_price",
+    "spread",
+    "bid_depth",
+    "ask_depth",
+    "imbalance",
+    "microprice",
+    "return_1",
+    "return_5",
+    "return_10",
+    "spread_bps",
+    "depth_imbalance",
+    "microprice_deviation",
+    "volatility_10",
+    "volatility_50",
+    "momentum_10",
+]
 
-    df = (
-        df.sort_values("timestamp")
-        .reset_index(drop=True)
-        .copy()
+
+def build_features(df: pd.DataFrame) -> pd.DataFrame:
+    required = {
+        "timestamp", "best_bid", "best_ask", "mid_price",
+        "spread", "bid_depth", "ask_depth", "imbalance", "microprice",
+    }
+
+    missing = required - set(df.columns)
+    if missing:
+        raise ValueError(f"Missing columns: {sorted(missing)}")
+
+    df = df.sort_values("timestamp").reset_index(drop=True).copy()
+
+    mid = pd.to_numeric(df["mid_price"], errors="coerce")
+    spread = pd.to_numeric(df["spread"], errors="coerce")
+    bid_depth = pd.to_numeric(df["bid_depth"], errors="coerce")
+    ask_depth = pd.to_numeric(df["ask_depth"], errors="coerce")
+    microprice = pd.to_numeric(df["microprice"], errors="coerce")
+
+    df["return_1"] = mid.pct_change(1)
+    df["return_5"] = mid.pct_change(5)
+    df["return_10"] = mid.pct_change(10)
+
+    df["spread_bps"] = np.where(
+        mid.ne(0),
+        (spread / mid) * 10_000,
+        np.nan,
     )
 
-    # -----------------------------
-    # Basic returns
-    # -----------------------------
-
-    df["return_1"] = (
-        df["mid_price"]
-        .pct_change(1)
+    total_depth = bid_depth + ask_depth
+    df["depth_imbalance"] = np.where(
+        total_depth.ne(0),
+        (bid_depth - ask_depth) / total_depth,
+        np.nan,
     )
 
-    df["return_5"] = (
-        df["mid_price"]
-        .pct_change(5)
+    df["microprice_deviation"] = np.where(
+        mid.ne(0),
+        (microprice - mid) / mid,
+        np.nan,
     )
 
-    df["return_10"] = (
-        df["mid_price"]
-        .pct_change(10)
-    )
+    df["bid_depth_change"] = bid_depth.diff()
+    df["ask_depth_change"] = ask_depth.diff()
 
-    # -----------------------------
-    # Spread
-    # -----------------------------
+    df["volatility_10"] = df["return_1"].rolling(10, min_periods=10).std()
+    df["volatility_50"] = df["return_1"].rolling(50, min_periods=50).std()
 
-    df["spread_bps"] = (
-        df["spread"]
-        / df["mid_price"]
-    ) * 10_000
+    df["momentum_10"] = mid - mid.shift(10)
 
-    # -----------------------------
-    # Depth imbalance
-    # -----------------------------
-
-    total_depth = (
-        df["bid_depth"]
-        + df["ask_depth"]
-    )
-
-    df["depth_imbalance"] = (
-        (
-            df["bid_depth"]
-            - df["ask_depth"]
-        )
-        / total_depth.replace(
-            0,
-            np.nan
-        )
-    )
-
-    # -----------------------------
-    # Microprice deviation
-    # -----------------------------
-
-    df["microprice_deviation"] = (
-        (
-            df["microprice"]
-            - df["mid_price"]
-        )
-        / df["mid_price"]
-    )
-
-    # -----------------------------
-    # Depth changes
-    # -----------------------------
-
-    df["bid_depth_change"] = (
-        df["bid_depth"]
-        .diff()
-    )
-
-    df["ask_depth_change"] = (
-        df["ask_depth"]
-        .diff()
-    )
-
-    # -----------------------------
-    # Short-term volatility
-    # -----------------------------
-
-    df["volatility_10"] = (
-        df["return_1"]
-        .rolling(10)
-        .std()
-    )
-
-    df["volatility_50"] = (
-        df["return_1"]
-        .rolling(50)
-        .std()
-    )
-
-    # -----------------------------
-    # Momentum
-    # -----------------------------
-
-    df["momentum_10"] = (
-        df["mid_price"]
-        - df["mid_price"].shift(10)
-    )
-
-    # -----------------------------
-    # Clean
-    # -----------------------------
-
-    df = df.replace(
-        [np.inf, -np.inf],
-        np.nan
-    )
-
+    df = df.replace([np.inf, -np.inf], np.nan)
     return df

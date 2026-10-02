@@ -5,59 +5,20 @@ from pathlib import Path
 
 class MarketRecorder:
 
-    def __init__(self, output_dir="data/raw"):
+    def __init__(self, output_dir="data/raw",
+                 filename="polymarket_extended.jsonl"):
+
         self.output_dir = Path(output_dir)
-        self.output_dir.mkdir(
-            parents=True,
-            exist_ok=True
-        )
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.filename = self.output_dir / filename
 
-        self.filename = (
-            self.output_dir /
-            "polymarket_orderbook.jsonl"
-        )
-
-    def record(
-        self,
-        asset_id,
-        snapshot,
-        event=None
-    ):
-
-        timestamp = datetime.now(
-            timezone.utc
-        ).isoformat()
+    def record(self, asset_id, event):
 
         record = {
-            "timestamp": timestamp,
-            "asset_id": asset_id,
-            "best_bid": snapshot.get(
-                "best_bid"
-            ),
-            "best_ask": snapshot.get(
-                "best_ask"
-            ),
-            "mid_price": snapshot.get(
-                "mid_price"
-            ),
-            "spread": snapshot.get(
-                "spread"
-            ),
-            "bid_depth": snapshot.get(
-                "bid_depth"
-            ),
-            "ask_depth": snapshot.get(
-                "ask_depth"
-            ),
+            "received_at": datetime.now(timezone.utc).isoformat(),
+            "asset_id": str(asset_id),
             "event": event,
         }
 
-        with open(
-            self.filename,
-            "a",
-            encoding="utf-8"
-        ) as file:
-
-            file.write(
-                json.dumps(record) + "\n"
-            )
+        with self.filename.open("a", encoding="utf-8") as file:
+            file.write(json.dumps(record) + "\n")

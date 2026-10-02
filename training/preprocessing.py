@@ -1,10 +1,6 @@
 import pandas as pd
 
 FEATURES = [
-    "best_bid",
-    "best_ask",
-    "mid_price",
-    "spread",
     "bid_depth",
     "ask_depth",
     "imbalance",

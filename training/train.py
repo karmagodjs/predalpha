@@ -18,11 +18,11 @@ from training.class_weights import (
 
 
 TRAIN_PATH = (
-    "data/processed/train_scaled.parquet"
+    "data/processed/audit/train.parquet"
 )
 
 VAL_PATH = (
-    "data/processed/val_scaled.parquet"
+    "data/processed/audit/val.parquet"
 )
 
 SEQUENCE_LENGTH = 10
@@ -182,7 +182,7 @@ def main():
     # --------------------------------------------------
 
     model = OrderBookTransformer(
-        input_features=8,
+        input_features=4,
         sequence_length=SEQUENCE_LENGTH,
         d_model=64,
         n_heads=4,
