@@ -19,7 +19,7 @@ from training.sequence_dataset import (
 
 
 TEST_PATH = (
-    "data/processed/test_scaled.parquet"
+    "data/processed/audit/test.parquet"
 )
 
 MODEL_PATH = Path(
@@ -54,6 +54,8 @@ def main():
     test_df = pd.read_parquet(
         TEST_PATH
     )
+    print("DEBUG PATH:", Path(TEST_PATH).resolve())
+    print("DEBUG LABELS:", test_df["label"].value_counts().sort_index().to_dict())
 
     print(
         "Test rows:",
@@ -94,7 +96,7 @@ def main():
     # --------------------------------------------------
 
     model = OrderBookTransformer(
-        input_features=8,
+        input_features=4,
         sequence_length=SEQUENCE_LENGTH,
         d_model=64,
         n_heads=4,
@@ -175,6 +177,9 @@ def main():
     y_true = np.asarray(
         all_labels
     )
+    print("DEBUG y_true distribution:", np.unique(y_true, return_counts=True))
+    print("DEBUG test_df distribution:", test_df["label"].value_counts().sort_index().to_dict())
+
 
     y_pred = np.asarray(
         all_predictions
@@ -205,7 +210,6 @@ def main():
             zero_division=0,
         )
     )
-
     # --------------------------------------------------
     # Confusion matrix
     # --------------------------------------------------
@@ -276,7 +280,7 @@ def main():
     # --------------------------------------------------
 
     output = test_df.iloc[
-        SEQUENCE_LENGTH:
+        SEQUENCE_LENGTH - 1:
     ].copy()
 
     output["prediction"] = y_pred
@@ -296,8 +300,7 @@ def main():
     output["confidence"] = confidence
 
     output_path = Path(
-        "data/processed/"
-        "test_predictions.parquet"
+        "data/processed/audit/test_predictions.parquet"
     )
 
     output.to_parquet(

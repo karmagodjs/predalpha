@@ -47,7 +47,7 @@ class OrderBookSequenceDataset(Dataset):
 
         return (
             len(self.df)
-            - self.sequence_length
+            - self.sequence_length + 1
         )
 
     def __getitem__(self, index):
@@ -63,7 +63,7 @@ class OrderBookSequenceDataset(Dataset):
         ]
 
         target = self.df.iloc[
-            end
+            end - 1
         ]["label"]
 
         x = torch.tensor(

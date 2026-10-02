@@ -3,7 +3,7 @@ import pandas as pd
 
 REQUIRED_COLUMNS = [
     "timestamp",
-    "market_id",
+    "asset_id",
     "best_bid",
     "best_ask",
     "mid_price",
@@ -18,7 +18,7 @@ REQUIRED_COLUMNS = [
 def validate_data(path):
 
     df = pd.read_parquet(path)
-
+    df["asset_id"] = df["asset_id"].astype("string")
     missing = [
         col for col in REQUIRED_COLUMNS
         if col not in df.columns

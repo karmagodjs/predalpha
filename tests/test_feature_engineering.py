@@ -1,36 +1,31 @@
 import pandas as pd
 
-from features.feature_engineering import (
-    build_features
-)
+from features.feature_engineering import build_features
 
 
-def test_feature_engineering():
-
+def test_feature_engineering_creates_expected_columns():
+    n = 100
     df = pd.DataFrame({
-        "timestamp": pd.date_range(
-            "2026-01-01",
-            periods=100,
-            freq="s"
-        ),
-        "mid_price": [
-            0.5 + i * 0.001
-            for i in range(100)
-        ],
-        "spread": [0.001] * 100,
-        "bid_depth": [100 + i for i in range(100)],
-        "ask_depth": [100] * 100,
-        "microprice": [
-            0.5 + i * 0.001
-            for i in range(100)
-        ],
+        "timestamp": pd.date_range("2026-01-01", periods=n, freq="s"),
+        "best_bid": [0.036] * n,
+        "best_ask": [0.037] * n,
+        "mid_price": [0.0365 + i * 0.00001 for i in range(n)],
+        "spread": [0.001] * n,
+        "bid_depth": [100 + i for i in range(n)],
+        "ask_depth": [90 + i for i in range(n)],
+        "imbalance": [0.05] * n,
+        "microprice": [0.0366] * n,
     })
 
     result = build_features(df)
 
-    assert "return_1" in result.columns
-    assert "spread_bps" in result.columns
-    assert "depth_imbalance" in result.columns
-    assert "microprice_deviation" in result.columns
-    assert "volatility_10" in result.columns
-    assert "momentum_10" in result.columns
+    for column in [
+        "return_1", "return_5", "return_10",
+        "spread_bps", "depth_imbalance",
+        "microprice_deviation", "volatility_10",
+        "volatility_50", "momentum_10",
+    ]:
+        assert column in result.columns
+
+    assert len(result) == n
+    assert result["return_1"].notna().sum() > 0
