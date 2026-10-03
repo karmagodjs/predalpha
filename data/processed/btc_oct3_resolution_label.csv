@@ -1,0 +1,2 @@
+market,start_candle_open_time,start_candle_close_time,start_close,end_candle_open_time,end_candle_close_time,end_close,price_difference,percentage_change,resolution_label
+"Bitcoin Up or Down on October 3, 2026",2026-10-02 15:59:00+00:00,2026-10-02 15:59:59.999000+00:00,85326.0,2026-10-03 15:59:00+00:00,2026-10-03 15:59:59.999000+00:00,84867.28,-458.72000000000116,-0.5376087007477218,DOWN

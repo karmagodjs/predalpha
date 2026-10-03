@@ -1,0 +1,23 @@
+{
+  "rows": 289,
+  "start_time": "2026-10-02 12:44:12+00:00",
+  "end_time": "2026-10-02 12:49:00+00:00",
+  "features": [
+    "mid_price",
+    "spread",
+    "spread_bps",
+    "mid_return_1s",
+    "mid_return_3s",
+    "mid_return_5s",
+    "mid_volatility_5s",
+    "bid_change_1s",
+    "ask_change_1s"
+  ],
+  "target": "label",
+  "horizon_seconds": 5,
+  "class_counts": {
+    "FLAT": 244,
+    "UP": 33,
+    "DOWN": 12
+  }
+}
