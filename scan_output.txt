@@ -1,0 +1,862 @@
+Scanning Polymarket markets...
+Minimum 24h volume: $1,000
+Maximum time to end: 24 hours
+Maximum pages: 10
+Page 1: fetched 100 markets
+Page 2: fetched 100 markets
+Page 3: fetched 100 markets
+Page 4: fetched 100 markets
+Page 5: fetched 100 markets
+Page 6: fetched 100 markets
+Page 7: fetched 100 markets
+Page 8: fetched 100 markets
+Page 9: fetched 100 markets
+Page 10: fetched 100 markets
+
+Total markets fetched: 1000
+
+FILTER SUMMARY
+Crypto markets rejected: 845
+Crypto markets rejected by time: 111
+Rejected by volume: 0
+Short crypto candidates: 44
+No valid two-sided book: Will the price of Bitcoin be above $74,000 on October 2?
+No valid two-sided book: Will the price of Bitcoin be above $74,000 on October 2?
+No valid two-sided book: Will the price of Bitcoin be above $80,000 on October 2?
+No valid two-sided book: Will the price of Bitcoin be above $80,000 on October 2?
+No valid two-sided book: Will the price of Bitcoin be above $94,000 on October 2?
+No valid two-sided book: Will the price of Bitcoin be above $94,000 on October 2?
+No valid two-sided book: Will the price of Bitcoin be above $78,000 on October 2?
+No valid two-sided book: Will the price of Bitcoin be above $78,000 on October 2?
+No valid two-sided book: Will the price of Bitcoin be above $76,000 on October 2?
+No valid two-sided book: Will the price of Bitcoin be above $76,000 on October 2?
+No valid two-sided book: Will the price of Bitcoin be between $80,000 and $82,000 on October 2?
+No valid two-sided book: Will the price of Bitcoin be between $80,000 and $82,000 on October 2?
+No valid two-sided book: Will the price of Ethereum be above $3,200 on October 2?
+No valid two-sided book: Will the price of Ethereum be above $3,200 on October 2?
+No valid two-sided book: Will the price of Ethereum be above $3,100 on October 2?
+No valid two-sided book: Will the price of Ethereum be above $3,100 on October 2?
+No valid two-sided book: Will the price of Ethereum be above $2,400 on October 2?
+No valid two-sided book: Will the price of Ethereum be above $2,400 on October 2?
+No valid two-sided book: Will the price of Solana be above $140 on October 2?
+No valid two-sided book: Will the price of Solana be above $140 on October 2?
+
+======================================================================
+VALID ORDER BOOKS: 68
+======================================================================
+
+----------------------------------------------------------------------
+#1 | Outcome: Down
+Market: Bitcoin Up or Down on October 2?
+Slug: bitcoin-up-or-down-on-october-2-2026
+Token ID: 82691470908709360682279443841313051189010636271639264688286309023840144095713
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $220,190.53
+Liquidity: $32,941.14
+Bid: 0.0240 | Ask: 0.0290 | Spread: 0.0050 | Mid: 0.0265
+Top-5 depth — Bid: 784.00 | Ask: 2238.69
+
+----------------------------------------------------------------------
+#2 | Outcome: Up
+Market: Bitcoin Up or Down on October 2?
+Slug: bitcoin-up-or-down-on-october-2-2026
+Token ID: 111760978514438443703517685755866412046618095181871351566766618939279173738482
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $220,190.53
+Liquidity: $32,941.14
+Bid: 0.9710 | Ask: 0.9760 | Spread: 0.0050 | Mid: 0.9735
+Top-5 depth — Bid: 2238.69 | Ask: 784.00
+
+----------------------------------------------------------------------
+#3 | Outcome: Yes
+Market: Will the price of Bitcoin be above $88,000 on October 2?
+Slug: bitcoin-above-88k-on-october-2-2026
+Token ID: 41204045870451989441006259077692571105773543114590728783061562183667482414716
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $192,517.85
+Liquidity: $47,851.39
+Bid: 0.0780 | Ask: 0.0850 | Spread: 0.0070 | Mid: 0.0815
+Top-5 depth — Bid: 1149.90 | Ask: 7598.00
+
+----------------------------------------------------------------------
+#4 | Outcome: No
+Market: Will the price of Bitcoin be above $88,000 on October 2?
+Slug: bitcoin-above-88k-on-october-2-2026
+Token ID: 18944840174972312589309848968882744178687863823071135691241787935121481952636
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $192,517.85
+Liquidity: $47,851.39
+Bid: 0.9150 | Ask: 0.9220 | Spread: 0.0070 | Mid: 0.9185
+Top-5 depth — Bid: 7598.00 | Ask: 1149.90
+
+----------------------------------------------------------------------
+#5 | Outcome: No
+Market: Will the price of Bitcoin be above $84,000 on October 2?
+Slug: bitcoin-above-84k-on-october-2-2026
+Token ID: 84744366325043419380993546068328049730970124454958617068866498080991996777943
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $164,403.66
+Liquidity: $65,327.01
+Bid: 0.0130 | Ask: 0.0190 | Spread: 0.0060 | Mid: 0.0160
+Top-5 depth — Bid: 4016.80 | Ask: 8123.27
+
+----------------------------------------------------------------------
+#6 | Outcome: Yes
+Market: Will the price of Bitcoin be above $84,000 on October 2?
+Slug: bitcoin-above-84k-on-october-2-2026
+Token ID: 91906711273637008499474301782182594273655833050254205608899261007418482940301
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $164,403.66
+Liquidity: $65,327.01
+Bid: 0.9810 | Ask: 0.9870 | Spread: 0.0060 | Mid: 0.9840
+Top-5 depth — Bid: 8123.27 | Ask: 4016.80
+
+----------------------------------------------------------------------
+#7 | Outcome: No
+Market: Will the price of Bitcoin be above $82,000 on October 2?
+Slug: bitcoin-above-82k-on-october-2-2026
+Token ID: 58269560649033002343847616409665153732603904603024919045084683602048447466202
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $141,560.37
+Liquidity: $50,991.42
+Bid: 0.0020 | Ask: 0.0030 | Spread: 0.0010 | Mid: 0.0025
+Top-5 depth — Bid: 7229.39 | Ask: 4258.82
+
+----------------------------------------------------------------------
+#8 | Outcome: Yes
+Market: Will the price of Bitcoin be above $82,000 on October 2?
+Slug: bitcoin-above-82k-on-october-2-2026
+Token ID: 42928585429672958307213730930785711688949145731180624331197811753035214373502
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $141,560.37
+Liquidity: $50,991.42
+Bid: 0.9970 | Ask: 0.9980 | Spread: 0.0010 | Mid: 0.9975
+Top-5 depth — Bid: 4258.82 | Ask: 7229.39
+
+----------------------------------------------------------------------
+#9 | Outcome: Yes
+Market: Will the price of Bitcoin be above $86,000 on October 2?
+Slug: bitcoin-above-86k-on-october-2-2026
+Token ID: 88029458829668905457560723465473855228435794647821651959814826330273040507930
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $126,349.12
+Liquidity: $45,753.61
+Bid: 0.8300 | Ask: 0.8400 | Spread: 0.0100 | Mid: 0.8350
+Top-5 depth — Bid: 14406.50 | Ask: 8526.00
+
+----------------------------------------------------------------------
+#10 | Outcome: No
+Market: Will the price of Bitcoin be above $86,000 on October 2?
+Slug: bitcoin-above-86k-on-october-2-2026
+Token ID: 113112321663601089532438259097087651672202443652293888663206794024640043204932
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $126,349.12
+Liquidity: $45,753.61
+Bid: 0.1600 | Ask: 0.1700 | Spread: 0.0100 | Mid: 0.1650
+Top-5 depth — Bid: 8526.00 | Ask: 14406.50
+
+----------------------------------------------------------------------
+#11 | Outcome: Yes
+Market: Will the price of Bitcoin be above $90,000 on October 2?
+Slug: bitcoin-above-90k-on-october-2-2026
+Token ID: 71900519189783978664737155357231323517397666944396353273209907934235983446597
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $117,843.91
+Liquidity: $44,020.50
+Bid: 0.0080 | Ask: 0.0090 | Spread: 0.0010 | Mid: 0.0085
+Top-5 depth — Bid: 1758.20 | Ask: 421.09
+
+----------------------------------------------------------------------
+#12 | Outcome: No
+Market: Will the price of Bitcoin be above $90,000 on October 2?
+Slug: bitcoin-above-90k-on-october-2-2026
+Token ID: 9178746972273168498677986137347264811291497379032186021978266700766446845524
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $117,843.91
+Liquidity: $44,020.50
+Bid: 0.9910 | Ask: 0.9920 | Spread: 0.0010 | Mid: 0.9915
+Top-5 depth — Bid: 421.09 | Ask: 1758.20
+
+----------------------------------------------------------------------
+#13 | Outcome: Yes
+Market: Will the price of Ethereum be above $2,800 on October 2?
+Slug: ethereum-above-2800-on-october-2-2026
+Token ID: 87916158863842269504017423440377450979988374548679149434199350360152047363894
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $93,408.56
+Liquidity: $43,333.36
+Bid: 0.0640 | Ask: 0.0850 | Spread: 0.0210 | Mid: 0.0745
+Top-5 depth — Bid: 572.99 | Ask: 30.50
+
+----------------------------------------------------------------------
+#14 | Outcome: No
+Market: Will the price of Ethereum be above $2,800 on October 2?
+Slug: ethereum-above-2800-on-october-2-2026
+Token ID: 83337580396721989093205840979354483483014981059458289471375379656512375144279
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $93,408.56
+Liquidity: $43,333.36
+Bid: 0.9150 | Ask: 0.9360 | Spread: 0.0210 | Mid: 0.9255
+Top-5 depth — Bid: 30.50 | Ask: 622.99
+
+----------------------------------------------------------------------
+#15 | Outcome: Yes
+Market: Will the price of Bitcoin be above $92,000 on October 2?
+Slug: bitcoin-above-92k-on-october-2-2026
+Token ID: 33220839119625146479742022295107816577775219427677392448717734420372625280095
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $65,626.30
+Liquidity: $50,480.35
+Bid: 0.0010 | Ask: 0.0030 | Spread: 0.0020 | Mid: 0.0020
+Top-5 depth — Bid: 3484.06 | Ask: 219.99
+
+----------------------------------------------------------------------
+#16 | Outcome: No
+Market: Will the price of Bitcoin be above $92,000 on October 2?
+Slug: bitcoin-above-92k-on-october-2-2026
+Token ID: 29383081913660931933213095460181745444008173676240343495222049137911790833902
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $65,626.30
+Liquidity: $50,480.35
+Bid: 0.9970 | Ask: 0.9990 | Spread: 0.0020 | Mid: 0.9980
+Top-5 depth — Bid: 511.99 | Ask: 3484.06
+
+----------------------------------------------------------------------
+#17 | Outcome: Yes
+Market: Will the price of Ethereum be above $2,900 on October 2?
+Slug: ethereum-above-2900-on-october-2-2026
+Token ID: 90500235345621105628975593738701454187704353167081306107859843010009568770187
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $55,670.62
+Liquidity: $40,247.54
+Bid: 0.0150 | Ask: 0.0200 | Spread: 0.0050 | Mid: 0.0175
+Top-5 depth — Bid: 937.40 | Ask: 9024.78
+
+----------------------------------------------------------------------
+#18 | Outcome: No
+Market: Will the price of Ethereum be above $2,900 on October 2?
+Slug: ethereum-above-2900-on-october-2-2026
+Token ID: 96468936068035253002195548724393179714694077200853546638300121070430831542409
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $55,670.62
+Liquidity: $40,247.54
+Bid: 0.9800 | Ask: 0.9850 | Spread: 0.0050 | Mid: 0.9825
+Top-5 depth — Bid: 9024.78 | Ask: 937.40
+
+----------------------------------------------------------------------
+#19 | Outcome: No
+Market: Will the price of Ethereum be above $2,700 on October 2?
+Slug: ethereum-above-2700-on-october-2-2026
+Token ID: 96305029146296005722974037682389426771570496368194273224673825783947844821158
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $51,736.85
+Liquidity: $36,796.97
+Bid: 0.0260 | Ask: 0.0390 | Spread: 0.0130 | Mid: 0.0325
+Top-5 depth — Bid: 4654.00 | Ask: 9535.82
+
+----------------------------------------------------------------------
+#20 | Outcome: Yes
+Market: Will the price of Ethereum be above $2,700 on October 2?
+Slug: ethereum-above-2700-on-october-2-2026
+Token ID: 19798996921763249230263162917710202456774639548406084473159940350972928013679
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $51,736.85
+Liquidity: $36,796.97
+Bid: 0.9610 | Ask: 0.9740 | Spread: 0.0130 | Mid: 0.9675
+Top-5 depth — Bid: 9535.82 | Ask: 4654.00
+
+----------------------------------------------------------------------
+#21 | Outcome: Down
+Market: Ethereum Up or Down on October 2?
+Slug: ethereum-up-or-down-on-october-2-2026
+Token ID: 7995078250951251253689014686987229062813006885545554394706442235258005227725
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $41,974.64
+Liquidity: $29,059.47
+Bid: 0.0300 | Ask: 0.0360 | Spread: 0.0060 | Mid: 0.0330
+Top-5 depth — Bid: 4383.44 | Ask: 10218.54
+
+----------------------------------------------------------------------
+#22 | Outcome: Up
+Market: Ethereum Up or Down on October 2?
+Slug: ethereum-up-or-down-on-october-2-2026
+Token ID: 64670637702264922039735839255740818809510521673498899692824043171689650466003
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $41,974.64
+Liquidity: $29,059.47
+Bid: 0.9640 | Ask: 0.9700 | Spread: 0.0060 | Mid: 0.9670
+Top-5 depth — Bid: 10218.54 | Ask: 4383.44
+
+----------------------------------------------------------------------
+#23 | Outcome: No
+Market: Will the price of Ethereum be above $2,600 on October 2?
+Slug: ethereum-above-2600-on-october-2-2026
+Token ID: 41358723072742074769515476239829295386393025078369594041440347239474105486392
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $37,381.82
+Liquidity: $36,999.60
+Bid: 0.0030 | Ask: 0.0080 | Spread: 0.0050 | Mid: 0.0055
+Top-5 depth — Bid: 315.00 | Ask: 4909.99
+
+----------------------------------------------------------------------
+#24 | Outcome: Yes
+Market: Will the price of Ethereum be above $2,600 on October 2?
+Slug: ethereum-above-2600-on-october-2-2026
+Token ID: 101673588958235766501178458202154820880176788471128736745099420999700729027744
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $37,381.82
+Liquidity: $36,999.60
+Bid: 0.9920 | Ask: 0.9970 | Spread: 0.0050 | Mid: 0.9945
+Top-5 depth — Bid: 4909.99 | Ask: 315.00
+
+----------------------------------------------------------------------
+#25 | Outcome: No
+Market: Will Bitcoin dip to $83,000 on October 2?
+Slug: will-bitcoin-dip-to-83k-on-october-2-2026
+Token ID: 17951643597171756729434242682720377532013862100082265679881120542376959693182
+End date: 2026-10-03T04:00:00Z
+Ends in: 14.70 hours
+24h Volume: $19,815.06
+Liquidity: $20,705.24
+Bid: 0.9630 | Ask: 0.9860 | Spread: 0.0230 | Mid: 0.9745
+Top-5 depth — Bid: 5294.00 | Ask: 6240.08
+
+----------------------------------------------------------------------
+#26 | Outcome: Yes
+Market: Will Bitcoin dip to $83,000 on October 2?
+Slug: will-bitcoin-dip-to-83k-on-october-2-2026
+Token ID: 37424357035093036701113953420520157925628208376596873012563157455726120161302
+End date: 2026-10-03T04:00:00Z
+Ends in: 14.70 hours
+24h Volume: $19,815.06
+Liquidity: $20,705.24
+Bid: 0.0130 | Ask: 0.0370 | Spread: 0.0240 | Mid: 0.0250
+Top-5 depth — Bid: 5780.36 | Ask: 5294.00
+
+----------------------------------------------------------------------
+#27 | Outcome: Yes
+Market: Will the price of Ethereum be above $3,000 on October 2?
+Slug: ethereum-above-3000-on-october-2-2026
+Token ID: 24758914404275808170987653041504523997323895762264024477525181736577059330017
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $17,633.44
+Liquidity: $38,858.71
+Bid: 0.0050 | Ask: 0.0080 | Spread: 0.0030 | Mid: 0.0065
+Top-5 depth — Bid: 2195.32 | Ask: 1345.44
+
+----------------------------------------------------------------------
+#28 | Outcome: No
+Market: Will the price of Ethereum be above $3,000 on October 2?
+Slug: ethereum-above-3000-on-october-2-2026
+Token ID: 66831261063364804112094544543638011032228301605993092582915498004449727398889
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $17,633.44
+Liquidity: $38,858.71
+Bid: 0.9920 | Ask: 0.9950 | Spread: 0.0030 | Mid: 0.9935
+Top-5 depth — Bid: 1345.44 | Ask: 2195.32
+
+----------------------------------------------------------------------
+#29 | Outcome: No
+Market: Will the price of Ethereum be above $2,500 on October 2?
+Slug: ethereum-above-2500-on-october-2-2026
+Token ID: 70744588263150678369532267508726034396669697606215023960054178703609475584946
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $15,278.86
+Liquidity: $33,398.36
+Bid: 0.0010 | Ask: 0.0050 | Spread: 0.0040 | Mid: 0.0030
+Top-5 depth — Bid: 1497.31 | Ask: 25.05
+
+----------------------------------------------------------------------
+#30 | Outcome: Yes
+Market: Will the price of Ethereum be above $2,500 on October 2?
+Slug: ethereum-above-2500-on-october-2-2026
+Token ID: 65777402203576811558345335827368530003916749908002883708586074348882685872588
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $15,278.86
+Liquidity: $33,398.36
+Bid: 0.9950 | Ask: 0.9990 | Spread: 0.0040 | Mid: 0.9970
+Top-5 depth — Bid: 25.05 | Ask: 1497.31
+
+----------------------------------------------------------------------
+#31 | Outcome: Yes
+Market: Will the price of Bitcoin be between $90,000 and $92,000 on October 2?
+Slug: will-the-price-of-bitcoin-be-between-90000-92000-on-october-2-2026
+Token ID: 2434743717166276956814526257099258622924473654280604293706191095770035691128
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $13,616.99
+Liquidity: $23,328.48
+Bid: 0.0110 | Ask: 0.0160 | Spread: 0.0050 | Mid: 0.0135
+Top-5 depth — Bid: 14301.02 | Ask: 187.43
+
+----------------------------------------------------------------------
+#32 | Outcome: No
+Market: Will the price of Bitcoin be between $90,000 and $92,000 on October 2?
+Slug: will-the-price-of-bitcoin-be-between-90000-92000-on-october-2-2026
+Token ID: 27137230965258550360722655425338797729615674600612030969826987883883594330392
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $13,616.99
+Liquidity: $23,328.48
+Bid: 0.9840 | Ask: 0.9890 | Spread: 0.0050 | Mid: 0.9865
+Top-5 depth — Bid: 187.43 | Ask: 14301.02
+
+----------------------------------------------------------------------
+#33 | Outcome: Up
+Market: Bitcoin Up or Down - October 2, 8:00AM-12:00PM ET
+Slug: btc-updown-4h-1790942400
+Token ID: 10476792943389079305105599854986807835189070041050261427612720748614759819235
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $13,501.53
+Liquidity: $4,816.81
+Bid: 0.6600 | Ask: 0.6800 | Spread: 0.0200 | Mid: 0.6700
+Top-5 depth — Bid: 1018.58 | Ask: 2950.00
+
+----------------------------------------------------------------------
+#34 | Outcome: Down
+Market: Bitcoin Up or Down - October 2, 8:00AM-12:00PM ET
+Slug: btc-updown-4h-1790942400
+Token ID: 80873370061190827148406780890835717095562670757150207057950352802655136933307
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $13,501.53
+Liquidity: $4,816.81
+Bid: 0.3200 | Ask: 0.3400 | Spread: 0.0200 | Mid: 0.3300
+Top-5 depth — Bid: 2950.00 | Ask: 1018.58
+
+----------------------------------------------------------------------
+#35 | Outcome: Yes
+Market: Will Bitcoin dip to $84,000 on October 2?
+Slug: will-bitcoin-dip-to-84k-on-october-2-2026
+Token ID: 18189423923755285861737611187276217872070774475445463154171908591246013001069
+End date: 2026-10-03T04:00:00Z
+Ends in: 14.70 hours
+24h Volume: $13,016.10
+Liquidity: $13,444.86
+Bid: 0.0500 | Ask: 0.0600 | Spread: 0.0100 | Mid: 0.0550
+Top-5 depth — Bid: 7511.34 | Ask: 5777.00
+
+----------------------------------------------------------------------
+#36 | Outcome: No
+Market: Will Bitcoin dip to $84,000 on October 2?
+Slug: will-bitcoin-dip-to-84k-on-october-2-2026
+Token ID: 1122500055571806913426169084057458947925763463470405885626472611531574399630
+End date: 2026-10-03T04:00:00Z
+Ends in: 14.70 hours
+24h Volume: $13,016.10
+Liquidity: $13,444.86
+Bid: 0.9400 | Ask: 0.9500 | Spread: 0.0100 | Mid: 0.9450
+Top-5 depth — Bid: 5777.00 | Ask: 7511.34
+
+----------------------------------------------------------------------
+#37 | Outcome: No
+Market: Will the price of Bitcoin be between $86,000 and $88,000 on October 2?
+Slug: will-the-price-of-bitcoin-be-between-86000-88000-on-october-2-2026
+Token ID: 32203522676965702244106886148339030970219057644462491240962690826837427050300
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $10,149.68
+Liquidity: $22,389.65
+Bid: 0.2190 | Ask: 0.2470 | Spread: 0.0280 | Mid: 0.2330
+Top-5 depth — Bid: 245.90 | Ask: 5315.00
+
+----------------------------------------------------------------------
+#38 | Outcome: Yes
+Market: Will the price of Bitcoin be between $86,000 and $88,000 on October 2?
+Slug: will-the-price-of-bitcoin-be-between-86000-88000-on-october-2-2026
+Token ID: 7036219739993351557629521009066556117711015222037780496440181012116377282062
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $10,149.68
+Liquidity: $22,389.65
+Bid: 0.7530 | Ask: 0.7840 | Spread: 0.0310 | Mid: 0.7685
+Top-5 depth — Bid: 5250.00 | Ask: 5301.00
+
+----------------------------------------------------------------------
+#39 | Outcome: No
+Market: Will the price of Bitcoin be between $88,000 and $90,000 on October 2?
+Slug: will-the-price-of-bitcoin-be-between-88000-90000-on-october-2-2026
+Token ID: 3221381320808213166142776205350816440699738625674226897640614975950841913872
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $9,523.63
+Liquidity: $21,208.14
+Bid: 0.9360 | Ask: 0.9510 | Spread: 0.0150 | Mid: 0.9435
+Top-5 depth — Bid: 5186.06 | Ask: 530.84
+
+----------------------------------------------------------------------
+#40 | Outcome: Yes
+Market: Will the price of Bitcoin be between $88,000 and $90,000 on October 2?
+Slug: will-the-price-of-bitcoin-be-between-88000-90000-on-october-2-2026
+Token ID: 35786228996264977789512355875434745740595924794781426887951446339925802204683
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $9,523.63
+Liquidity: $21,208.14
+Bid: 0.0490 | Ask: 0.0640 | Spread: 0.0150 | Mid: 0.0565
+Top-5 depth — Bid: 530.84 | Ask: 5186.06
+
+----------------------------------------------------------------------
+#41 | Outcome: Yes
+Market: Will the price of Bitcoin be between $82,000 and $84,000 on October 2?
+Slug: will-the-price-of-bitcoin-be-between-82000-84000-on-october-2-2026
+Token ID: 82595638413510578325124933428469238170292344046003527714685947998517128419496
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $9,043.15
+Liquidity: $23,980.22
+Bid: 0.0100 | Ask: 0.0130 | Spread: 0.0030 | Mid: 0.0115
+Top-5 depth — Bid: 5546.02 | Ask: 5791.86
+
+----------------------------------------------------------------------
+#42 | Outcome: No
+Market: Will the price of Bitcoin be between $82,000 and $84,000 on October 2?
+Slug: will-the-price-of-bitcoin-be-between-82000-84000-on-october-2-2026
+Token ID: 46029321885727435773702090482207733281793566043156797392899189856404991522065
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $9,043.15
+Liquidity: $23,980.22
+Bid: 0.9870 | Ask: 0.9900 | Spread: 0.0030 | Mid: 0.9885
+Top-5 depth — Bid: 5791.86 | Ask: 5546.02
+
+----------------------------------------------------------------------
+#43 | Outcome: Yes
+Market: Will Ethereum reach $2,900 on October 2?
+Slug: will-ethereum-reach-2900-on-october-2-2026
+Token ID: 85517578290748040669026229438667691926609290965216354643356232464446069554864
+End date: 2026-10-03T04:00:00Z
+Ends in: 14.70 hours
+24h Volume: $8,949.29
+Liquidity: $14,310.65
+Bid: 0.0100 | Ask: 0.0260 | Spread: 0.0160 | Mid: 0.0180
+Top-5 depth — Bid: 5749.96 | Ask: 6019.06
+
+----------------------------------------------------------------------
+#44 | Outcome: No
+Market: Will Ethereum reach $2,900 on October 2?
+Slug: will-ethereum-reach-2900-on-october-2-2026
+Token ID: 95889696282968371008728532195203257198200210772981986282216005800196952832978
+End date: 2026-10-03T04:00:00Z
+Ends in: 14.70 hours
+24h Volume: $8,949.29
+Liquidity: $14,310.65
+Bid: 0.9740 | Ask: 0.9900 | Spread: 0.0160 | Mid: 0.9820
+Top-5 depth — Bid: 6019.06 | Ask: 5749.96
+
+----------------------------------------------------------------------
+#45 | Outcome: No
+Market: Will the price of Ethereum be between $2,700 and $2,800 on October 2?
+Slug: will-the-price-of-ethereum-be-between-2700-2800-on-october-2-2026
+Token ID: 61890224209804561933469899516845486924221384843865838998715221044612303847056
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $8,841.53
+Liquidity: $20,145.43
+Bid: 0.1100 | Ask: 0.1300 | Spread: 0.0200 | Mid: 0.1200
+Top-5 depth — Bid: 3085.95 | Ask: 3022.50
+
+----------------------------------------------------------------------
+#46 | Outcome: Yes
+Market: Will the price of Ethereum be between $2,700 and $2,800 on October 2?
+Slug: will-the-price-of-ethereum-be-between-2700-2800-on-october-2-2026
+Token ID: 105274090851097233820016588960977114477145204637406903352272444395218353235247
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $8,841.53
+Liquidity: $20,145.43
+Bid: 0.8700 | Ask: 0.8900 | Spread: 0.0200 | Mid: 0.8800
+Top-5 depth — Bid: 3022.50 | Ask: 3085.95
+
+----------------------------------------------------------------------
+#47 | Outcome: No
+Market: Will the price of Solana be above $125 on October 2?
+Slug: solana-above-125-on-october-2-2026
+Token ID: 93185892376118166573541703504036735793492383876725898682993418755468589543572
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $8,620.36
+Liquidity: $21,649.97
+Bid: 0.8930 | Ask: 0.9570 | Spread: 0.0640 | Mid: 0.9250
+Top-5 depth — Bid: 67.00 | Ask: 1550.38
+
+----------------------------------------------------------------------
+#48 | Outcome: Yes
+Market: Will the price of Solana be above $125 on October 2?
+Slug: solana-above-125-on-october-2-2026
+Token ID: 22914197970988123329843806275803862770820194064076250449744574499929255270237
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $8,620.36
+Liquidity: $21,649.97
+Bid: 0.0420 | Ask: 0.1070 | Spread: 0.0650 | Mid: 0.0745
+Top-5 depth — Bid: 250.34 | Ask: 72.00
+
+----------------------------------------------------------------------
+#49 | Outcome: No
+Market: Will Bitcoin dip to $85,000 on October 2?
+Slug: will-bitcoin-dip-to-85k-on-october-2-2026
+Token ID: 59188955130061008318835137692254436173501627830859171870463308616490518731441
+End date: 2026-10-03T04:00:00Z
+Ends in: 14.70 hours
+24h Volume: $8,523.15
+Liquidity: $12,885.64
+Bid: 0.8000 | Ask: 0.8200 | Spread: 0.0200 | Mid: 0.8100
+Top-5 depth — Bid: 6053.23 | Ask: 6084.25
+
+----------------------------------------------------------------------
+#50 | Outcome: Yes
+Market: Will Bitcoin dip to $85,000 on October 2?
+Slug: will-bitcoin-dip-to-85k-on-october-2-2026
+Token ID: 37142706556187720293862429142406915744660429934743491902252366312541276351651
+End date: 2026-10-03T04:00:00Z
+Ends in: 14.70 hours
+24h Volume: $8,523.15
+Liquidity: $12,885.64
+Bid: 0.1800 | Ask: 0.2000 | Spread: 0.0200 | Mid: 0.1900
+Top-5 depth — Bid: 6084.25 | Ask: 6053.23
+
+----------------------------------------------------------------------
+#51 | Outcome: Yes
+Market: Will Bitcoin reach $90,000 on October 2?
+Slug: will-bitcoin-reach-90k-on-october-2-2026
+Token ID: 95111385644726693848550230180542007252915367661729464488029967852811076928084
+End date: 2026-10-03T04:00:00Z
+Ends in: 14.70 hours
+24h Volume: $8,315.36
+Liquidity: $18,822.02
+Bid: 0.0160 | Ask: 0.0230 | Spread: 0.0070 | Mid: 0.0195
+Top-5 depth — Bid: 6001.38 | Ask: 5893.28
+
+----------------------------------------------------------------------
+#52 | Outcome: No
+Market: Will Bitcoin reach $90,000 on October 2?
+Slug: will-bitcoin-reach-90k-on-october-2-2026
+Token ID: 65780491757264160785553779971166802240170030076075114650572539971690531800257
+End date: 2026-10-03T04:00:00Z
+Ends in: 14.70 hours
+24h Volume: $8,315.36
+Liquidity: $18,822.02
+Bid: 0.9770 | Ask: 0.9840 | Spread: 0.0070 | Mid: 0.9805
+Top-5 depth — Bid: 5893.28 | Ask: 6001.38
+
+----------------------------------------------------------------------
+#53 | Outcome: No
+Market: Will the price of Solana be above $120 on October 2?
+Slug: solana-above-120-on-october-2-2026
+Token ID: 70077513477663984567050723281949601526978758306717620929627355471032045765563
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $7,949.83
+Liquidity: $23,198.08
+Bid: 0.0400 | Ask: 0.0500 | Spread: 0.0100 | Mid: 0.0450
+Top-5 depth — Bid: 1458.19 | Ask: 1344.12
+
+----------------------------------------------------------------------
+#54 | Outcome: Yes
+Market: Will the price of Solana be above $120 on October 2?
+Slug: solana-above-120-on-october-2-2026
+Token ID: 87163536421376736127449438678331739715051075911688649037084138810975504163315
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $7,949.83
+Liquidity: $23,198.08
+Bid: 0.9500 | Ask: 0.9600 | Spread: 0.0100 | Mid: 0.9550
+Top-5 depth — Bid: 1344.12 | Ask: 1458.19
+
+----------------------------------------------------------------------
+#55 | Outcome: Yes
+Market: Will the price of Bitcoin be between $78,000 and $80,000 on October 2?
+Slug: will-the-price-of-bitcoin-be-between-78000-80000-on-october-2-2026
+Token ID: 68304727615588594491996506087864681725354152109721327179872701996147090254581
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $7,226.85
+Liquidity: $24,217.09
+Bid: 0.0010 | Ask: 0.0090 | Spread: 0.0080 | Mid: 0.0050
+Top-5 depth — Bid: 399.23 | Ask: 6446.68
+
+----------------------------------------------------------------------
+#56 | Outcome: No
+Market: Will the price of Bitcoin be between $78,000 and $80,000 on October 2?
+Slug: will-the-price-of-bitcoin-be-between-78000-80000-on-october-2-2026
+Token ID: 92521814608566374140804362196409716578242828985888924841295901573794783709956
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $7,226.85
+Liquidity: $24,217.09
+Bid: 0.9910 | Ask: 0.9990 | Spread: 0.0080 | Mid: 0.9950
+Top-5 depth — Bid: 6446.68 | Ask: 399.23
+
+----------------------------------------------------------------------
+#57 | Outcome: Yes
+Market: Will Ethereum reach $2,850 on October 2?
+Slug: will-ethereum-reach-2850-on-october-2-2026
+Token ID: 20735529875000595344097424174628347275894947796086532481913913067494634032719
+End date: 2026-10-03T04:00:00Z
+Ends in: 14.70 hours
+24h Volume: $6,986.34
+Liquidity: $12,567.39
+Bid: 0.0540 | Ask: 0.0840 | Spread: 0.0300 | Mid: 0.0690
+Top-5 depth — Bid: 3158.44 | Ask: 6103.42
+
+----------------------------------------------------------------------
+#58 | Outcome: No
+Market: Will Ethereum reach $2,850 on October 2?
+Slug: will-ethereum-reach-2850-on-october-2-2026
+Token ID: 47306716568756771178171472028637487281410360694391587625507522329936410113554
+End date: 2026-10-03T04:00:00Z
+Ends in: 14.70 hours
+24h Volume: $6,986.34
+Liquidity: $12,567.39
+Bid: 0.9140 | Ask: 0.9450 | Spread: 0.0310 | Mid: 0.9295
+Top-5 depth — Bid: 6084.91 | Ask: 5548.44
+
+----------------------------------------------------------------------
+#59 | Outcome: Up
+Market: Bitcoin Up or Down - October 2, 9AM ET
+Slug: bitcoin-up-or-down-october-2-2026-9am-et
+Token ID: 79026741493904744682529678031289378846026804814619184799374173218615920064114
+End date: 2026-10-02T14:00:00Z
+Ends in: 0.70 hours
+24h Volume: $6,933.14
+Liquidity: $6,789.23
+Bid: 0.4000 | Ask: 0.4100 | Spread: 0.0100 | Mid: 0.4050
+Top-5 depth — Bid: 2518.77 | Ask: 3263.40
+
+----------------------------------------------------------------------
+#60 | Outcome: Down
+Market: Bitcoin Up or Down - October 2, 9AM ET
+Slug: bitcoin-up-or-down-october-2-2026-9am-et
+Token ID: 88782190662854931224747013719779257233597207432226842019727772520462985082350
+End date: 2026-10-02T14:00:00Z
+Ends in: 0.70 hours
+24h Volume: $6,933.14
+Liquidity: $6,789.23
+Bid: 0.5900 | Ask: 0.6000 | Spread: 0.0100 | Mid: 0.5950
+Top-5 depth — Bid: 3263.40 | Ask: 2521.00
+
+----------------------------------------------------------------------
+#61 | Outcome: No
+Market: Will the price of Solana be above $115 on October 2?
+Slug: solana-above-115-on-october-2-2026
+Token ID: 20834465740029686937504121758328004593424861617050705479143386941989025405650
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $6,298.75
+Liquidity: $22,183.65
+Bid: 0.0050 | Ask: 0.0250 | Spread: 0.0200 | Mid: 0.0150
+Top-5 depth — Bid: 7421.24 | Ask: 45.00
+
+----------------------------------------------------------------------
+#62 | Outcome: Yes
+Market: Will the price of Solana be above $115 on October 2?
+Slug: solana-above-115-on-october-2-2026
+Token ID: 31563495118940441089384910780176510328329808077149293452583887308942186945271
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $6,298.75
+Liquidity: $22,183.65
+Bid: 0.9750 | Ask: 0.9950 | Spread: 0.0200 | Mid: 0.9850
+Top-5 depth — Bid: 45.00 | Ask: 7421.24
+
+----------------------------------------------------------------------
+#63 | Outcome: Yes
+Market: Will the price of Ethereum be between $2,500 and $2,600 on October 2?
+Slug: will-the-price-of-ethereum-be-between-2500-2600-on-october-2-2026
+Token ID: 88410681108063926021724161376162256265115835306725446389420077885655840356620
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $6,202.27
+Liquidity: $21,175.98
+Bid: 0.0010 | Ask: 0.0110 | Spread: 0.0100 | Mid: 0.0060
+Top-5 depth — Bid: 42.94 | Ask: 3193.05
+
+----------------------------------------------------------------------
+#64 | Outcome: No
+Market: Will the price of Ethereum be between $2,500 and $2,600 on October 2?
+Slug: will-the-price-of-ethereum-be-between-2500-2600-on-october-2-2026
+Token ID: 66683263954756849535752808696915642763533158557075026318368443651751084695418
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $6,202.27
+Liquidity: $21,175.98
+Bid: 0.9890 | Ask: 0.9990 | Spread: 0.0100 | Mid: 0.9940
+Top-5 depth — Bid: 3193.05 | Ask: 42.94
+
+----------------------------------------------------------------------
+#65 | Outcome: Yes
+Market: Will the price of Bitcoin be between $84,000 and $86,000 on October 2?
+Slug: will-the-price-of-bitcoin-be-between-84000-86000-on-october-2-2026
+Token ID: 61085929598190313677626054987167207073163094151540184793753780966952341866434
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $5,772.58
+Liquidity: $23,275.36
+Bid: 0.1300 | Ask: 0.1700 | Spread: 0.0400 | Mid: 0.1500
+Top-5 depth — Bid: 5641.99 | Ask: 5722.28
+
+----------------------------------------------------------------------
+#66 | Outcome: No
+Market: Will the price of Bitcoin be between $84,000 and $86,000 on October 2?
+Slug: will-the-price-of-bitcoin-be-between-84000-86000-on-october-2-2026
+Token ID: 114925382402220792097712527991589892555648096309338339961980461334275708132927
+End date: 2026-10-02T16:00:00Z
+Ends in: 2.70 hours
+24h Volume: $5,772.58
+Liquidity: $23,275.36
+Bid: 0.8300 | Ask: 0.8700 | Spread: 0.0400 | Mid: 0.8500
+Top-5 depth — Bid: 5722.28 | Ask: 5641.99
+
+----------------------------------------------------------------------
+#67 | Outcome: Yes
+Market: Will Bitcoin reach $89,000 on October 2?
+Slug: will-bitcoin-reach-89k-on-october-2-2026
+Token ID: 13352939142323543101357727266296192956427081488577827228433507602921217080586
+End date: 2026-10-03T04:00:00Z
+Ends in: 14.70 hours
+24h Volume: $5,137.64
+Liquidity: $17,793.28
+Bid: 0.0710 | Ask: 0.0760 | Spread: 0.0050 | Mid: 0.0735
+Top-5 depth — Bid: 6112.50 | Ask: 6171.49
+
+----------------------------------------------------------------------
+#68 | Outcome: No
+Market: Will Bitcoin reach $89,000 on October 2?
+Slug: will-bitcoin-reach-89k-on-october-2-2026
+Token ID: 24715978681331842669450760220086926231969116840011351994717681053417064987658
+End date: 2026-10-03T04:00:00Z
+Ends in: 14.70 hours
+24h Volume: $5,137.64
+Liquidity: $17,793.28
+Bid: 0.9240 | Ask: 0.9290 | Spread: 0.0050 | Mid: 0.9265
+Top-5 depth — Bid: 6171.49 | Ask: 6112.50
