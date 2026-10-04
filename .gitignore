@@ -5,3 +5,13 @@ __pycache__/
 venv/
 .vscode/
 *.ipynb_checkpoints/
+# Raw and generated data
+data/raw/
+data/processed/
+*.parquet
+*.jsonl
+
+# Test and tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
