@@ -3,64 +3,91 @@ from pathlib import Path
 
 import pandas as pd
 
-INPUT = Path("data/raw/btc_oct3_up_down_session_20261002_04.jsonl")
-OUTPUT = Path("data/processed/btc_oct3_up_down_session_20261002_04_bbo.parquet")
 
-TOKEN_NAMES = {
-    "32664731353322490016663940157951165038326534411865610104571929420891932752044": "UP",
-    "83368144530639073518031297526937851295808514385655078316894643930693648829402": "DOWN",
-}
+INPUT_FILES = [
+    Path("data/raw/btc-updown-5m-1791062400.jsonl"),
+    Path("data/raw/btc-updown-5m-1791062700.jsonl"),
+]
+
+OUTPUT = Path("data/processed/btc_oct3_new_markets_bbo.parquet")
+
+
+def get_outcome_map():
+    """
+    Read asset IDs from the captured files.
+    Each file contains exactly two assets.
+    The recorder stores no explicit UP/DOWN mapping,
+    so mapping must be supplied from market metadata.
+    """
+    return {}
 
 
 def main():
     rows = []
 
-    with INPUT.open("r", encoding="utf-8") as f:
-        for line in f:
-            if not line.strip():
-                continue
+    for input_file in INPUT_FILES:
+        if not input_file.exists():
+            print(f"Skipping missing file: {input_file}")
+            continue
 
-            record = json.loads(line)
-            event = record.get("event", {})
+        print(f"Reading: {input_file}")
 
-            if event.get("event_type") != "book":
-                continue
+        with input_file.open("r", encoding="utf-8") as f:
+            for line in f:
+                if not line.strip():
+                    continue
 
-            asset_id = str(event.get("asset_id", record.get("asset_id", "")))
-            if asset_id not in TOKEN_NAMES:
-                continue
+                record = json.loads(line)
+                event = record.get("event", {})
 
-            bids = event.get("bids", [])
-            asks = event.get("asks", [])
+                if event.get("event_type") != "book":
+                    continue
 
-            if not bids or not asks:
-                continue
+                asset_id = str(
+                    event.get("asset_id", record.get("asset_id", ""))
+                )
 
-            bid = max(float(x["price"]) for x in bids)
-            ask = min(float(x["price"]) for x in asks)
+                bids = event.get("bids", [])
+                asks = event.get("asks", [])
 
-            if bid > ask:
-                continue
+                if not bids or not asks:
+                    continue
 
-            rows.append({
-                "timestamp_ms": int(event["timestamp"]),
-                "asset_id": asset_id,
-                "outcome": TOKEN_NAMES[asset_id],
-                "bid": bid,
-                "ask": ask,
-            })
+                try:
+                    bid = max(float(x["price"]) for x in bids)
+                    ask = min(float(x["price"]) for x in asks)
+                    timestamp_ms = int(event["timestamp"])
+                except (KeyError, TypeError, ValueError):
+                    continue
+
+                if bid > ask:
+                    continue
+
+                rows.append({
+                    "timestamp_ms": timestamp_ms,
+                    "asset_id": asset_id,
+                    "bid": bid,
+                    "ask": ask,
+                    "source_file": input_file.name,
+                })
 
     if not rows:
         raise RuntimeError("No valid BBO rows found.")
 
     df = pd.DataFrame(rows)
+
     df["timestamp"] = pd.to_datetime(
-        df["timestamp_ms"], unit="ms", utc=True
+        df["timestamp_ms"],
+        unit="ms",
+        utc=True,
     )
 
     df = (
         df.sort_values(["asset_id", "timestamp_ms"])
-        .drop_duplicates(["asset_id", "timestamp_ms"], keep="last")
+        .drop_duplicates(
+            ["asset_id", "timestamp_ms"],
+            keep="last",
+        )
         .reset_index(drop=True)
     )
 
@@ -70,13 +97,17 @@ def main():
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(OUTPUT, index=False)
 
-    print("Actual BBO rows:", len(df))
-    print("Rows by outcome:")
-    print(df["outcome"].value_counts())
-    print("Unique mid prices by outcome:")
-    print(df.groupby("outcome")["mid_price"].nunique())
-    print("Time range by outcome:")
-    print(df.groupby("outcome")["timestamp"].agg(["min", "max"]))
+    print("\nBBO dataset created")
+    print("Rows:", len(df))
+    print("Unique assets:", df["asset_id"].nunique())
+    print("Rows by source:")
+    print(df["source_file"].value_counts())
+    print("Rows by asset:")
+    print(df.groupby("asset_id").size())
+    print("Time range:")
+    print(df["timestamp"].agg(["min", "max"]))
+    print("Unique mid prices:")
+    print(df.groupby("asset_id")["mid_price"].nunique())
     print("Saved:", OUTPUT)
     print(df.head())
 

@@ -1,0 +1,3 @@
+market,label,quote_rows,mean_up_mid,mean_down_mid,mean_combined_spread,mean_pair_age_ms,baseline_prediction,correct
+btc-updown-5m-1791062400,UP,704,0.7595596590909092,0.24044034090909092,0.026988636363636364,0.0,UP,True
+btc-updown-5m-1791062700,DOWN,348,0.5202298850574713,0.47977011494252875,0.02701149425287357,0.0,UP,False

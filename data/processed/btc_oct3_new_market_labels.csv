@@ -1,0 +1,3 @@
+market,market_start,market_end,btc_start_price,btc_end_price,price_change,label,label_source
+btc-updown-5m-1791062400,2026-10-03 21:20:00+00:00,2026-10-03 21:25:00+00:00,84709.27,84715.98,6.709999999991851,UP,"Binance BTCUSDT 1m candles (proxy, not Chainlink settlement)"
+btc-updown-5m-1791062700,2026-10-03 21:25:00+00:00,2026-10-03 21:30:00+00:00,84715.99,84710.68,-5.310000000012224,DOWN,"Binance BTCUSDT 1m candles (proxy, not Chainlink settlement)"
