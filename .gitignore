@@ -6,3 +6,5 @@ venv/
 .vscode/
 *.ipynb_checkpoints/
 data/raw/
+data/processed/track_a/*.parquet
+data/processed/track_b/*.parquet
