@@ -1,0 +1,15 @@
+MARKET-LEVEL BASELINE REPORT
+Independent markets: 2
+Label counts: {'UP': 1, 'DOWN': 1}
+Baseline: always predict UP
+Correct: 1/2
+Accuracy: 0.500
+
+Market-level rows:
+                  market label  quote_rows  mean_up_mid  mean_down_mid  mean_combined_spread  mean_pair_age_ms baseline_prediction  correct
+btc-updown-5m-1791062400    UP         704      0.75956        0.24044              0.026989               0.0                  UP     True
+btc-updown-5m-1791062700  DOWN         348      0.52023        0.47977              0.027011               0.0                  UP    False
+
+LIMITATION: only 2 independent outcomes; this is a sanity-check baseline,
+not a statistically meaningful ML evaluation. Do not use quote rows
+as independent train/test samples.
