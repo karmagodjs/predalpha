@@ -1,0 +1,116 @@
+{
+  "L20": {
+    "seeds": [
+      {
+        "accuracy": 0.5797,
+        "balanced_accuracy": 0.529,
+        "macro_f1": 0.5416,
+        "seed": 42
+      },
+      {
+        "accuracy": 0.5804,
+        "balanced_accuracy": 0.522,
+        "macro_f1": 0.5378,
+        "seed": 123
+      },
+      {
+        "accuracy": 0.5773,
+        "balanced_accuracy": 0.5322,
+        "macro_f1": 0.5439,
+        "seed": 999
+      }
+    ],
+    "mean": {
+      "accuracy": 0.5791,
+      "balanced_accuracy": 0.5277,
+      "macro_f1": 0.5411
+    },
+    "std": {
+      "accuracy": 0.0013,
+      "balanced_accuracy": 0.0043,
+      "macro_f1": 0.0025
+    },
+    "mean_accuracy": 0.5791,
+    "std_accuracy": 0.0013,
+    "mean_balanced_accuracy": 0.5277,
+    "std_balanced_accuracy": 0.0043,
+    "mean_macro_f1": 0.5411,
+    "std_macro_f1": 0.0025
+  },
+  "L30": {
+    "seeds": [
+      {
+        "accuracy": 0.5695,
+        "balanced_accuracy": 0.5265,
+        "macro_f1": 0.5358,
+        "seed": 42
+      },
+      {
+        "accuracy": 0.5857,
+        "balanced_accuracy": 0.5419,
+        "macro_f1": 0.5546,
+        "seed": 123
+      },
+      {
+        "accuracy": 0.5884,
+        "balanced_accuracy": 0.548,
+        "macro_f1": 0.5581,
+        "seed": 999
+      }
+    ],
+    "mean": {
+      "accuracy": 0.5812,
+      "balanced_accuracy": 0.5388,
+      "macro_f1": 0.5495
+    },
+    "std": {
+      "accuracy": 0.0083,
+      "balanced_accuracy": 0.009,
+      "macro_f1": 0.0098
+    },
+    "mean_accuracy": 0.5812,
+    "std_accuracy": 0.0083,
+    "mean_balanced_accuracy": 0.5388,
+    "std_balanced_accuracy": 0.009,
+    "mean_macro_f1": 0.5495,
+    "std_macro_f1": 0.0098
+  },
+  "L60": {
+    "seeds": [
+      {
+        "accuracy": 0.5538,
+        "balanced_accuracy": 0.4857,
+        "macro_f1": 0.4923,
+        "seed": 42
+      },
+      {
+        "accuracy": 0.5387,
+        "balanced_accuracy": 0.4527,
+        "macro_f1": 0.4558,
+        "seed": 123
+      },
+      {
+        "accuracy": 0.5699,
+        "balanced_accuracy": 0.5048,
+        "macro_f1": 0.5113,
+        "seed": 999
+      }
+    ],
+    "mean": {
+      "accuracy": 0.5541,
+      "balanced_accuracy": 0.4811,
+      "macro_f1": 0.4865
+    },
+    "std": {
+      "accuracy": 0.0127,
+      "balanced_accuracy": 0.0215,
+      "macro_f1": 0.023
+    },
+    "mean_accuracy": 0.5541,
+    "std_accuracy": 0.0127,
+    "mean_balanced_accuracy": 0.4811,
+    "std_balanced_accuracy": 0.0215,
+    "mean_macro_f1": 0.4865,
+    "std_macro_f1": 0.023
+  }
+}

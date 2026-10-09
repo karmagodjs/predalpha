@@ -1,0 +1,246 @@
+{
+  "pipeline_valid": true,
+  "data_quality_pass": false,
+  "training_ready": false,
+  "checks": {
+    "sequence_dimensions": {
+      "name": "sequence_dimensions",
+      "category": "pipeline_integrity",
+      "status": "PASS",
+      "required": "(*, 10, 11)",
+      "observed": "{'train': (249, 10, 11), 'val': (47, 10, 11), 'test': (46, 10, 11)}",
+      "details": "Sequence tensors must strictly have expected lookback and feature dimensionality."
+    },
+    "duplicate_sequence_endpoints": {
+      "name": "duplicate_sequence_endpoints",
+      "category": "pipeline_integrity",
+      "status": "PASS",
+      "required": 0,
+      "observed": 0,
+      "details": "Sequences must possess distinct endpoints with zero duplicates across splits."
+    },
+    "cross_split_leakage": {
+      "name": "cross_split_leakage",
+      "category": "pipeline_integrity",
+      "status": "PASS",
+      "required": 0,
+      "observed": 0,
+      "details": "Zero sequence lookback or endpoint overlap across train/val/test partitions."
+    },
+    "cross_session_leakage": {
+      "name": "cross_session_leakage",
+      "category": "pipeline_integrity",
+      "status": "PASS",
+      "required": 0,
+      "observed": 0,
+      "details": "Zero sequences may bridge across independent recording sessions."
+    },
+    "scaler_fit_source": {
+      "name": "scaler_fit_source",
+      "category": "pipeline_integrity",
+      "status": "PASS",
+      "required": "train (valid metadata)",
+      "observed": "train (valid=True)",
+      "details": "Feature scaler must be fitted strictly on train partition; validation/test never fit."
+    },
+    "canonical_observations_count": {
+      "name": "canonical_observations_count",
+      "category": "data_quality",
+      "status": "FAIL",
+      "required": ">= 50,000",
+      "observed": "498",
+      "details": "Minimum number of canonical market events required for institutional training."
+    },
+    "labeled_observations_count": {
+      "name": "labeled_observations_count",
+      "category": "data_quality",
+      "status": "FAIL",
+      "required": ">= 10,000",
+      "observed": "375",
+      "details": "Minimum physical labeled observations required before sequence construction."
+    },
+    "sequence_counts_sufficiency": {
+      "name": "sequence_counts_sufficiency",
+      "category": "data_quality",
+      "status": "FAIL",
+      "required": "total >= 10,000, train >= 7,000, val >= 1,000, test >= 1,000",
+      "observed": "total=342 (train=249, val=47, test=46)",
+      "details": "Partition sample counts must meet minimum thresholds for neural convergence."
+    },
+    "zero_nan_values": {
+      "name": "zero_nan_values",
+      "category": "data_quality",
+      "status": "FAIL",
+      "required": 0,
+      "observed": 39,
+      "details": "Scaled feature matrices must contain zero NaN values."
+    },
+    "zero_inf_values": {
+      "name": "zero_inf_values",
+      "category": "data_quality",
+      "status": "PASS",
+      "required": 0,
+      "observed": 0,
+      "details": "Scaled feature matrices must contain zero Inf values."
+    },
+    "required_classes_present": {
+      "name": "required_classes_present",
+      "category": "data_quality",
+      "status": "FAIL",
+      "required": [
+        "UP",
+        "DOWN",
+        "FLAT"
+      ],
+      "observed": [
+        "FLAT"
+      ],
+      "details": "All required outcome classes (UP, DOWN, FLAT) must be represented in target labels."
+    },
+    "class_balance_minimum": {
+      "name": "class_balance_minimum",
+      "category": "data_quality",
+      "status": "FAIL",
+      "required": "Each class >= 5.0%",
+      "observed": "{'UP': 0.0, 'DOWN': 0.0, 'FLAT': 1.0} (Violations: {'UP': '0.00% < 5.00%', 'DOWN': '0.00% < 5.00%'})",
+      "details": "Each target label class must comprise at least 5% of all samples."
+    },
+    "price_diversity": {
+      "name": "price_diversity",
+      "category": "data_quality",
+      "status": "FAIL",
+      "required": ">= 25 unique prices",
+      "observed": 1,
+      "details": "Underlying market observations must exhibit distinct price levels to avoid degenerate models."
+    },
+    "directional_transitions": {
+      "name": "directional_transitions",
+      "category": "data_quality",
+      "status": "FAIL",
+      "required": ">= 100 transitions",
+      "observed": 0,
+      "details": "Dataset must exhibit frequent directional state switches to train non-trivial dynamics."
+    },
+    "staleness_threshold": {
+      "name": "staleness_threshold",
+      "category": "data_quality",
+      "status": "FAIL",
+      "required": "<= 20.0%",
+      "observed": "54.13%",
+      "details": "Proportion of stale resampled grid observations must remain within threshold."
+    },
+    "feature_variance_audit": {
+      "name": "feature_variance_audit",
+      "category": "data_quality",
+      "status": "WARNING",
+      "required": "Zero constant features (strict=False)",
+      "observed": "9 constant features: [np.str_('mid_price'), np.str_('spread'), np.str_('spread_bps'), np.str_('mid_return_1s'), np.str_('mid_return_3s'), np.str_('mid_return_5s'), np.str_('mid_volatility_5s'), np.str_('bid_change_1s'), np.str_('ask_change_1s')]",
+      "details": "Features with zero variance reflect static market conditions and provide zero signal."
+    }
+  },
+  "failed_checks": [
+    {
+      "name": "canonical_observations_count",
+      "category": "data_quality",
+      "status": "FAIL",
+      "required": ">= 50,000",
+      "observed": "498",
+      "details": "Minimum number of canonical market events required for institutional training."
+    },
+    {
+      "name": "labeled_observations_count",
+      "category": "data_quality",
+      "status": "FAIL",
+      "required": ">= 10,000",
+      "observed": "375",
+      "details": "Minimum physical labeled observations required before sequence construction."
+    },
+    {
+      "name": "sequence_counts_sufficiency",
+      "category": "data_quality",
+      "status": "FAIL",
+      "required": "total >= 10,000, train >= 7,000, val >= 1,000, test >= 1,000",
+      "observed": "total=342 (train=249, val=47, test=46)",
+      "details": "Partition sample counts must meet minimum thresholds for neural convergence."
+    },
+    {
+      "name": "zero_nan_values",
+      "category": "data_quality",
+      "status": "FAIL",
+      "required": 0,
+      "observed": 39,
+      "details": "Scaled feature matrices must contain zero NaN values."
+    },
+    {
+      "name": "required_classes_present",
+      "category": "data_quality",
+      "status": "FAIL",
+      "required": [
+        "UP",
+        "DOWN",
+        "FLAT"
+      ],
+      "observed": [
+        "FLAT"
+      ],
+      "details": "All required outcome classes (UP, DOWN, FLAT) must be represented in target labels."
+    },
+    {
+      "name": "class_balance_minimum",
+      "category": "data_quality",
+      "status": "FAIL",
+      "required": "Each class >= 5.0%",
+      "observed": "{'UP': 0.0, 'DOWN': 0.0, 'FLAT': 1.0} (Violations: {'UP': '0.00% < 5.00%', 'DOWN': '0.00% < 5.00%'})",
+      "details": "Each target label class must comprise at least 5% of all samples."
+    },
+    {
+      "name": "price_diversity",
+      "category": "data_quality",
+      "status": "FAIL",
+      "required": ">= 25 unique prices",
+      "observed": 1,
+      "details": "Underlying market observations must exhibit distinct price levels to avoid degenerate models."
+    },
+    {
+      "name": "directional_transitions",
+      "category": "data_quality",
+      "status": "FAIL",
+      "required": ">= 100 transitions",
+      "observed": 0,
+      "details": "Dataset must exhibit frequent directional state switches to train non-trivial dynamics."
+    },
+    {
+      "name": "staleness_threshold",
+      "category": "data_quality",
+      "status": "FAIL",
+      "required": "<= 20.0%",
+      "observed": "54.13%",
+      "details": "Proportion of stale resampled grid observations must remain within threshold."
+    }
+  ],
+  "warnings": [
+    {
+      "name": "feature_variance_audit",
+      "category": "data_quality",
+      "status": "WARNING",
+      "required": "Zero constant features (strict=False)",
+      "observed": "9 constant features: [np.str_('mid_price'), np.str_('spread'), np.str_('spread_bps'), np.str_('mid_return_1s'), np.str_('mid_return_3s'), np.str_('mid_return_5s'), np.str_('mid_volatility_5s'), np.str_('bid_change_1s'), np.str_('ask_change_1s')]",
+      "details": "Features with zero variance reflect static market conditions and provide zero signal."
+    }
+  ],
+  "summary": {
+    "total_sequences": 342,
+    "train_sequences": 249,
+    "val_sequences": 47,
+    "test_sequences": 46,
+    "class_distribution": {
+      "FLAT": 342
+    },
+    "unique_mid_prices": 1,
+    "directional_transitions": 0,
+    "stale_pct": 0.5413142485361093,
+    "total_nan_inf": 39,
+    "constant_features_count": 9,
+    "feature_dim": 11
+  }
+}

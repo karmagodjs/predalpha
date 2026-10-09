@@ -1,0 +1,112 @@
+{
+  "timestamp": "2026-10-04T13:54:22.554498",
+  "dataset_name": "Canonical PredAlpha Dataset (Phase 1)",
+  "total_checks": 8,
+  "passed_count": 8,
+  "failed_count": 0,
+  "warning_count": 0,
+  "is_valid": true,
+  "results": [
+    {
+      "check_name": "missing_values",
+      "passed": true,
+      "severity": "ERROR",
+      "message": "No missing values found across 11 columns.",
+      "details": {
+        "total_missing": 0,
+        "by_column": {}
+      }
+    },
+    {
+      "check_name": "duplicate_records",
+      "passed": true,
+      "severity": "ERROR",
+      "message": "No duplicate records found.",
+      "details": {
+        "duplicate_count": 0,
+        "subset_columns": [
+          "timestamp"
+        ]
+      }
+    },
+    {
+      "check_name": "timestamp_integrity",
+      "passed": true,
+      "severity": "ERROR",
+      "message": "Timestamps are ordered, unique, and continuous.",
+      "details": {
+        "min_time": "2026-10-02 12:44:12+00:00",
+        "max_time": "2026-10-02 12:49:00+00:00",
+        "is_monotonic_increasing": true,
+        "duplicate_timestamps": 0,
+        "max_observed_gap_seconds": 1.0,
+        "gaps_over_threshold": 0
+      }
+    },
+    {
+      "check_name": "market_data_integrity",
+      "passed": true,
+      "severity": "ERROR",
+      "message": "Market prices and orderbook integrity valid.",
+      "details": {
+        "non_positive_bids": 0,
+        "non_positive_asks": 0,
+        "crossed_books": 0,
+        "negative_spreads": 0,
+        "non_positive_mids": 0,
+        "mid_price_inconsistencies": 0
+      }
+    },
+    {
+      "check_name": "finite_values",
+      "passed": true,
+      "severity": "ERROR",
+      "message": "All 9 numeric columns contain only finite values.",
+      "details": {
+        "non_finite_columns": {}
+      }
+    },
+    {
+      "check_name": "constant_features",
+      "passed": true,
+      "severity": "INFO",
+      "message": "All 9 features exhibit sufficient variability.",
+      "details": {
+        "constant_columns": [],
+        "near_constant_columns": {},
+        "threshold": 0.98
+      }
+    },
+    {
+      "check_name": "label_distribution",
+      "passed": true,
+      "severity": "INFO",
+      "message": "Label distribution valid with 3 classes: {'FLAT': 244, 'UP': 33, 'DOWN': 12}.",
+      "details": {
+        "class_counts": {
+          "FLAT": 244,
+          "UP": 33,
+          "DOWN": 12
+        },
+        "class_percentages": {
+          "FLAT": 84.43,
+          "UP": 11.42,
+          "DOWN": 4.15
+        },
+        "num_classes": 3
+      }
+    },
+    {
+      "check_name": "target_leakage",
+      "passed": true,
+      "severity": "ERROR",
+      "message": "No target leakage or future information detected in features.",
+      "details": {
+        "target_in_features": false,
+        "forbidden_in_features": [],
+        "pattern_matches_in_features": [],
+        "forbidden_in_df": []
+      }
+    }
+  ]
+}

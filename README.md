@@ -1,31 +1,46 @@
-# PredAlpha
+# PredAlpha-HFT
 
-## Phase 2–3 data collection
+PredAlpha-HFT is a research-grade pipeline for studying short-horizon directional prediction from high-frequency prediction-market order-book data.
 
-Collectors are intentionally separate from research labeling and model training. They append immutable JSONL records and can be safely restarted: records with an identical logical record ID are skipped, never overwritten.
+The project emphasizes causal data construction, physical-time labeling, strict temporal isolation, leakage prevention, train-only scaling, and locked out-of-sample evaluation.
 
-### Setup and commands (PowerShell)
+> **Status: Final model frozen and locked test evaluation complete.**
+>
+> The project demonstrates directional predictive signal, but the final model has **not** been demonstrated to be a profitable or production-ready trading strategy.
 
-```powershell
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-# One synthetic Track A write; no network needed
-python scripts/collect_track_a.py --dry-run
-# Live BTC collection for 10 minutes, every 60 seconds
-python scripts/collect_track_a.py --start-time 2026-10-04T12:00:00Z --end-time 2026-10-04T12:10:00Z --interval-seconds 60
-# Create a separate cleaned parquet and quality status (no labels)
-python scripts/collect_track_a.py --process-only
-# Verify/capture metadata for specified condition IDs; add --max-messages 100 for live bounded websocket capture
-python scripts/collect_track_b.py <condition-id> --settlement-only
-python scripts/collect_track_b.py <condition-id> --max-messages 100
-# Discover candidate active BTC Up/Down markets (inspect candidates before capture)
-python scripts/collect_track_b.py --discover
-python scripts/report_collection_status.py
-python -m pytest -q --basetemp .test-tmp
-```
+---
 
-Track A raw schema (`data/raw/track_a/btc_observations.jsonl`): `source`, `symbol`, source/collection timestamps, OHLCV, raw source payload, and stable `record_id`. Clean output is `data/processed/track_a/btc_observations.parquet` and contains no future-dependent label.
+## Final Result
 
-Track B has one folder per condition ID, containing append-only `official_metadata.jsonl`, `events.jsonl`, `settlement_evidence.jsonl`, and `collection_errors.jsonl`. Token outcomes are accepted only from official CLOB metadata; a settlement is `VERIFIED` only when exactly one official token has `winner: true`. Repeated snapshots are correlated observations from one market, never independent evaluation samples.
+| Metric | Result |
+|---|---:|
+| Model | SmallLSTM |
+| Sequence length | 10 seconds |
+| Features | 11 |
+| Hidden size | 32 |
+| Layers | 1 |
+| Dropout | 0.10 |
+| Parameters | 5,859 |
+| Seed | 999 |
+| Test samples | 1,582 |
+| Accuracy | **52.72%** |
+| Balanced Accuracy | **42.49%** |
+| Macro F1 | **0.4315** |
+| Weighted F1 | **0.5140** |
 
-Limitations: public endpoints and websocket access can rate-limit or disconnect; collection error logs and quality reports expose gaps rather than inventing observations. Discover results are candidates, not an assertion that they are five-minute markets—inspect official metadata before long captures. Raw files and collection parquet outputs are Git-ignored.
+### Per-class test performance
+
+| Class | Precision | Recall | F1 | Support |
+|---|---:|---:|---:|---:|
+| DOWN | 53.96% | 56.03% | 0.5498 | 705 |
+| FLAT | 38.89% | 12.50% | 0.1892 | 168 |
+| UP | 52.51% | 58.96% | 0.5555 | 709 |
+
+Confusion matrix:
+
+```text
+              Predicted
+             DOWN FLAT UP
+Actual DOWN    395  14 296
+       FLAT     65  21  82
+       UP      272  19 418

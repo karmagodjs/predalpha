@@ -1,0 +1,27 @@
+{
+  "input_file": "data\\clean_v2\\04_features\\features_51min.parquet",
+  "input_rows": 375,
+  "train_rows": 258,
+  "val_rows": 56,
+  "test_rows": 55,
+  "purged_rows": 6,
+  "train_ratio_target": 0.7,
+  "val_ratio_target": 0.15,
+  "test_ratio_target": 0.15,
+  "purge_gap_requested_ms": 20000,
+  "actual_purge_train_val_ms": 29000,
+  "actual_purge_val_test_ms": 29000,
+  "train_start_ts": 1790916233000,
+  "train_end_ts": 1790918535000,
+  "val_start_ts": 1790918564000,
+  "val_end_ts": 1790918937000,
+  "test_start_ts": 1790918966000,
+  "test_end_ts": 1790919281000,
+  "session_info": "Single continuous recording session (default). Multi-session cross-validation not applicable.",
+  "market_ids": [
+    "0xa467b14d51f01b957109d9cbb1d6c124fab2a089d52ed8f471d23c2812e743b7"
+  ],
+  "asset_ids": [
+    "32338220190071351435772801779725302244575775216413325951443816017994629993401"
+  ]
+}

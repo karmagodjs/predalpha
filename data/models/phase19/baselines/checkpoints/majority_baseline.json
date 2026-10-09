@@ -1,0 +1,16 @@
+{
+  "model_type": "MajorityBaseline",
+  "majority_class": 2,
+  "majority_class_name": "UP",
+  "class_counts": {
+    "0": 3050,
+    "1": 1414,
+    "2": 3050
+  },
+  "class_priors": [
+    0.4059089699228108,
+    0.1881820601543785,
+    0.4059089699228108
+  ],
+  "parameter_count": 0
+}

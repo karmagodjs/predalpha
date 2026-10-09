@@ -1,0 +1,69 @@
+{
+  "phase": "19C",
+  "evaluation": "FINAL_LOCKED_TEST",
+  "test_set_locked_before_evaluation": true,
+  "test_samples": 1582,
+  "sequence_shape": [
+    1582,
+    10,
+    11
+  ],
+  "model": {
+    "type": "SmallLSTM",
+    "seed": 999,
+    "input_size": 11,
+    "hidden_size": 32,
+    "num_layers": 1,
+    "dropout": 0.1,
+    "parameters": 5859,
+    "best_epoch": 31,
+    "best_val_loss": 0.8966798782348633
+  },
+  "metrics": {
+    "accuracy": 0.527180783817952,
+    "balanced_accuracy": 0.424948817466748,
+    "macro_f1": 0.4314757845951709,
+    "weighted_f1": 0.51403199540739
+  },
+  "per_class": {
+    "DOWN": {
+      "precision": 0.5396174863387978,
+      "recall": 0.5602836879432624,
+      "f1": 0.5497564370215727,
+      "support": 705
+    },
+    "FLAT": {
+      "precision": 0.3888888888888889,
+      "recall": 0.125,
+      "f1": 0.1891891891891892,
+      "support": 168
+    },
+    "UP": {
+      "precision": 0.5251256281407035,
+      "recall": 0.5895627644569816,
+      "f1": 0.5554817275747508,
+      "support": 709
+    }
+  },
+  "confusion_matrix": [
+    [
+      395,
+      14,
+      296
+    ],
+    [
+      65,
+      21,
+      82
+    ],
+    [
+      272,
+      19,
+      418
+    ]
+  ],
+  "provenance": {
+    "model_sha256": "d8b75bdbaffbb7f2c4b398beea484f83d851b37380bccd93ca07199a3d9c025d",
+    "test_sha256": "7b550496f89c2628ae7b6d9efa149429110fd2545153659be55237bcde35d38e"
+  }
+}

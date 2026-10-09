@@ -1,0 +1,980 @@
+{
+  "generated_at_utc": "2026-10-06T04:53:54.018289+00:00",
+  "execution_duration_sec": 0.39,
+  "pipeline_valid": true,
+  "data_quality_pass": false,
+  "training_ready": false,
+  "verdict_string": "TRAINING_READY = FALSE",
+  "blocking_failures": [
+    "sequence_counts_sufficiency: Required: total >= 10,000, train >= 7,000, val >= 1,000, test >= 1,000 | Observed: total=4,628 (train=3,248, val=722, test=658) | Diagnostic: Insufficient total sequence count for institutional deep neural network convergence under strict 10k threshold.",
+    "canonical_observations_count: Required: >= 50,000 | Observed: 12,987 | Diagnostic: Canonical raw events count (12,987) is below the institutional 50,000 threshold.",
+    "labeled_observations_count: Required: >= 10,000 | Observed: 4,970 | Diagnostic: Labeled observations count (4,970) is below the institutional 10,000 threshold.",
+    "zero_nan_values: Required: 0 unmasked NaN values | Observed: 1,482 NaNs in lookback warmup positions 0\u20134 (train: 624, val: 390, test: 468) | Diagnostic: Unmasked NaNs exist in early sequence lookback steps 0\u20134 due to 5s causal feature lookback warm-up. Must be masked or imputed with 0.0 before neural forward pass."
+  ],
+  "row_counts": {
+    "train_sequences": 3248,
+    "val_sequences": 722,
+    "test_sequences": 658,
+    "total_sequences": 4628
+  },
+  "gates": {
+    "sequence_dimensions": {
+      "category": "pipeline_integrity",
+      "required": "(*, 10, 11)",
+      "observed": "train=(3248, 10, 11), val=(722, 10, 11), test=(658, 10, 11)",
+      "status": "PASS"
+    },
+    "duplicate_sequence_endpoints": {
+      "category": "pipeline_integrity",
+      "required": "0 duplicate (market, asset, T) endpoint keys",
+      "observed": "0 duplicates",
+      "status": "PASS"
+    },
+    "cross_split_leakage": {
+      "category": "pipeline_integrity",
+      "required": "0 cross-split leakage, purge >= 22,000ms",
+      "observed": "purge_1=88,000ms, purge_2=69,000ms",
+      "status": "PASS"
+    },
+    "market_and_asset_isolation": {
+      "category": "pipeline_integrity",
+      "required": "Strict session isolation across 19 markets and 38 tokens",
+      "observed": "19 markets, 38 assets, 0 cross-boundary sequences",
+      "status": "PASS"
+    },
+    "scaler_fit_source": {
+      "category": "pipeline_integrity",
+      "required": "Strictly train only, invariant under val/test perturbation",
+      "observed": "fit_source='train', max_perturb_diff=0.00",
+      "status": "PASS"
+    },
+    "price_diversity": {
+      "category": "data_quality",
+      "required": ">= 25 unique prices",
+      "observed": "261 unique prices",
+      "status": "PASS"
+    },
+    "directional_transitions": {
+      "category": "data_quality",
+      "required": ">= 100 transitions",
+      "observed": "3,832 transitions",
+      "status": "PASS"
+    },
+    "required_classes_present": {
+      "category": "data_quality",
+      "required": "['DOWN', 'FLAT', 'UP']",
+      "observed": [
+        "DOWN",
+        "FLAT",
+        "UP"
+      ],
+      "status": "PASS"
+    },
+    "class_balance_minimum": {
+      "category": "data_quality",
+      "required": "Each class >= 5.0%",
+      "observed": "UP: 42.33%, DOWN: 42.31%, FLAT: 15.36%",
+      "status": "PASS"
+    },
+    "zero_inf_values": {
+      "category": "data_quality",
+      "required": "0 Inf values",
+      "observed": "0 Infs",
+      "status": "PASS"
+    },
+    "feature_variance_audit": {
+      "category": "data_quality",
+      "required": "0 constant features",
+      "observed": "0 constant features",
+      "status": "PASS"
+    },
+    "sequence_counts_sufficiency": {
+      "category": "data_quality",
+      "required": "total >= 10,000, train >= 7,000, val >= 1,000, test >= 1,000",
+      "observed": "total=4,628 (train=3,248, val=722, test=658)",
+      "status": "FAIL",
+      "diagnostic": "Insufficient total sequence count for institutional deep neural network convergence under strict 10k threshold."
+    },
+    "canonical_observations_count": {
+      "category": "data_quality",
+      "required": ">= 50,000",
+      "observed": "12,987",
+      "status": "FAIL",
+      "diagnostic": "Canonical raw events count (12,987) is below the institutional 50,000 threshold."
+    },
+    "labeled_observations_count": {
+      "category": "data_quality",
+      "required": ">= 10,000",
+      "observed": "4,970",
+      "status": "FAIL",
+      "diagnostic": "Labeled observations count (4,970) is below the institutional 10,000 threshold."
+    },
+    "zero_nan_values": {
+      "category": "data_quality",
+      "required": "0 unmasked NaN values",
+      "observed": "1,482 NaNs in lookback warmup positions 0\u20134 (train: 624, val: 390, test: 468)",
+      "status": "FAIL",
+      "diagnostic": "Unmasked NaNs exist in early sequence lookback steps 0\u20134 due to 5s causal feature lookback warm-up. Must be masked or imputed with 0.0 before neural forward pass."
+    }
+  },
+  "nan_proof": {
+    "train": {
+      "total_nans": 624,
+      "total_cells": 357280,
+      "nan_percentage": 0.175,
+      "nans_by_timestep": [
+        256,
+        160,
+        112,
+        64,
+        32,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "nans_by_feature": {
+        "mid_price": {
+          "total": 0,
+          "steps_0_to_9": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "spread": {
+          "total": 0,
+          "steps_0_to_9": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "spread_bps": {
+          "total": 0,
+          "steps_0_to_9": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "mid_return_1s": {
+          "total": 16,
+          "steps_0_to_9": [
+            16,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "mid_return_3s": {
+          "total": 96,
+          "steps_0_to_9": [
+            48,
+            32,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "mid_return_5s": {
+          "total": 240,
+          "steps_0_to_9": [
+            80,
+            64,
+            48,
+            32,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "mid_volatility_5s": {
+          "total": 240,
+          "steps_0_to_9": [
+            80,
+            64,
+            48,
+            32,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "bid_change_1s": {
+          "total": 16,
+          "steps_0_to_9": [
+            16,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "ask_change_1s": {
+          "total": 16,
+          "steps_0_to_9": [
+            16,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "microprice": {
+          "total": 0,
+          "steps_0_to_9": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "depth_imbalance": {
+          "total": 0,
+          "steps_0_to_9": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "prediction_endpoint_nans": 0,
+      "usable_steps_5_to_9_nans": 0
+    },
+    "validation": {
+      "total_nans": 390,
+      "total_cells": 79420,
+      "nan_percentage": 0.491,
+      "nans_by_timestep": [
+        160,
+        100,
+        70,
+        40,
+        20,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "nans_by_feature": {
+        "mid_price": {
+          "total": 0,
+          "steps_0_to_9": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "spread": {
+          "total": 0,
+          "steps_0_to_9": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "spread_bps": {
+          "total": 0,
+          "steps_0_to_9": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "mid_return_1s": {
+          "total": 10,
+          "steps_0_to_9": [
+            10,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "mid_return_3s": {
+          "total": 60,
+          "steps_0_to_9": [
+            30,
+            20,
+            10,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "mid_return_5s": {
+          "total": 150,
+          "steps_0_to_9": [
+            50,
+            40,
+            30,
+            20,
+            10,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "mid_volatility_5s": {
+          "total": 150,
+          "steps_0_to_9": [
+            50,
+            40,
+            30,
+            20,
+            10,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "bid_change_1s": {
+          "total": 10,
+          "steps_0_to_9": [
+            10,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "ask_change_1s": {
+          "total": 10,
+          "steps_0_to_9": [
+            10,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "microprice": {
+          "total": 0,
+          "steps_0_to_9": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "depth_imbalance": {
+          "total": 0,
+          "steps_0_to_9": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "prediction_endpoint_nans": 0,
+      "usable_steps_5_to_9_nans": 0
+    },
+    "test": {
+      "total_nans": 468,
+      "total_cells": 72380,
+      "nan_percentage": 0.647,
+      "nans_by_timestep": [
+        192,
+        120,
+        84,
+        48,
+        24,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "nans_by_feature": {
+        "mid_price": {
+          "total": 0,
+          "steps_0_to_9": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "spread": {
+          "total": 0,
+          "steps_0_to_9": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "spread_bps": {
+          "total": 0,
+          "steps_0_to_9": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "mid_return_1s": {
+          "total": 12,
+          "steps_0_to_9": [
+            12,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "mid_return_3s": {
+          "total": 72,
+          "steps_0_to_9": [
+            36,
+            24,
+            12,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "mid_return_5s": {
+          "total": 180,
+          "steps_0_to_9": [
+            60,
+            48,
+            36,
+            24,
+            12,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "mid_volatility_5s": {
+          "total": 180,
+          "steps_0_to_9": [
+            60,
+            48,
+            36,
+            24,
+            12,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "bid_change_1s": {
+          "total": 12,
+          "steps_0_to_9": [
+            12,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "ask_change_1s": {
+          "total": 12,
+          "steps_0_to_9": [
+            12,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "microprice": {
+          "total": 0,
+          "steps_0_to_9": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "depth_imbalance": {
+          "total": 0,
+          "steps_0_to_9": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "prediction_endpoint_nans": 0,
+      "usable_steps_5_to_9_nans": 0
+    }
+  },
+  "class_audit": {
+    "train": {
+      "total": 3248,
+      "up_count": 1386,
+      "down_count": 1386,
+      "flat_count": 476,
+      "up_pct": 42.67,
+      "down_pct": 42.67,
+      "flat_pct": 14.66,
+      "up_down_ratio": 1.0
+    },
+    "validation": {
+      "total": 722,
+      "up_count": 282,
+      "down_count": 281,
+      "flat_count": 159,
+      "up_pct": 39.06,
+      "down_pct": 38.92,
+      "flat_pct": 22.02,
+      "up_down_ratio": 1.0036
+    },
+    "test": {
+      "total": 658,
+      "up_count": 291,
+      "down_count": 291,
+      "flat_count": 76,
+      "up_pct": 44.22,
+      "down_pct": 44.22,
+      "flat_pct": 11.55,
+      "up_down_ratio": 1.0
+    },
+    "combined": {
+      "total": 4628,
+      "up_count": 1959,
+      "down_count": 1958,
+      "flat_count": 711,
+      "up_pct": 42.33,
+      "down_pct": 42.31,
+      "flat_pct": 15.36,
+      "up_down_ratio": 1.0005
+    }
+  },
+  "market_class_breakdown": {
+    "0x67d7111399311bee6c11ed2884c00d2d2032368f5ce736b8a9a53450d2081b92": {
+      "total": 506,
+      "up": 203,
+      "down": 203,
+      "flat": 100
+    },
+    "0x2e222470f8d209085ae1a4b85ccbd6d602b538f2efd09f74ed50322cfaa99af9": {
+      "total": 568,
+      "up": 259,
+      "down": 259,
+      "flat": 50
+    },
+    "0xae59df8807f60d9b711252fcefb4481a456a3aa481f59e633bd81d828a9aceb5": {
+      "total": 256,
+      "up": 92,
+      "down": 92,
+      "flat": 72
+    },
+    "0x1513370f3c00f9a6dde05dd146894c23708eaec8d6f2f7d37eb06f2c88b33121": {
+      "total": 542,
+      "up": 256,
+      "down": 256,
+      "flat": 30
+    },
+    "0x7944f37d88ba36ef1bcdc2b455f29c58a255b81bb539849952d6a7c505f6ed8c": {
+      "total": 436,
+      "up": 171,
+      "down": 171,
+      "flat": 94
+    },
+    "0x9523a610624fc281c139b2b005b939415fb3644416219108b9dffd4b77d2033f": {
+      "total": 408,
+      "up": 182,
+      "down": 182,
+      "flat": 44
+    },
+    "0xece8b19e50895f7f6fdbf9128854fdb4255113fa9f833bbd69d8a1aefc45eb6c": {
+      "total": 312,
+      "up": 123,
+      "down": 123,
+      "flat": 66
+    },
+    "0xde773924630e62e7bfd9bbcdfef5fcaee14cae6920a6d102ea846df79ba426c2": {
+      "total": 220,
+      "up": 100,
+      "down": 100,
+      "flat": 20
+    },
+    "0xa9a650633de03b264d0db82b03e2ba76693a1f687cf09528b088257650954004": {
+      "total": 236,
+      "up": 74,
+      "down": 73,
+      "flat": 89
+    },
+    "0x06d0b3cfe98dd6947539816fd3781f5966addb8537c69d438487964d38077760": {
+      "total": 66,
+      "up": 33,
+      "down": 33,
+      "flat": 0
+    },
+    "0x178ac9dd3e21a3a3baf361876f26fade75d0a6a43a39c577a7b9b06796f191d8": {
+      "total": 228,
+      "up": 98,
+      "down": 98,
+      "flat": 32
+    },
+    "0xc00c0afd4a0daad7ddb291c0436043559ce27e7e0f643d8bdd13e2c875c90501": {
+      "total": 94,
+      "up": 31,
+      "down": 31,
+      "flat": 32
+    },
+    "0xe1948ec2ba75cc62fc3f54c8504a43184c8676bd7a6b300a1e48c76ad2c66065": {
+      "total": 98,
+      "up": 46,
+      "down": 46,
+      "flat": 6
+    },
+    "0x7c470e1d274ed64b36413504b22eb0f8acf3560ae2bc80adeded92a5b3ac3a21": {
+      "total": 202,
+      "up": 83,
+      "down": 83,
+      "flat": 36
+    },
+    "0x4283a2a38aa82abd8841c1254d221c20ad23211a3927101ddffb6b7b22dafaee": {
+      "total": 66,
+      "up": 31,
+      "down": 31,
+      "flat": 4
+    },
+    "0xba005b7e518925a5af69b6f92308abf507a9aa7d3b4870298bc9df4d3597979d": {
+      "total": 126,
+      "up": 55,
+      "down": 55,
+      "flat": 16
+    },
+    "0x1d0fb9a895dc5d0c59854935fabe11157917e6b2624008d6ed222580418f2d36": {
+      "total": 42,
+      "up": 21,
+      "down": 21,
+      "flat": 0
+    },
+    "0xd18098910284bdfdb21af60907edd7d7ee7d342c76aec7b3e046e2dc13f0cef5": {
+      "total": 126,
+      "up": 59,
+      "down": 59,
+      "flat": 8
+    },
+    "0xe8d6899ca1b3d81c309fe9205abd02abdb31f0af0ab583d7ea2ce3db63cfeb69": {
+      "total": 96,
+      "up": 42,
+      "down": 42,
+      "flat": 12
+    }
+  },
+  "feature_quality_audit": {
+    "mid_price": {
+      "scaled_mean": 3.7932164251447926e-16,
+      "scaled_std": 1.0000000000000702,
+      "scaled_variance": 1.0000000000001406,
+      "min": -1.7139823521373685,
+      "max": 1.7139823521373692,
+      "nan_count": 0,
+      "inf_count": 0,
+      "is_constant": false,
+      "train_scaler_center": 0.4999999999999999,
+      "train_scaler_scale": 0.2905514163427555
+    },
+    "spread": {
+      "scaled_mean": 1.1809185266227655e-12,
+      "scaled_std": 0.9999999999998613,
+      "scaled_variance": 0.9999999999997227,
+      "min": -2.3207878208498345,
+      "max": 17.482198063484,
+      "nan_count": 0,
+      "inf_count": 0,
+      "is_constant": false,
+      "train_scaler_center": 0.010258312807877062,
+      "train_scaler_scale": 0.003989297394919475
+    },
+    "spread_bps": {
+      "scaled_mean": 1.883813302394512e-14,
+      "scaled_std": 1.0000000000000036,
+      "scaled_variance": 1.000000000000007,
+      "min": -0.5333711916177489,
+      "max": 9.932727512372942,
+      "nan_count": 0,
+      "inf_count": 0,
+      "is_constant": false,
+      "train_scaler_center": 519.1321318008095,
+      "train_scaler_scale": 954.5079995790802
+    },
+    "mid_return_1s": {
+      "scaled_mean": 2.1777662089739394e-16,
+      "scaled_std": 0.9999999999998626,
+      "scaled_variance": 0.9999999999997252,
+      "min": -5.781202570803624,
+      "max": 26.6977596523916,
+      "nan_count": 16,
+      "inf_count": 0,
+      "is_constant": false,
+      "train_scaler_center": 0.003528418867888129,
+      "train_scaler_scale": 0.1594643596234536
+    },
+    "mid_return_3s": {
+      "scaled_mean": -8.403466767419663e-16,
+      "scaled_std": 1.0000000000001115,
+      "scaled_variance": 1.000000000000223,
+      "min": -3.1039926827954787,
+      "max": 17.038721456611523,
+      "nan_count": 96,
+      "inf_count": 0,
+      "is_constant": false,
+      "train_scaler_center": 0.011977715725074623,
+      "train_scaler_scale": 0.30177548539746124
+    },
+    "mid_return_5s": {
+      "scaled_mean": -5.377556685033016e-17,
+      "scaled_std": 0.9999999999999584,
+      "scaled_variance": 0.9999999999999167,
+      "min": -2.511316481322651,
+      "max": 13.2166663391485,
+      "nan_count": 240,
+      "inf_count": 0,
+      "is_constant": false,
+      "train_scaler_center": 0.019889294759088086,
+      "train_scaler_scale": 0.38368372674502355
+    },
+    "mid_volatility_5s": {
+      "scaled_mean": -1.1828861573733281e-14,
+      "scaled_std": 1.0000000000000098,
+      "scaled_variance": 1.0000000000000195,
+      "min": -0.5920547328975587,
+      "max": 13.649639461183375,
+      "nan_count": 240,
+      "inf_count": 0,
+      "is_constant": false,
+      "train_scaler_center": 0.07960839195464926,
+      "train_scaler_scale": 0.13446120355298916
+    },
+    "bid_change_1s": {
+      "scaled_mean": 3.710547011207167e-18,
+      "scaled_std": 1.0000000000000908,
+      "scaled_variance": 1.0000000000001819,
+      "min": -13.158905812556569,
+      "max": 12.63236685479822,
+      "nan_count": 16,
+      "inf_count": 0,
+      "is_constant": false,
+      "train_scaler_center": 3.5423854115327247e-06,
+      "train_scaler_scale": 0.03799734943830172
+    },
+    "ask_change_1s": {
+      "scaled_mean": -9.808155601974338e-18,
+      "scaled_std": 1.0000000000000915,
+      "scaled_variance": 1.000000000000183,
+      "min": -12.632366854798228,
+      "max": 13.158905812556576,
+      "nan_count": 16,
+      "inf_count": 0,
+      "is_constant": false,
+      "train_scaler_center": -3.542385411532785e-06,
+      "train_scaler_scale": 0.0379973494383017
+    },
+    "microprice": {
+      "scaled_mean": 1.5269121489906278e-15,
+      "scaled_std": 0.999999999999974,
+      "scaled_variance": 0.999999999999948,
+      "min": -1.7101204277567732,
+      "max": 1.7101204277567765,
+      "nan_count": 0,
+      "inf_count": 0,
+      "is_constant": false,
+      "train_scaler_center": 0.49999999999999956,
+      "train_scaler_scale": 0.2911883113204862
+    },
+    "depth_imbalance": {
+      "scaled_mean": 2.529449009306083e-19,
+      "scaled_std": 1.0000000000000098,
+      "scaled_variance": 1.0000000000000198,
+      "min": -1.388760877017264,
+      "max": 1.388760877017264,
+      "nan_count": 0,
+      "inf_count": 0,
+      "is_constant": false,
+      "train_scaler_center": 9.878523833641324e-19,
+      "train_scaler_scale": 0.7196491946472754
+    }
+  },
+  "hashes": {
+    "train_scaled_parquet": "8d625b4b0a9af0318e3220170e34eeac45d1301ee776d22546722dc05627dfd2",
+    "validation_scaled_parquet": "59d14857b6885519276c90e18ac26d2c9f1a5288572ab9a728e85e2c8c046994",
+    "test_scaled_parquet": "73f8ef374b12074213bbc213ab0bd7b29b6d8531f10a4f958744e8ce1c8f2a03",
+    "scaled_production_npz": "d878dce32b17d6c43e6bc1e4159d3315666bcc53b98f1b31a8f183f7f20866c3",
+    "scaler_params_json": "22966ed3550bc4914a4fe9a710f4cb27fe1c35d8df42208bc33134af06ccfaa9",
+    "scaler_metadata_json": "ebe43bd726f65785b2f1d1eff325238aad179281bef871aba2390e03601be122"
+  }
+}

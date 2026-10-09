@@ -1,0 +1,496 @@
+{
+  "smoke_test_metadata": {
+    "title": "PredAlpha-HFT Pipeline Training Smoke Test",
+    "is_smoke_test": true,
+    "status": "COMPLETED_SUCCESSFULLY",
+    "execution_timestamp": "2026-10-04T14:37:50.711931+00:00",
+    "disclaimer": "PIPELINE SMOKE TEST ONLY \u2014 NOT EVIDENCE OF PREDICTIVE EDGE OR PROFITABILITY. This run confirms end-to-end model training, scaling isolation, and evaluation pipeline integrity on existing canonical data splits. No statistical significance or trading viability is claimed.",
+    "random_seed": 42,
+    "feature_columns": [
+      "mid_price",
+      "spread",
+      "spread_bps",
+      "mid_return_1s",
+      "mid_return_3s",
+      "mid_return_5s",
+      "mid_volatility_5s",
+      "bid_change_1s",
+      "ask_change_1s"
+    ],
+    "target_column": "label",
+    "target_classes": [
+      "DOWN",
+      "FLAT",
+      "UP"
+    ],
+    "forbidden_columns_checked": [
+      "future_delta",
+      "future_mid",
+      "future_return",
+      "label_threshold",
+      "price_change_5m",
+      "target_close",
+      "target_time"
+    ],
+    "split_row_counts": {
+      "train": 202,
+      "validation": 38,
+      "test": 39,
+      "total": 279
+    },
+    "split_temporal_boundaries": {
+      "train": {
+        "start": "2026-10-02 12:44:12+00:00",
+        "end": "2026-10-02 12:47:33+00:00"
+      },
+      "validation": {
+        "start": "2026-10-02 12:47:39+00:00",
+        "end": "2026-10-02 12:48:16+00:00"
+      },
+      "test": {
+        "start": "2026-10-02 12:48:22+00:00",
+        "end": "2026-10-02 12:49:00+00:00"
+      }
+    },
+    "class_distribution": {
+      "train": {
+        "FLAT": 164,
+        "UP": 28,
+        "DOWN": 10
+      },
+      "validation": {
+        "FLAT": 36,
+        "UP": 2
+      },
+      "test": {
+        "FLAT": 37,
+        "DOWN": 2
+      }
+    }
+  },
+  "model_configuration": {
+    "model_type": "LogisticRegression",
+    "scaler": "StandardScaler (fitted strictly on train)",
+    "class_weight": "balanced",
+    "max_iter": 1000,
+    "solver": "lbfgs",
+    "random_state": 42
+  },
+  "evaluation_metrics": {
+    "model": {
+      "train": {
+        "split_name": "train",
+        "sample_count": 202,
+        "accuracy": 0.5396039603960396,
+        "balanced_accuracy": 0.6315911730545878,
+        "macro_f1": 0.43115037846495646,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.12,
+            "recall": 0.9,
+            "f1": 0.21176470588235294,
+            "support": 10,
+            "present_in_ground_truth": true,
+            "present_in_predictions": true
+          },
+          "FLAT": {
+            "precision": 0.9775280898876404,
+            "recall": 0.5304878048780488,
+            "f1": 0.6877470355731226,
+            "support": 164,
+            "present_in_ground_truth": true,
+            "present_in_predictions": true
+          },
+          "UP": {
+            "precision": 0.34210526315789475,
+            "recall": 0.4642857142857143,
+            "f1": 0.3939393939393939,
+            "support": 28,
+            "present_in_ground_truth": true,
+            "present_in_predictions": true
+          }
+        },
+        "confusion_matrix": {
+          "labels": [
+            "DOWN",
+            "FLAT",
+            "UP"
+          ],
+          "matrix": [
+            [
+              9,
+              0,
+              1
+            ],
+            [
+              53,
+              87,
+              24
+            ],
+            [
+              13,
+              2,
+              13
+            ]
+          ]
+        },
+        "absent_classes_ground_truth": [],
+        "absent_classes_predictions": [],
+        "log_loss": 0.8555348417434903,
+        "log_loss_status": "COMPUTED",
+        "log_loss_details": "Calculated across all 3 classes.",
+        "diagnostic_subset_log_loss": 0.8555348417434903
+      },
+      "validation": {
+        "split_name": "validation",
+        "sample_count": 38,
+        "accuracy": 0.2894736842105263,
+        "balanced_accuracy": 0.1527777777777778,
+        "macro_f1": 0.15602836879432624,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "present_in_ground_truth": false,
+            "present_in_predictions": true
+          },
+          "FLAT": {
+            "precision": 1.0,
+            "recall": 0.3055555555555556,
+            "f1": 0.46808510638297873,
+            "support": 36,
+            "present_in_ground_truth": true,
+            "present_in_predictions": true
+          },
+          "UP": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 2,
+            "present_in_ground_truth": true,
+            "present_in_predictions": true
+          }
+        },
+        "confusion_matrix": {
+          "labels": [
+            "DOWN",
+            "FLAT",
+            "UP"
+          ],
+          "matrix": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              22,
+              11,
+              3
+            ],
+            [
+              2,
+              0,
+              0
+            ]
+          ]
+        },
+        "absent_classes_ground_truth": [
+          "DOWN"
+        ],
+        "absent_classes_predictions": [],
+        "log_loss": null,
+        "log_loss_status": "OMITTED_MISSING_CLASSES_IN_SPLIT",
+        "log_loss_details": "Ground truth in split 'validation' lacks required classes: ['DOWN']. Log loss across full class simplex is not defined/representative on partial ground truth.",
+        "diagnostic_subset_log_loss": 0.9016924185726343
+      },
+      "test": {
+        "split_name": "test",
+        "sample_count": 39,
+        "accuracy": 0.4358974358974359,
+        "balanced_accuracy": 0.7027027027027027,
+        "macro_f1": 0.24358974358974358,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.08333333333333333,
+            "recall": 1.0,
+            "f1": 0.15384615384615385,
+            "support": 2,
+            "present_in_ground_truth": true,
+            "present_in_predictions": true
+          },
+          "FLAT": {
+            "precision": 1.0,
+            "recall": 0.40540540540540543,
+            "f1": 0.5769230769230769,
+            "support": 37,
+            "present_in_ground_truth": true,
+            "present_in_predictions": true
+          },
+          "UP": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "present_in_ground_truth": false,
+            "present_in_predictions": false
+          }
+        },
+        "confusion_matrix": {
+          "labels": [
+            "DOWN",
+            "FLAT",
+            "UP"
+          ],
+          "matrix": [
+            [
+              2,
+              0,
+              0
+            ],
+            [
+              22,
+              15,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "absent_classes_ground_truth": [
+          "UP"
+        ],
+        "absent_classes_predictions": [
+          "UP"
+        ],
+        "log_loss": null,
+        "log_loss_status": "OMITTED_MISSING_CLASSES_IN_SPLIT",
+        "log_loss_details": "Ground truth in split 'test' lacks required classes: ['UP']. Log loss across full class simplex is not defined/representative on partial ground truth.",
+        "diagnostic_subset_log_loss": 0.8403122673725906
+      }
+    },
+    "dummy_baseline_reference": {
+      "train": {
+        "split_name": "train",
+        "sample_count": 202,
+        "accuracy": 0.8118811881188119,
+        "balanced_accuracy": 0.3333333333333333,
+        "macro_f1": 0.2987249544626594,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 10,
+            "present_in_ground_truth": true,
+            "present_in_predictions": false
+          },
+          "FLAT": {
+            "precision": 0.8118811881188119,
+            "recall": 1.0,
+            "f1": 0.8961748633879781,
+            "support": 164,
+            "present_in_ground_truth": true,
+            "present_in_predictions": true
+          },
+          "UP": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 28,
+            "present_in_ground_truth": true,
+            "present_in_predictions": false
+          }
+        },
+        "confusion_matrix": {
+          "labels": [
+            "DOWN",
+            "FLAT",
+            "UP"
+          ],
+          "matrix": [
+            [
+              0,
+              10,
+              0
+            ],
+            [
+              0,
+              164,
+              0
+            ],
+            [
+              0,
+              28,
+              0
+            ]
+          ]
+        },
+        "absent_classes_ground_truth": [],
+        "absent_classes_predictions": [
+          "DOWN",
+          "UP"
+        ],
+        "log_loss": 6.780489251418078,
+        "log_loss_status": "COMPUTED",
+        "log_loss_details": "Calculated across all 3 classes.",
+        "diagnostic_subset_log_loss": 6.780489251418078
+      },
+      "validation": {
+        "split_name": "validation",
+        "sample_count": 38,
+        "accuracy": 0.9473684210526315,
+        "balanced_accuracy": 0.5,
+        "macro_f1": 0.32432432432432434,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "present_in_ground_truth": false,
+            "present_in_predictions": false
+          },
+          "FLAT": {
+            "precision": 0.9473684210526315,
+            "recall": 1.0,
+            "f1": 0.972972972972973,
+            "support": 36,
+            "present_in_ground_truth": true,
+            "present_in_predictions": true
+          },
+          "UP": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 2,
+            "present_in_ground_truth": true,
+            "present_in_predictions": false
+          }
+        },
+        "confusion_matrix": {
+          "labels": [
+            "DOWN",
+            "FLAT",
+            "UP"
+          ],
+          "matrix": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              36,
+              0
+            ],
+            [
+              0,
+              2,
+              0
+            ]
+          ]
+        },
+        "absent_classes_ground_truth": [
+          "DOWN"
+        ],
+        "absent_classes_predictions": [
+          "DOWN",
+          "UP"
+        ],
+        "log_loss": null,
+        "log_loss_status": "OMITTED_MISSING_CLASSES_IN_SPLIT",
+        "log_loss_details": "Ground truth in split 'validation' lacks required classes: ['DOWN']. Log loss across full class simplex is not defined/representative on partial ground truth.",
+        "diagnostic_subset_log_loss": 1.897034388900903
+      },
+      "test": {
+        "split_name": "test",
+        "sample_count": 39,
+        "accuracy": 0.9487179487179487,
+        "balanced_accuracy": 0.5,
+        "macro_f1": 0.32456140350877194,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 2,
+            "present_in_ground_truth": true,
+            "present_in_predictions": false
+          },
+          "FLAT": {
+            "precision": 0.9487179487179487,
+            "recall": 1.0,
+            "f1": 0.9736842105263158,
+            "support": 37,
+            "present_in_ground_truth": true,
+            "present_in_predictions": true
+          },
+          "UP": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0,
+            "present_in_ground_truth": false,
+            "present_in_predictions": false
+          }
+        },
+        "confusion_matrix": {
+          "labels": [
+            "DOWN",
+            "FLAT",
+            "UP"
+          ],
+          "matrix": [
+            [
+              0,
+              2,
+              0
+            ],
+            [
+              0,
+              37,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        },
+        "absent_classes_ground_truth": [
+          "UP"
+        ],
+        "absent_classes_predictions": [
+          "DOWN",
+          "UP"
+        ],
+        "log_loss": null,
+        "log_loss_status": "OMITTED_MISSING_CLASSES_IN_SPLIT",
+        "log_loss_details": "Ground truth in split 'test' lacks required classes: ['UP']. Log loss across full class simplex is not defined/representative on partial ground truth.",
+        "diagnostic_subset_log_loss": 1.8483924814931874
+      }
+    }
+  },
+  "pipeline_integrity_checks": {
+    "train_only_scaling_verified": true,
+    "split_temporal_boundaries_preserved": true,
+    "target_leakage_columns_excluded": true,
+    "phase1_artifacts_unmodified": true,
+    "phase2_artifacts_unmodified": true
+  },
+  "caveats_and_limitations": [
+    "This run is strictly a pipeline smoke test to verify training and evaluation execution.",
+    "Sample size of 279 total rows is insufficient for statistical generalization.",
+    "Validation ground truth contains 0 DOWN instances; test ground truth contains 0 UP instances.",
+    "Balanced class weights result in high false-positive predictions on rare classes.",
+    "No edge, predictive power, or commercial profitability is claimed."
+  ]
+}
