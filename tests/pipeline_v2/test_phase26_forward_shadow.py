@@ -298,3 +298,74 @@ def test_phase25_baseline_reproduction():
     assert s0["cumulative_pnl"] == 1.75
     assert s0["win_rate"] == 0.4653
     assert s0["max_drawdown"] == 1.19
+
+
+def test_forward_shadow_logger_rejects_preexisting_log_file():
+    """Verify that ForwardShadowLogger raises FileExistsError if its log file already exists."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_path = Path(tmp_dir)
+        run_id = "test_collision_log"
+        log_file = tmp_path / f"{run_id}_observations.jsonl"
+        sentinel_content = '{"sentinel": "preexisting_data"}\n'
+        log_file.write_text(sentinel_content, encoding="utf-8")
+
+        with pytest.raises(FileExistsError, match="Artifact collision: log file already exists"):
+            ForwardShadowLogger(output_dir=tmp_path, run_id=run_id)
+
+        # Verify pre-existing file was not modified or truncated
+        assert log_file.read_text(encoding="utf-8") == sentinel_content
+
+
+def test_forward_shadow_logger_rejects_preexisting_manifest_file():
+    """Verify that ForwardShadowLogger raises FileExistsError if its manifest file already exists."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_path = Path(tmp_dir)
+        run_id = "test_collision_manifest"
+        manifest_file = tmp_path / f"{run_id}_manifest.json"
+        sentinel_content = '{"sentinel": "preexisting_manifest"}'
+        manifest_file.write_text(sentinel_content, encoding="utf-8")
+
+        with pytest.raises(FileExistsError, match="Artifact collision: manifest file already exists"):
+            ForwardShadowLogger(output_dir=tmp_path, run_id=run_id)
+
+        # Verify pre-existing file was not overwritten
+        assert manifest_file.read_text(encoding="utf-8") == sentinel_content
+
+
+def test_forward_shadow_logger_rejects_reused_run_id_after_closure():
+    """Verify that reusing a run_id after session closure is strictly rejected and preserves prior data."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_path = Path(tmp_dir)
+        run_id = "test_reused_run_id"
+
+        # First session runs and closes
+        logger1 = ForwardShadowLogger(output_dir=tmp_path, run_id=run_id)
+        logger1.log_decision_point(
+            event_timestamp_ms=1000,
+            market_id="m",
+            asset_id="a",
+            quote_timestamp_ms=1000,
+            bid_entry=0.50,
+            ask_entry=0.51,
+            depth_imbalance=0.0,
+            scaled_spread=-0.5,
+            abs_scaled_depth_imbal=0.1,
+            model_probs=(0.1, 0.1, 0.8),
+            predicted_class=2,
+            confidence=0.8,
+            burst_id=0,
+            data_gap_ms=1000.0,
+            bid_exit=0.52,
+            ask_exit=0.53,
+        )
+        logger1.close()
+        orig_log_bytes = (tmp_path / f"{run_id}_observations.jsonl").read_bytes()
+        orig_manifest_bytes = (tmp_path / f"{run_id}_manifest.json").read_bytes()
+
+        # Second attempt to open same run_id must raise FileExistsError
+        with pytest.raises(FileExistsError, match="Artifact collision"):
+            ForwardShadowLogger(output_dir=tmp_path, run_id=run_id)
+
+        # Verify original files remain bitwise invariant
+        assert (tmp_path / f"{run_id}_observations.jsonl").read_bytes() == orig_log_bytes
+        assert (tmp_path / f"{run_id}_manifest.json").read_bytes() == orig_manifest_bytes

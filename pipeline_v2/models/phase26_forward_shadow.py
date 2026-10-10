@@ -211,10 +211,23 @@ class ForwardShadowLogger:
         max_data_gap_ms: float = 5000.0,
     ) -> None:
         self.output_dir = Path(output_dir)
-        self.output_dir.mkdir(parents=True, exist_ok=True)
         self.run_id = run_id or f"shadow_{datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
         self.log_file = self.output_dir / f"{self.run_id}_observations.jsonl"
         self.manifest_file = self.output_dir / f"{self.run_id}_manifest.json"
+
+        # Session-artifact collision protection: reject if log or manifest already exists
+        if self.log_file.exists():
+            raise FileExistsError(
+                f"Artifact collision: log file already exists for run_id '{self.run_id}' at {self.log_file}. "
+                f"Reusing run_id is prohibited to prevent corrupting prior artifacts."
+            )
+        if self.manifest_file.exists():
+            raise FileExistsError(
+                f"Artifact collision: manifest file already exists for run_id '{self.run_id}' at {self.manifest_file}. "
+                f"Reusing run_id is prohibited to prevent corrupting prior artifacts."
+            )
+
+        self.output_dir.mkdir(parents=True, exist_ok=True)
         self.max_quote_age_ms = max_quote_age_ms
         self.max_data_gap_ms = max_data_gap_ms
 
@@ -380,6 +393,11 @@ class ForwardShadowLogger:
         if self._is_closed:
             raise RuntimeError("Shadow logger already closed.")
         self._is_closed = True
+
+        if self.manifest_file.exists():
+            raise FileExistsError(
+                f"Artifact collision: manifest file already exists at {self.manifest_file}."
+            )
 
         log_sha256 = sha256_file(self.log_file) if self.log_file.exists() else ""
         manifest: Dict[str, Any] = {

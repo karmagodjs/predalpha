@@ -50,14 +50,15 @@ def test_locked_test_isolation_in_prospective():
 def test_model_weight_immutability_in_prospective():
     """Ensure model checkpoint weights are bitwise invariant before and after instantiation."""
     initial_hash = sha256_file(MODEL_PATH)
-    session = ProspectiveShadowSession(
-        output_base_dir=Path(tempfile.gettempdir()),
-        session_id="test_model_immutability",
-        duration_seconds=1,
-    )
-    final_hash = sha256_file(MODEL_PATH)
-    assert initial_hash == final_hash
-    assert initial_hash == session.model_initial_hash
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        session = ProspectiveShadowSession(
+            output_base_dir=Path(tmp_dir),
+            session_id="test_model_immutability",
+            duration_seconds=1,
+        )
+        final_hash = sha256_file(MODEL_PATH)
+        assert initial_hash == final_hash
+        assert initial_hash == session.model_initial_hash
 
 
 def test_message_classification_and_parsing():
@@ -1161,3 +1162,103 @@ def test_hard_stop_same_grid_step_resolution_prevents_entry_and_handles_in_fligh
         # Manifest status is ABORTED_HARD_STOP
         assert manifest["session_status"] == "ABORTED_HARD_STOP"
         assert manifest["hard_stop_triggered"] == "CONSECUTIVE_LOSSES_LIMIT (8 >= 8)"
+
+
+def test_prospective_session_rejects_duplicate_session_id_when_dir_exists():
+    """Verify that ProspectiveShadowSession raises FileExistsError if session_dir already exists."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_path = Path(tmp_dir)
+        session_id = "test_dup_session"
+        # Create session 1
+        s1 = ProspectiveShadowSession(output_base_dir=tmp_path, session_id=session_id)
+        assert s1.session_dir.exists()
+
+        # Attempt to create session 2 with identical session_id
+        with pytest.raises(FileExistsError, match="Session collision detected"):
+            ProspectiveShadowSession(output_base_dir=tmp_path, session_id=session_id)
+
+
+def test_prospective_session_rejects_when_log_manifest_or_report_already_exists():
+    """Verify that ProspectiveShadowSession raises FileExistsError if any log, manifest, or report exists."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_path = Path(tmp_dir)
+
+        # 1. Reject when log file exists in output_base_dir
+        session_id_log = "session_with_log"
+        log_file = tmp_path / f"{session_id_log}_observations.jsonl"
+        log_sentinel = '{"preexisting": "log_entry"}\n'
+        log_file.write_text(log_sentinel, encoding="utf-8")
+
+        with pytest.raises(FileExistsError, match="Session collision detected"):
+            ProspectiveShadowSession(output_base_dir=tmp_path, session_id=session_id_log)
+        assert log_file.read_text(encoding="utf-8") == log_sentinel
+
+        # 2. Reject when manifest file exists
+        session_id_manifest = "session_with_manifest"
+        manifest_file = tmp_path / f"{session_id_manifest}_manifest.json"
+        manifest_sentinel = '{"preexisting": "manifest"}'
+        manifest_file.write_text(manifest_sentinel, encoding="utf-8")
+
+        with pytest.raises(FileExistsError, match="Session collision detected"):
+            ProspectiveShadowSession(output_base_dir=tmp_path, session_id=session_id_manifest)
+        assert manifest_file.read_text(encoding="utf-8") == manifest_sentinel
+
+        # 3. Reject when health report exists
+        session_id_report = "session_with_report"
+        report_file = tmp_path / f"{session_id_report}_health_report.md"
+        report_sentinel = "# Preexisting Report"
+        report_file.write_text(report_sentinel, encoding="utf-8")
+
+        with pytest.raises(FileExistsError, match="Session collision detected"):
+            ProspectiveShadowSession(output_base_dir=tmp_path, session_id=session_id_report)
+        assert report_file.read_text(encoding="utf-8") == report_sentinel
+
+
+def test_prospective_session_preserves_append_only_behavior_within_single_session():
+    """Verify that within a single session, append-only JSONL writes work as expected and finalize cleanly."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_path = Path(tmp_dir)
+        session_id = "test_single_session_append"
+
+        session = ProspectiveShadowSession(output_base_dir=tmp_path, session_id=session_id)
+
+        # Log 3 observations
+        for i in range(3):
+            session.shadow_logger.log_decision_point(
+                event_timestamp_ms=1000 * (i + 1),
+                market_id="m1",
+                asset_id="a1",
+                quote_timestamp_ms=1000 * (i + 1),
+                bid_entry=0.50,
+                ask_entry=0.51,
+                depth_imbalance=0.0,
+                scaled_spread=-0.5,
+                abs_scaled_depth_imbal=0.1,
+                model_probs=(0.1, 0.1, 0.8),
+                predicted_class=2,
+                confidence=0.8,
+                burst_id=0,
+                data_gap_ms=1000.0,
+                bid_exit=0.52,
+                ask_exit=0.53,
+            )
+
+        log_path = session.session_dir / f"{session_id}_observations.jsonl"
+        assert log_path.exists()
+        with open(log_path, "r", encoding="utf-8") as f:
+            lines = [json.loads(line) for line in f]
+        assert len(lines) == 3
+
+        # Finalize
+        manifest = session._finalize_session()
+        assert manifest["session_status"] == "COMPLETE"
+        assert (session.session_dir / "session_manifest.json").exists()
+        assert (session.session_dir / "collector_health_report.md").exists()
+
+        # Finalizing again must raise RuntimeError
+        with pytest.raises(RuntimeError, match="already been finalized"):
+            session._finalize_session()
+
+        # Reusing the session ID in a new instance must raise FileExistsError
+        with pytest.raises(FileExistsError, match="Session collision detected"):
+            ProspectiveShadowSession(output_base_dir=tmp_path, session_id=session_id)

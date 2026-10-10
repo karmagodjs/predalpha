@@ -490,9 +490,32 @@ class ProspectiveShadowSession:
         if not LOCKED_TEST_PATH.exists():
             raise FileNotFoundError(f"Safety check failed: locked test path {LOCKED_TEST_PATH} not found.")
 
+        self.output_base_dir = Path(output_base_dir)
         self.session_id = session_id or f"prospective_{datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:6]}"
-        self.session_dir = output_base_dir / self.session_id
-        self.session_dir.mkdir(parents=True, exist_ok=True)
+        self.session_dir = self.output_base_dir / self.session_id
+
+        # Artifact collision protection: reject if session dir or any corresponding log, manifest, or report exists
+        candidate_artifacts = [
+            self.session_dir,
+            self.session_dir / f"{self.session_id}_observations.jsonl",
+            self.session_dir / f"{self.session_id}_manifest.json",
+            self.session_dir / "session_manifest.json",
+            self.session_dir / "collector_health_report.md",
+            self.output_base_dir / f"{self.session_id}_observations.jsonl",
+            self.output_base_dir / f"{self.session_id}_manifest.json",
+            self.output_base_dir / f"{self.session_id}_session_manifest.json",
+            self.output_base_dir / f"{self.session_id}_health_report.md",
+            self.output_base_dir / f"{self.session_id}_collector_health_report.md",
+        ]
+        for artifact in candidate_artifacts:
+            if artifact.exists():
+                raise FileExistsError(
+                    f"Session collision detected: artifact already exists for session ID '{self.session_id}' "
+                    f"at {artifact}. Reusing session ID is prohibited to prevent corrupting prior artifacts."
+                )
+
+        self.output_base_dir.mkdir(parents=True, exist_ok=True)
+        self.session_dir.mkdir(parents=True, exist_ok=False)
 
         self.duration_seconds = duration_seconds
         self.max_observations = max_observations
@@ -555,6 +578,7 @@ class ProspectiveShadowSession:
         self.max_drawdown_stop_loss_units = 2.5
         self.is_hard_stopped = False
         self.hard_stop_reason: Optional[str] = None
+        self._is_finalized = False
 
     async def _ws_reader_task(self, ws: Any) -> None:
         """
@@ -1101,6 +1125,10 @@ class ProspectiveShadowSession:
         - Classifies session status: COMPLETE, DEGRADED, or FAILED.
         - Writes manifest and health report.
         """
+        if self._is_finalized:
+            raise RuntimeError(f"Session {self.session_id} has already been finalized.")
+        self._is_finalized = True
+
         for pos in self.pending_positions:
             self.shadow_logger.log_decision_point(
                 event_timestamp_ms=pos["event_timestamp_ms"],
@@ -1145,10 +1173,18 @@ class ProspectiveShadowSession:
 
         # Generate health report
         health_report_path = self.session_dir / "collector_health_report.md"
+        if health_report_path.exists():
+            raise FileExistsError(
+                f"Artifact collision: health report already exists at {health_report_path}."
+            )
         self._write_health_report(health_report_path, logger_manifest, end_utc, session_status)
 
         # Generate session provenance manifest
         manifest_path = self.session_dir / "session_manifest.json"
+        if manifest_path.exists():
+            raise FileExistsError(
+                f"Artifact collision: session manifest already exists at {manifest_path}."
+            )
         session_manifest = {
             "session_id": self.session_id,
             "session_type": "GENUINE_PROSPECTIVE_SHADOW",
