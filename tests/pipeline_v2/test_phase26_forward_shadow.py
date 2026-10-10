@@ -369,3 +369,23 @@ def test_forward_shadow_logger_rejects_reused_run_id_after_closure():
         # Verify original files remain bitwise invariant
         assert (tmp_path / f"{run_id}_observations.jsonl").read_bytes() == orig_log_bytes
         assert (tmp_path / f"{run_id}_manifest.json").read_bytes() == orig_manifest_bytes
+
+
+def test_protocol_amendment_v1_1_definition():
+    """Verify Protocol Amendment v1.1 version, documented metric definitions, and hard stops."""
+    protocol = define_prospective_protocol()
+    assert protocol["protocol_version"] == "1.1"
+    assert protocol["amendment_version"] == "1.1"
+    assert "amendment_metric_definitions" in protocol
+
+    defs = protocol["amendment_metric_definitions"]
+    assert "missing_quote_rate" in defs
+    assert "average_quote_staleness" in defs
+    assert defs["missing_quote_rate_threshold"] == 0.25
+    assert defs["average_quote_staleness_threshold_ms"] == 2000.0
+
+    triggers = protocol["hard_stopping_abort_triggers"]
+    assert triggers["max_drawdown_stop_loss_units"] == 2.50
+    assert triggers["consecutive_losses_limit"] == 8
+    assert triggers["max_missing_quote_rate_pct"] == 25.0
+    assert triggers["max_average_quote_staleness_ms"] == 2000.0

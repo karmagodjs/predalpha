@@ -569,6 +569,14 @@ class ProspectiveShadowSession:
         self.malformed_samples: List[Dict[str, Any]] = []
         self.rollover_records: List[Dict[str, Any]] = []
 
+        # Protocol Amendment v1.1 telemetry & metric definitions
+        self.protocol_version = "1.1"
+        self.eligible_grid_steps_count = 0
+        self.valid_staleness_observation_count = 0
+        self.total_quote_age_ms = 0.0
+        self.max_missing_quote_rate_threshold = 0.25
+        self.max_average_staleness_threshold_ms = 2000.0
+
         # Predeclared hard stopping triggers (from prospective_protocol.json)
         self.consecutive_losses = 0
         self.consecutive_losses_limit = 8
@@ -579,6 +587,49 @@ class ProspectiveShadowSession:
         self.is_hard_stopped = False
         self.hard_stop_reason: Optional[str] = None
         self._is_finalized = False
+
+    @property
+    def missing_quote_rate(self) -> float:
+        """Missing quote rate = unquotable quotes / eligible grid steps (Amendment v1.1)."""
+        if self.eligible_grid_steps_count == 0:
+            return 0.0
+        return float(self.unquotable_quotes_count / self.eligible_grid_steps_count)
+
+    @property
+    def average_quote_age_ms(self) -> float:
+        """Average quote staleness = mean age in ms of valid, timestamped eligible quotes (Amendment v1.1)."""
+        if self.valid_staleness_observation_count == 0:
+            return 0.0
+        return float(self.total_quote_age_ms / self.valid_staleness_observation_count)
+
+    def _check_grid_metric_hard_stops(self) -> None:
+        """Check prospective quote quality hard stops (Amendment v1.1)."""
+        if self.is_hard_stopped:
+            return
+
+        rate = self.missing_quote_rate
+        if rate > self.max_missing_quote_rate_threshold:
+            self.is_hard_stopped = True
+            self.hard_stop_reason = (
+                f"MISSING_QUOTE_RATE_LIMIT ({rate:.4f} > {self.max_missing_quote_rate_threshold:.2f})"
+            )
+            logger.warning(
+                "Hard stopping abort trigger activated: %s. Halting new entries immediately.",
+                self.hard_stop_reason,
+            )
+            return
+
+        avg_age = self.average_quote_age_ms
+        if avg_age > self.max_average_staleness_threshold_ms:
+            self.is_hard_stopped = True
+            self.hard_stop_reason = (
+                f"MAX_STALENESS_LIMIT ({avg_age:.2f}ms > {self.max_average_staleness_threshold_ms:.1f}ms)"
+            )
+            logger.warning(
+                "Hard stopping abort trigger activated: %s. Halting new entries immediately.",
+                self.hard_stop_reason,
+            )
+            return
 
     async def _ws_reader_task(self, ws: Any) -> None:
         """
@@ -825,6 +876,8 @@ class ProspectiveShadowSession:
                             if up_book.is_initialized and down_book.is_initialized and not self.is_book_degraded:
                                 self.is_book_valid = True
                                 rollover_pending_snapshot_since = None
+                            else:
+                                self.is_book_valid = False
 
                             # 1-Second Grid Sampling
                             curr_sec = int(time.time())
@@ -836,17 +889,13 @@ class ProspectiveShadowSession:
                                 last_grid_sample_sec += 1
                                 grid_ts_ms = last_grid_sample_sec * 1000
 
-                                if self.is_book_valid and not self.is_book_degraded:
-                                    await self._process_grid_step(
-                                        up_book=up_book,
-                                        market_id=slug,
-                                        asset_id=up_token_id,
-                                        grid_timestamp_ms=grid_ts_ms,
-                                    )
-                                else:
-                                    # Book not ready or degraded -> record uninitialized step
-                                    self.uninitialized_book_steps_count += 1
-                                    logger.debug("Skipping grid step %d: book uninitialized or degraded.", grid_ts_ms)
+                                await self._process_grid_step(
+                                    up_book=up_book,
+                                    market_id=slug,
+                                    asset_id=up_token_id,
+                                    grid_timestamp_ms=grid_ts_ms,
+                                    down_book=down_book,
+                                )
 
                             # Yield control briefly to event loop
                             await asyncio.sleep(0.01)
@@ -919,15 +968,29 @@ class ProspectiveShadowSession:
         market_id: str,
         asset_id: str,
         grid_timestamp_ms: int,
+        down_book: Optional[LiveTokenOrderBook] = None,
     ) -> None:
         """Execute a 1-second sampled evaluation step."""
+        # Determine whether books are initialized and safe for execution.
+        # Fail closed: quote validation and entry creation are permitted ONLY when
+        # down_book is provided and both UP and DOWN books are initialized.
+        # A missing DOWN book (down_book=None) is treated as unsafe / uninitialized.
+        both_books_initialized = (
+            up_book.is_initialized
+            and down_book is not None
+            and down_book.is_initialized
+        )
+        is_safe_for_exit = both_books_initialized and not self.is_book_degraded
+
         # 1. Check and close pending hypothetical positions whose 5s holding horizon has arrived
+        # Due in-flight positions are settled regardless of whether the book is uninitialized or degraded.
         for pos in list(self.pending_positions):
             if grid_timestamp_ms >= pos["target_exit_ms"]:
-                exit_bid = up_book.best_bid
-                exit_ask = up_book.best_ask
+                exit_bid = up_book.best_bid if is_safe_for_exit else None
+                exit_ask = up_book.best_ask if is_safe_for_exit else None
                 has_exit_quote = (
-                    exit_bid is not None
+                    is_safe_for_exit
+                    and exit_bid is not None
                     and exit_ask is not None
                     and exit_bid > 0
                     and exit_ask > 0
@@ -946,24 +1009,58 @@ class ProspectiveShadowSession:
                 self._log_and_complete_position(pos)
                 self.pending_positions.remove(pos)
 
-        # 2. Extract top-of-book quotes for decision evaluation
+        # 2. Check uninitialized or degraded book state (tracked separately from quote validation path)
+        # Require both UP and DOWN books to be initialized before a grid step is eligible for quote validation.
+        if not both_books_initialized or self.is_book_degraded:
+            self.uninitialized_book_steps_count += 1
+            logger.debug(
+                "Skipping grid step %d: book uninitialized (up=%s, down=%s) or degraded (degraded=%s).",
+                grid_timestamp_ms,
+                up_book.is_initialized,
+                down_book.is_initialized if down_book is not None else "N/A",
+                self.is_book_degraded,
+            )
+            return
+
+        # 3. Extract top-of-book quotes for decision evaluation (Quote-Validation Path)
+        self.eligible_grid_steps_count += 1
+
         bid = up_book.best_bid
         ask = up_book.best_ask
         bid_size = up_book.bid_size
         ask_size = up_book.ask_size
 
-        if bid is None or ask is None or bid <= 0 or ask <= 0 or bid >= ask:
+        has_valid_prices = (
+            bid is not None
+            and ask is not None
+            and bid > 0
+            and ask > 0
+            and bid < ask
+        )
+        has_valid_timestamp = (
+            up_book.last_update_ms is not None
+            and up_book.last_update_ms > 0
+            and grid_timestamp_ms >= up_book.last_update_ms
+        )
+
+        if not has_valid_prices or not has_valid_timestamp:
             self.unquotable_quotes_count += 1
+            self._check_grid_metric_hard_stops()
             return
 
-        quote_age_ms = float(grid_timestamp_ms - up_book.last_update_ms) if up_book.last_update_ms > 0 else 0.0
+        quote_age_ms = float(grid_timestamp_ms - up_book.last_update_ms)
+        self.valid_staleness_observation_count += 1
+        self.total_quote_age_ms += quote_age_ms
+
+        if quote_age_ms > 2000.0:
+            self.stale_quotes_count += 1
+
+        self._check_grid_metric_hard_stops()
+
         data_gap_ms = float(grid_timestamp_ms - self.last_event_ms) if self.last_event_ms > 0 else 1000.0
         if data_gap_ms > 5000.0:
             self.burst_id += 1
         self.last_event_ms = grid_timestamp_ms
-
-        if quote_age_ms > 2000.0:
-            self.stale_quotes_count += 1
 
         # 3. Add quote to online feature engine
         self.feature_engine.add_grid_sample(
@@ -1189,12 +1286,19 @@ class ProspectiveShadowSession:
             "session_id": self.session_id,
             "session_type": "GENUINE_PROSPECTIVE_SHADOW",
             "session_status": session_status,
+            "protocol_version": self.protocol_version,
             "hard_stop_triggered": self.hard_stop_reason,
             "start_time_utc": self.start_utc,
             "end_time_utc": end_utc,
             "total_observations_logged": self.observations_logged,
             "warmup_steps_count": self.warmup_steps_count,
+            "eligible_grid_steps_count": self.eligible_grid_steps_count,
             "unquotable_quotes_count": self.unquotable_quotes_count,
+            "missing_quote_rate": round(self.missing_quote_rate, 6),
+            "missing_quote_rate_threshold": self.max_missing_quote_rate_threshold,
+            "valid_staleness_observation_count": self.valid_staleness_observation_count,
+            "average_quote_age_ms": round(self.average_quote_age_ms, 2),
+            "average_quote_staleness_threshold_ms": self.max_average_staleness_threshold_ms,
             "uninitialized_book_steps_count": self.uninitialized_book_steps_count,
             "trades_executed": self.trades_executed,
             "trades_suppressed": self.trades_suppressed,
@@ -1249,6 +1353,7 @@ class ProspectiveShadowSession:
             f"## 1. Session Status: {status_badge}\n",
             "| Telemetry Metric | Session Value | Quality Benchmark |",
             "| :--- | :---: | :--- |",
+            f"| **Protocol Version** | `{self.protocol_version}` | Protocol Amendment v1.1 |",
             f"| **Start Timestamp (UTC)** | `{self.start_utc}` | Recorded |",
             f"| **End Timestamp (UTC)** | `{end_utc}` | Recorded |",
             f"| **Session Status** | `{session_status}` | Operational certification |",
@@ -1261,10 +1366,14 @@ class ProspectiveShadowSession:
             f"| **Peak Ingestion Queue Depth** | `{self.max_queue_depth_seen:,}` | Capacity: {self.queue_maxsize:,} |",
             f"| **Reconnect Attempts** | `{self.reconnect_count:,}` | Resubscription & snapshot rebuild |",
             f"| **Market Rollovers** | `{self.rollover_events_count:,}` | Feature engine cleanly reset |",
+            f"| **Eligible Grid Steps (Quote Validation)** | `{self.eligible_grid_steps_count:,}` | Denominator for missing quote rate |",
+            f"| **Unquotable / Crossed Quotes** | `{self.unquotable_quotes_count:,}` | Numerator for missing quote rate |",
+            f"| **Missing Quote Rate** | `{self.missing_quote_rate * 100:.2f}%` | Threshold: <= {self.max_missing_quote_rate_threshold * 100:.1f}% (abort if > 25%) |",
+            f"| **Valid Staleness Observations** | `{self.valid_staleness_observation_count:,}` | Timestamped quote observations |",
+            f"| **Average Quote Staleness** | `{self.average_quote_age_ms:.2f} ms` | Threshold: <= {self.max_average_staleness_threshold_ms:.1f} ms (abort if > 2000 ms) |",
+            f"| **Uninitialized Book Steps** | `{self.uninitialized_book_steps_count:,}` | Steps waiting for initial snapshots (tracked separately) |",
             f"| **1-Second Decisions Logged** | `{self.observations_logged:,}` | Grid synchronization |",
             f"| **Feature Warm-up Steps** | `{self.warmup_steps_count:,}` | Initial sequence building |",
-            f"| **Unquotable / Crossed Quotes** | `{self.unquotable_quotes_count:,}` | 0 valid opportunities during unquotable book |",
-            f"| **Uninitialized Book Steps** | `{self.uninitialized_book_steps_count:,}` | Steps waiting for initial snapshots |",
             f"| **Trades Triggered (EXECUTE)** | `{self.trades_executed:,}` | Evaluated under frozen regime gates |",
             f"| **Trades Suppressed by Gates** | `{self.trades_suppressed:,}` | Strict regime gating |",
             f"| **Predictions Skipped (FLAT)** | `{self.trades_skipped_flat:,}` | Non-directional model output |",
@@ -1283,6 +1392,9 @@ class ProspectiveShadowSession:
                 "---\n",
                 "## 3. Hard Stopping Abort Trigger\n",
                 f"- **Trigger Code**: `{self.hard_stop_reason}`\n",
+                f"- **Protocol Version**: `{self.protocol_version}`\n",
+                f"- **Missing Quote Rate**: `{self.missing_quote_rate * 100:.2f}%` (Threshold: `{self.max_missing_quote_rate_threshold * 100:.1f}%`)\n",
+                f"- **Average Quote Staleness**: `{self.average_quote_age_ms:.2f} ms` (Threshold: `{self.max_average_staleness_threshold_ms:.1f} ms`)\n",
                 "- **Enforcement**: New hypothetical trade entries halted immediately; pending in-flight positions drained before session exit.\n",
             ])
 

@@ -755,10 +755,15 @@ def test_quiet_period_grid_evaluation_and_stale_quote_rejection():
                 session_id="test_quiet_period",
             )
             book = LiveTokenOrderBook("test_token")
+            down_book = LiveTokenOrderBook("down_token")
             # Snapshot arrived at t = 10,000ms
             book.apply_book_event({
                 "bids": [{"price": "0.50", "size": "100.0"}],
                 "asks": [{"price": "0.51", "size": "100.0"}],
+            }, timestamp_ms=10000)
+            down_book.apply_book_event({
+                "bids": [{"price": "0.49", "size": "100.0"}],
+                "asks": [{"price": "0.50", "size": "100.0"}],
             }, timestamp_ms=10000)
 
             # Warm up feature engine with 10 steps
@@ -768,6 +773,7 @@ def test_quiet_period_grid_evaluation_and_stale_quote_rejection():
                     market_id="btc-updown-5m-1791546600",
                     asset_id="test_token",
                     grid_timestamp_ms=10000 + i * 1000,
+                    down_book=down_book,
                 )
 
             initial_obs = session.observations_logged
@@ -782,6 +788,7 @@ def test_quiet_period_grid_evaluation_and_stale_quote_rejection():
                     market_id="btc-updown-5m-1791546600",
                     asset_id="test_token",
                     grid_timestamp_ms=ts,
+                    down_book=down_book,
                 )
 
             assert session.observations_logged == initial_obs + 3
@@ -854,9 +861,14 @@ def test_hard_stop_exact_boundary_eighth_consecutive_loss():
 
         # Now simulate a subsequent grid step where model and market gates would normally PASS
         book = LiveTokenOrderBook("test_token_up")
+        down_book = LiveTokenOrderBook("test_token_down")
         book.apply_book_event({
             "bids": [{"price": "0.50", "size": "100.0"}],
             "asks": [{"price": "0.51", "size": "100.0"}],
+        }, timestamp_ms=25000)
+        down_book.apply_book_event({
+            "bids": [{"price": "0.49", "size": "100.0"}],
+            "asks": [{"price": "0.50", "size": "100.0"}],
         }, timestamp_ms=25000)
 
         # Warm up feature engine with 10 steps
@@ -867,6 +879,7 @@ def test_hard_stop_exact_boundary_eighth_consecutive_loss():
                     market_id="btc-updown-5m-1791608400",
                     asset_id="test_token_up",
                     grid_timestamp_ms=25000 + step * 1000,
+                    down_book=down_book,
                 )
 
         asyncio.run(_eval_grid())
@@ -1093,10 +1106,15 @@ def test_hard_stop_same_grid_step_resolution_prevents_entry_and_handles_in_fligh
 
         # Order book and warm-up
         book = LiveTokenOrderBook("test_token_up")
+        down_book = LiveTokenOrderBook("test_token_down")
         for i in range(10):
             book.apply_book_event({
                 "bids": [{"price": "0.50", "size": "100.0"}],
                 "asks": [{"price": "0.51", "size": "100.0"}],
+            }, timestamp_ms=10000 + i * 1000)
+            down_book.apply_book_event({
+                "bids": [{"price": "0.49", "size": "100.0"}],
+                "asks": [{"price": "0.50", "size": "100.0"}],
             }, timestamp_ms=10000 + i * 1000)
             session.feature_engine.add_grid_sample(0.50, 0.51, 100.0, 100.0, 10000 + i * 1000)
 
@@ -1107,6 +1125,10 @@ def test_hard_stop_same_grid_step_resolution_prevents_entry_and_handles_in_fligh
             "bids": [{"price": "0.40", "size": "100.0"}],
             "asks": [{"price": "0.41", "size": "100.0"}],
         }, timestamp_ms=20000)
+        down_book.apply_book_event({
+            "bids": [{"price": "0.49", "size": "100.0"}],
+            "asks": [{"price": "0.50", "size": "100.0"}],
+        }, timestamp_ms=20000)
 
         # Execute grid step at t=20000
         async def _run_same_step():
@@ -1115,6 +1137,7 @@ def test_hard_stop_same_grid_step_resolution_prevents_entry_and_handles_in_fligh
                 market_id="btc-updown-5m-1791608400",
                 asset_id="test_token_up",
                 grid_timestamp_ms=20000,
+                down_book=down_book,
             )
 
         asyncio.run(_run_same_step())
@@ -1262,3 +1285,664 @@ def test_prospective_session_preserves_append_only_behavior_within_single_sessio
         # Reusing the session ID in a new instance must raise FileExistsError
         with pytest.raises(FileExistsError, match="Session collision detected"):
             ProspectiveShadowSession(output_base_dir=tmp_path, session_id=session_id)
+
+
+def test_hard_stop_missing_quote_rate_threshold_and_boundary_equality():
+    """
+    Verify Amendment v1.1 missing quote rate hard-stop threshold and boundary equality.
+    - Exactly 25.0% missing quote rate does NOT trigger hard stop (strictly > 25% required).
+    - Strictly greater than 25.0% (e.g. 2/5 = 40.0%) immediately triggers hard stop.
+    """
+    async def _test():
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            session = ProspectiveShadowSession(
+                output_base_dir=Path(tmp_dir),
+                session_id="test_missing_quote_rate_boundary",
+            )
+            book = LiveTokenOrderBook("test_token")
+            down_book = LiveTokenOrderBook("down_token")
+            # Step 1-3: Valid quotes
+            book.apply_book_event({
+                "bids": [{"price": "0.50", "size": "100.0"}],
+                "asks": [{"price": "0.51", "size": "100.0"}],
+            }, timestamp_ms=10000)
+            down_book.apply_book_event({
+                "bids": [{"price": "0.49", "size": "100.0"}],
+                "asks": [{"price": "0.50", "size": "100.0"}],
+            }, timestamp_ms=10000)
+
+            for i in range(3):
+                book.last_update_ms = 10000 + i * 1000
+                await session._process_grid_step(book, "m1", "t1", 10000 + i * 1000, down_book=down_book)
+
+            assert session.eligible_grid_steps_count == 3
+            assert session.unquotable_quotes_count == 0
+            assert session.missing_quote_rate == 0.0
+            assert session.is_hard_stopped is False
+
+            # Step 4: Missing ask quote -> 1 unquotable out of 4 eligible = exactly 25.0%
+            book.asks.clear()
+            book.exchange_best_ask = None
+            book.last_update_ms = 13000
+            await session._process_grid_step(book, "m1", "t1", 13000, down_book=down_book)
+
+            assert session.eligible_grid_steps_count == 4
+            assert session.unquotable_quotes_count == 1
+            assert session.missing_quote_rate == 0.25
+            # Boundary equality: exactly 25% must NOT trigger hard stop
+            assert session.is_hard_stopped is False
+            assert session.hard_stop_reason is None
+
+            # Step 5: Second unquotable quote -> 2 out of 5 = 40.0% > 25.0%
+            await session._process_grid_step(book, "m1", "t1", 14000, down_book=down_book)
+
+            assert session.eligible_grid_steps_count == 5
+            assert session.unquotable_quotes_count == 2
+            assert session.missing_quote_rate == 0.40
+            # Strictly > 25%: must trigger hard stop immediately
+            assert session.is_hard_stopped is True
+            assert "MISSING_QUOTE_RATE_LIMIT (0.4000 > 0.25)" in session.hard_stop_reason
+
+    asyncio.run(_test())
+
+
+def test_hard_stop_average_staleness_threshold_and_boundary_equality():
+    """
+    Verify Amendment v1.1 average quote staleness hard-stop threshold and boundary equality.
+    - Exactly 2000.0 ms average quote staleness does NOT trigger hard stop (strictly > 2000 ms required).
+    - Strictly greater than 2000.0 ms immediately triggers hard stop.
+    """
+    async def _test():
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            session = ProspectiveShadowSession(
+                output_base_dir=Path(tmp_dir),
+                session_id="test_staleness_boundary",
+            )
+            book = LiveTokenOrderBook("test_token")
+            down_book = LiveTokenOrderBook("down_token")
+            book.apply_book_event({
+                "bids": [{"price": "0.50", "size": "100.0"}],
+                "asks": [{"price": "0.51", "size": "100.0"}],
+            }, timestamp_ms=8000)
+            down_book.apply_book_event({
+                "bids": [{"price": "0.49", "size": "100.0"}],
+                "asks": [{"price": "0.50", "size": "100.0"}],
+            }, timestamp_ms=8000)
+
+            # Step 1: grid_ts=10000, last_update=8000 -> age = 2000 ms
+            book.last_update_ms = 8000
+            await session._process_grid_step(book, "m1", "t1", 10000, down_book=down_book)
+
+            # Step 2: grid_ts=11000, last_update=9000 -> age = 2000 ms
+            book.last_update_ms = 9000
+            await session._process_grid_step(book, "m1", "t1", 11000, down_book=down_book)
+
+            assert session.valid_staleness_observation_count == 2
+            assert session.average_quote_age_ms == 2000.0
+            # Boundary equality: exactly 2000.0 ms must NOT trigger hard stop
+            assert session.is_hard_stopped is False
+            assert session.hard_stop_reason is None
+
+            # Step 3: grid_ts=12000, last_update=9999 -> age = 2001 ms
+            # Mean age = (2000 + 2000 + 2001) / 3 = 2000.33 ms > 2000.0 ms
+            book.last_update_ms = 9999
+            await session._process_grid_step(book, "m1", "t1", 12000, down_book=down_book)
+
+            assert session.valid_staleness_observation_count == 3
+            assert session.average_quote_age_ms > 2000.0
+            # Strictly > 2000 ms: must trigger hard stop immediately
+            assert session.is_hard_stopped is True
+            assert "MAX_STALENESS_LIMIT" in session.hard_stop_reason
+
+    asyncio.run(_test())
+
+
+def test_missing_invalid_crossed_quotes_counted_in_numerator():
+    """
+    Verify that missing, invalid, and crossed quotes increment unquotable_quotes_count
+    and eligible_grid_steps_count, without polluting valid staleness observations.
+    """
+    async def _test():
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            session = ProspectiveShadowSession(
+                output_base_dir=Path(tmp_dir),
+                session_id="test_unquotable_types",
+            )
+            down_book = LiveTokenOrderBook("down_token")
+            down_book.apply_book_event({"bids": [{"price": "0.49", "size": "100"}], "asks": [{"price": "0.50", "size": "100"}]}, timestamp_ms=1000)
+
+            # 1. Missing bid
+            book1 = LiveTokenOrderBook("t1")
+            book1.apply_book_event({"bids": [], "asks": [{"price": "0.51", "size": "100"}]}, timestamp_ms=1000)
+            await session._process_grid_step(book1, "m", "t", 1000, down_book=down_book)
+
+            # 2. Missing ask
+            book2 = LiveTokenOrderBook("t1")
+            book2.apply_book_event({"bids": [{"price": "0.50", "size": "100"}], "asks": []}, timestamp_ms=2000)
+            await session._process_grid_step(book2, "m", "t", 2000, down_book=down_book)
+
+            # 3. Invalid bid price (<= 0)
+            book3 = LiveTokenOrderBook("t1")
+            book3.apply_book_event({"bids": [{"price": "0.00", "size": "100"}], "asks": [{"price": "0.51", "size": "100"}]}, timestamp_ms=3000)
+            await session._process_grid_step(book3, "m", "t", 3000, down_book=down_book)
+
+            # 4. Crossed quote (bid >= ask)
+            book4 = LiveTokenOrderBook("t1")
+            book4.apply_book_event({"bids": [{"price": "0.55", "size": "100"}], "asks": [{"price": "0.50", "size": "100"}]}, timestamp_ms=4000)
+            await session._process_grid_step(book4, "m", "t", 4000, down_book=down_book)
+
+            # 5. Locked quote (bid == ask)
+            book5 = LiveTokenOrderBook("t1")
+            book5.apply_book_event({"bids": [{"price": "0.50", "size": "100"}], "asks": [{"price": "0.50", "size": "100"}]}, timestamp_ms=5000)
+            await session._process_grid_step(book5, "m", "t", 5000, down_book=down_book)
+
+            assert session.eligible_grid_steps_count == 5
+            assert session.unquotable_quotes_count == 5
+            assert session.missing_quote_rate == 1.0
+            assert session.valid_staleness_observation_count == 0
+            assert session.average_quote_age_ms == 0.0
+
+    asyncio.run(_test())
+
+
+def test_invalid_zero_timestamps_without_false_zero_age():
+    """
+    Verify that invalid, zero, or future quote timestamps are treated as invalid quotes
+    and NEVER assigned age zero or included in valid quote staleness observations.
+    """
+    async def _test():
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            session = ProspectiveShadowSession(
+                output_base_dir=Path(tmp_dir),
+                session_id="test_timestamp_validation",
+            )
+            down_book = LiveTokenOrderBook("down_token")
+            down_book.apply_book_event({"bids": [{"price": "0.49", "size": "100"}], "asks": [{"price": "0.50", "size": "100"}]}, timestamp_ms=5000)
+
+            # Timestamp = 0
+            book_zero = LiveTokenOrderBook("t1")
+            book_zero.apply_book_event({"bids": [{"price": "0.50", "size": "100"}], "asks": [{"price": "0.51", "size": "100"}]}, timestamp_ms=0)
+            book_zero.last_update_ms = 0
+            await session._process_grid_step(book_zero, "m", "t", 5000, down_book=down_book)
+
+            # Negative timestamp
+            book_neg = LiveTokenOrderBook("t1")
+            book_neg.apply_book_event({"bids": [{"price": "0.50", "size": "100"}], "asks": [{"price": "0.51", "size": "100"}]}, timestamp_ms=-10)
+            book_neg.last_update_ms = -10
+            await session._process_grid_step(book_neg, "m", "t", 5000, down_book=down_book)
+
+            # Future timestamp (grid_ts < last_update_ms)
+            book_fut = LiveTokenOrderBook("t1")
+            book_fut.apply_book_event({"bids": [{"price": "0.50", "size": "100"}], "asks": [{"price": "0.51", "size": "100"}]}, timestamp_ms=10000)
+            await session._process_grid_step(book_fut, "m", "t", 5000, down_book=down_book)
+
+            assert session.eligible_grid_steps_count == 3
+            assert session.unquotable_quotes_count == 3
+            # Zero timestamp must NEVER be assigned age 0 in valid staleness observations!
+            assert session.valid_staleness_observation_count == 0
+            assert session.total_quote_age_ms == 0.0
+            assert session.average_quote_age_ms == 0.0
+
+    asyncio.run(_test())
+
+
+def test_uninitialized_book_steps_tracked_separately():
+    """
+    Verify that uninitialized-book steps are tracked in uninitialized_book_steps_count
+    and do NOT pollute eligible_grid_steps_count or unquotable_quotes_count.
+    """
+    async def _test():
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            session = ProspectiveShadowSession(
+                output_base_dir=Path(tmp_dir),
+                session_id="test_uninitialized_tracking",
+            )
+            # Uninitialized book
+            uninit_book = LiveTokenOrderBook("t_uninit")
+            assert uninit_book.is_initialized is False
+
+            for i in range(5):
+                await session._process_grid_step(uninit_book, "m", "t", 1000 + i * 1000)
+
+            assert session.uninitialized_book_steps_count == 5
+            assert session.eligible_grid_steps_count == 0
+            assert session.unquotable_quotes_count == 0
+            assert session.missing_quote_rate == 0.0
+
+            # Degraded book
+            init_book = LiveTokenOrderBook("t_init")
+            init_book.apply_book_event({"bids": [{"price": "0.50", "size": "100"}], "asks": [{"price": "0.51", "size": "100"}]}, timestamp_ms=1000)
+            session.is_book_degraded = True
+
+            await session._process_grid_step(init_book, "m", "t", 2000)
+
+            assert session.uninitialized_book_steps_count == 6
+            assert session.eligible_grid_steps_count == 0
+            assert session.unquotable_quotes_count == 0
+
+    asyncio.run(_test())
+
+
+def test_immediate_entry_suppression_after_hard_stop_amendment_v1_1():
+    """
+    Verify that an active quote-quality hard stop immediately suppresses new hypothetical entries
+    and logs HARD_STOP_ACTIVE rejection in the append-only log.
+    """
+    async def _test():
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            session = ProspectiveShadowSession(
+                output_base_dir=Path(tmp_dir),
+                session_id="test_suppression_v1_1",
+            )
+            book = LiveTokenOrderBook("test_token")
+            down_book = LiveTokenOrderBook("down_token")
+            # Warm up with high-confidence valid quotes
+            for i in range(10):
+                book.apply_book_event({
+                    "bids": [{"price": "0.50", "size": "100"}],
+                    "asks": [{"price": "0.51", "size": "100"}],
+                }, timestamp_ms=10000 + i * 1000)
+                down_book.apply_book_event({
+                    "bids": [{"price": "0.49", "size": "100"}],
+                    "asks": [{"price": "0.50", "size": "100"}],
+                }, timestamp_ms=10000 + i * 1000)
+                await session._process_grid_step(book, "m", "t", 10000 + i * 1000, down_book=down_book)
+
+            # Manually trigger hard stop via missing quote rate threshold
+            session.is_hard_stopped = True
+            session.hard_stop_reason = "MISSING_QUOTE_RATE_LIMIT (0.3000 > 0.25)"
+
+            # Step 11: Otherwise valid opportunity
+            book.apply_book_event({
+                "bids": [{"price": "0.50", "size": "100"}],
+                "asks": [{"price": "0.51", "size": "100"}],
+            }, timestamp_ms=21000)
+            down_book.apply_book_event({
+                "bids": [{"price": "0.49", "size": "100"}],
+                "asks": [{"price": "0.50", "size": "100"}],
+            }, timestamp_ms=21000)
+            await session._process_grid_step(book, "m", "t", 21000, down_book=down_book)
+
+            assert session.trades_executed == 0
+            assert len(session.pending_positions) == 0
+
+            # Verify logged record is REJECT with HARD_STOP_ACTIVE
+            manifest = session._finalize_session()
+            log_path = session.session_dir / manifest["log_file"]
+            with open(log_path, "r", encoding="utf-8") as f:
+                records = [json.loads(line) for line in f]
+            last_rec = records[-1]
+            assert last_rec["gate_decision"] in ("REJECT", "SKIP")
+            assert "HARD_STOP_ACTIVE" in last_rec["rejection_reasons"]
+
+    asyncio.run(_test())
+
+
+def test_manifest_and_health_report_metrics_amendment_v1_1():
+    """
+    Verify that session_manifest.json and collector_health_report.md contain all Amendment v1.1
+    telemetry metrics: protocol version, denominator, numerator, missing quote rate,
+    valid staleness count, average quote age, thresholds, and hard-stop reason.
+    """
+    async def _test():
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            session = ProspectiveShadowSession(
+                output_base_dir=Path(tmp_dir),
+                session_id="test_manifest_reporting_v1_1",
+            )
+            book = LiveTokenOrderBook("test_token")
+            down_book = LiveTokenOrderBook("down_token")
+            # 2 valid quotes, 1 unquotable quote
+            book.apply_book_event({"bids": [{"price": "0.50", "size": "100"}], "asks": [{"price": "0.51", "size": "100"}]}, timestamp_ms=9000)
+            down_book.apply_book_event({"bids": [{"price": "0.49", "size": "100"}], "asks": [{"price": "0.50", "size": "100"}]}, timestamp_ms=9000)
+            await session._process_grid_step(book, "m", "t", 10000, down_book=down_book)  # age = 1000 ms
+
+            book.last_update_ms = 9500
+            await session._process_grid_step(book, "m", "t", 11000, down_book=down_book)  # age = 1500 ms
+
+            book.asks.clear()
+            book.exchange_best_ask = None
+            await session._process_grid_step(book, "m", "t", 12000, down_book=down_book)  # unquotable
+
+            manifest = session._finalize_session()
+
+            # Verify manifest keys and values
+            assert manifest["protocol_version"] == "1.1"
+            assert manifest["eligible_grid_steps_count"] == 3
+            assert manifest["unquotable_quotes_count"] == 1
+            assert pytest.approx(manifest["missing_quote_rate"], abs=1e-4) == 1.0 / 3.0
+            assert manifest["missing_quote_rate_threshold"] == 0.25
+            assert manifest["valid_staleness_observation_count"] == 2
+            assert pytest.approx(manifest["average_quote_age_ms"], abs=1e-1) == 1250.0
+            assert manifest["average_quote_staleness_threshold_ms"] == 2000.0
+            assert manifest["session_status"] == "ABORTED_HARD_STOP"
+            assert "MISSING_QUOTE_RATE_LIMIT" in manifest["hard_stop_triggered"]
+
+            # Verify health report markdown content
+            report_path = session.session_dir / "collector_health_report.md"
+            assert report_path.exists()
+            content = report_path.read_text(encoding="utf-8")
+            assert "Protocol Version" in content
+            assert "1.1" in content
+            assert "Eligible Grid Steps (Quote Validation)" in content
+            assert "Unquotable / Crossed Quotes" in content
+            assert "Missing Quote Rate" in content
+            assert "Valid Staleness Observations" in content
+            assert "Average Quote Staleness" in content
+            assert "MISSING_QUOTE_RATE_LIMIT" in content
+
+    asyncio.run(_test())
+
+
+def test_due_positions_settled_on_uninitialized_and_degraded_grid_steps():
+    """
+    Verify that in-flight hypothetical positions reaching their 5s horizon are settled
+    and removed from pending_positions even when books are uninitialized or degraded,
+    without executing new entries or incrementing eligible quote validation steps.
+    """
+    async def _test():
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            session = ProspectiveShadowSession(
+                output_base_dir=Path(tmp_dir),
+                session_id="test_due_positions_uninitialized_degraded",
+            )
+            # 1. Uninitialized book step: position reaches horizon at t=15000
+            pos1 = {
+                "event_timestamp_ms": 10000,
+                "market_id": "m1",
+                "asset_id": "t1",
+                "quote_timestamp_ms": 10000,
+                "bid_entry": 0.50,
+                "ask_entry": 0.51,
+                "depth_imbalance": 0.0,
+                "scaled_spread": -0.1,
+                "abs_scaled_depth_imbal": 0.5,
+                "model_probs": (0.1, 0.1, 0.8),
+                "predicted_class": 2,
+                "confidence": 0.80,
+                "burst_id": 0,
+                "data_gap_ms": 1000.0,
+                "target_exit_ms": 15000,
+                "bid_exit": None,
+                "ask_exit": None,
+                "exit_timestamp_ms": None,
+            }
+            session.pending_positions.append(pos1)
+
+            uninit_up = LiveTokenOrderBook("t1")
+            uninit_down = LiveTokenOrderBook("t2")
+            assert not uninit_up.is_initialized
+            assert not uninit_down.is_initialized
+
+            # Process grid step at horizon 15000
+            await session._process_grid_step(
+                up_book=uninit_up,
+                market_id="m1",
+                asset_id="t1",
+                grid_timestamp_ms=15000,
+                down_book=uninit_down,
+            )
+
+            # pos1 settled and drained, uninitialized steps incremented, eligible unchanged
+            assert len(session.pending_positions) == 0
+            assert session.uninitialized_book_steps_count == 1
+            assert session.eligible_grid_steps_count == 0
+            assert session.trades_executed == 0
+
+            # 2. Degraded state step: position reaches horizon at t=25000
+            pos2 = {
+                "event_timestamp_ms": 20000,
+                "market_id": "m1",
+                "asset_id": "t1",
+                "quote_timestamp_ms": 20000,
+                "bid_entry": 0.50,
+                "ask_entry": 0.51,
+                "depth_imbalance": 0.0,
+                "scaled_spread": -0.1,
+                "abs_scaled_depth_imbal": 0.5,
+                "model_probs": (0.1, 0.1, 0.8),
+                "predicted_class": 2,
+                "confidence": 0.80,
+                "burst_id": 0,
+                "data_gap_ms": 1000.0,
+                "target_exit_ms": 25000,
+                "bid_exit": None,
+                "ask_exit": None,
+                "exit_timestamp_ms": None,
+            }
+            session.pending_positions.append(pos2)
+            session.is_book_degraded = True
+
+            init_up = LiveTokenOrderBook("t1")
+            init_up.apply_book_event({"bids": [{"price": "0.50", "size": "100"}], "asks": [{"price": "0.51", "size": "100"}]}, timestamp_ms=25000)
+            init_down = LiveTokenOrderBook("t2")
+            init_down.apply_book_event({"bids": [{"price": "0.49", "size": "100"}], "asks": [{"price": "0.50", "size": "100"}]}, timestamp_ms=25000)
+
+            await session._process_grid_step(
+                up_book=init_up,
+                market_id="m1",
+                asset_id="t1",
+                grid_timestamp_ms=25000,
+                down_book=init_down,
+            )
+
+            # pos2 settled and drained, uninitialized steps incremented to 2, eligible still 0
+            assert len(session.pending_positions) == 0
+            assert session.uninitialized_book_steps_count == 2
+            assert session.eligible_grid_steps_count == 0
+            assert session.trades_executed == 0
+
+    asyncio.run(_test())
+
+
+def test_both_books_initialization_required_for_quote_validation():
+    """
+    Verify that BOTH UP and DOWN books must be initialized for a step to be eligible
+    for quote validation. If either book is uninitialized, the step is tracked as
+    uninitialized and quote validation is not entered.
+    """
+    async def _test():
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            session = ProspectiveShadowSession(
+                output_base_dir=Path(tmp_dir),
+                session_id="test_both_books_required",
+            )
+            up_book = LiveTokenOrderBook("up_token")
+            down_book = LiveTokenOrderBook("down_token")
+
+            # Step 1: UP initialized, DOWN uninitialized
+            up_book.apply_book_event({"bids": [{"price": "0.50", "size": "100"}], "asks": [{"price": "0.51", "size": "100"}]}, timestamp_ms=1000)
+            assert up_book.is_initialized is True
+            assert down_book.is_initialized is False
+
+            await session._process_grid_step(
+                up_book=up_book,
+                market_id="m",
+                asset_id="up_token",
+                grid_timestamp_ms=1000,
+                down_book=down_book,
+            )
+
+            assert session.uninitialized_book_steps_count == 1
+            assert session.eligible_grid_steps_count == 0
+
+            # Step 2: DOWN initialized, UP uninitialized
+            up_book.reset()
+            down_book.apply_book_event({"bids": [{"price": "0.49", "size": "100"}], "asks": [{"price": "0.50", "size": "100"}]}, timestamp_ms=2000)
+            assert up_book.is_initialized is False
+            assert down_book.is_initialized is True
+
+            await session._process_grid_step(
+                up_book=up_book,
+                market_id="m",
+                asset_id="up_token",
+                grid_timestamp_ms=2000,
+                down_book=down_book,
+            )
+
+            assert session.uninitialized_book_steps_count == 2
+            assert session.eligible_grid_steps_count == 0
+
+            # Step 3: Both UP and DOWN initialized
+            up_book.apply_book_event({"bids": [{"price": "0.50", "size": "100"}], "asks": [{"price": "0.51", "size": "100"}]}, timestamp_ms=3000)
+            assert up_book.is_initialized is True
+            assert down_book.is_initialized is True
+
+            await session._process_grid_step(
+                up_book=up_book,
+                market_id="m",
+                asset_id="up_token",
+                grid_timestamp_ms=3000,
+                down_book=down_book,
+            )
+
+            # Now eligible grid steps increments to 1, uninitialized count remains 2
+            assert session.uninitialized_book_steps_count == 2
+            assert session.eligible_grid_steps_count == 1
+
+    asyncio.run(_test())
+
+
+def test_no_entries_in_unsafe_states_uninitialized_degraded_and_hard_stopped():
+    """
+    Verify that no new hypothetical entries can be created during:
+    1. Uninitialized book state
+    2. Degraded session state
+    3. Active hard-stop state
+    """
+    async def _test():
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            session = ProspectiveShadowSession(
+                output_base_dir=Path(tmp_dir),
+                session_id="test_no_entries_unsafe_states",
+            )
+            up_book = LiveTokenOrderBook("up_token")
+            down_book = LiveTokenOrderBook("down_token")
+
+            # 1. Uninitialized books
+            await session._process_grid_step(
+                up_book=up_book,
+                market_id="m",
+                asset_id="up_token",
+                grid_timestamp_ms=1000,
+                down_book=down_book,
+            )
+            assert len(session.pending_positions) == 0
+            assert session.trades_executed == 0
+
+            # Initialize books
+            up_book.apply_book_event({"bids": [{"price": "0.50", "size": "100"}], "asks": [{"price": "0.51", "size": "100"}]}, timestamp_ms=2000)
+            down_book.apply_book_event({"bids": [{"price": "0.49", "size": "100"}], "asks": [{"price": "0.50", "size": "100"}]}, timestamp_ms=2000)
+
+            # 2. Degraded state
+            session.is_book_degraded = True
+            await session._process_grid_step(
+                up_book=up_book,
+                market_id="m",
+                asset_id="up_token",
+                grid_timestamp_ms=2000,
+                down_book=down_book,
+            )
+            assert len(session.pending_positions) == 0
+            assert session.trades_executed == 0
+
+            # 3. Hard-stop state
+            session.is_book_degraded = False
+            session.is_hard_stopped = True
+            session.hard_stop_reason = "FORCED_TEST_HARD_STOP"
+
+            # Warm up feature engine with 11 steps of valid quotes
+            for i in range(11):
+                ts = 3000 + i * 1000
+                up_book.last_update_ms = ts
+                down_book.last_update_ms = ts
+                await session._process_grid_step(
+                    up_book=up_book,
+                    market_id="m",
+                    asset_id="up_token",
+                    grid_timestamp_ms=ts,
+                    down_book=down_book,
+                )
+
+            # New entries strictly suppressed: trades_executed must remain 0
+            assert session.trades_executed == 0
+            assert len(session.pending_positions) == 0
+            assert session.is_hard_stopped is True
+
+    asyncio.run(_test())
+
+
+def test_missing_down_book_fails_closed_and_settles_due_positions_incomplete():
+    """
+    Verify that when down_book=None:
+    1. It fails closed: uninitialized_book_steps_count is incremented, eligible_grid_steps_count
+       is NOT incremented, and no new entries can be created.
+    2. Due in-flight positions are drained and settled safely as incomplete (INCOMPLETE_MISSING_EXIT)
+       without fabricating exit prices.
+    """
+    async def _test():
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            session = ProspectiveShadowSession(
+                output_base_dir=Path(tmp_dir),
+                session_id="test_missing_down_book_fail_closed",
+            )
+            # Add an in-flight hypothetical position due at t=15000
+            pos = {
+                "event_timestamp_ms": 10000,
+                "market_id": "m1",
+                "asset_id": "t1",
+                "quote_timestamp_ms": 10000,
+                "bid_entry": 0.50,
+                "ask_entry": 0.51,
+                "depth_imbalance": 0.0,
+                "scaled_spread": -0.1,
+                "abs_scaled_depth_imbal": 0.5,
+                "model_probs": (0.1, 0.1, 0.8),
+                "predicted_class": 2,
+                "confidence": 0.80,
+                "burst_id": 0,
+                "data_gap_ms": 1000.0,
+                "target_exit_ms": 15000,
+                "bid_exit": None,
+                "ask_exit": None,
+                "exit_timestamp_ms": None,
+            }
+            session.pending_positions.append(pos)
+            assert len(session.pending_positions) == 1
+
+            # UP book is fully initialized with valid quotes
+            up_book = LiveTokenOrderBook("t1")
+            up_book.apply_book_event({
+                "bids": [{"price": "0.50", "size": "100.0"}],
+                "asks": [{"price": "0.51", "size": "100.0"}],
+            }, timestamp_ms=15000)
+            assert up_book.is_initialized is True
+
+            # Process grid step with down_book=None (omitted)
+            await session._process_grid_step(
+                up_book=up_book,
+                market_id="m1",
+                asset_id="t1",
+                grid_timestamp_ms=15000,
+                down_book=None,
+            )
+
+            # 1. Due position must be drained cleanly without price fabrication
+            assert len(session.pending_positions) == 0
+            manifest = session._finalize_session()
+            log_path = session.session_dir / manifest["log_file"]
+            with open(log_path, "r", encoding="utf-8") as f:
+                records = [json.loads(line) for line in f]
+            assert len(records) == 1
+            rec = records[0]
+            assert rec["outcome_status"] == "INCOMPLETE_MISSING_EXIT"
+            assert rec["bid_exit"] is None
+            assert rec["ask_exit"] is None
+            assert rec["exit_timestamp_ms"] is None
+
+            # 2. Must fail closed: uninitialized counter increments, eligible does not increment, no new entries
+            assert session.uninitialized_book_steps_count == 1
+            assert session.eligible_grid_steps_count == 0
+            assert session.trades_executed == 0
+
+    asyncio.run(_test())
