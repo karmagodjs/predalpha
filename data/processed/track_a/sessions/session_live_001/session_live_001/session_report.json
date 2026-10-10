@@ -1,0 +1,72 @@
+{
+  "session_dir": "data\\raw\\track_a\\sessions\\session_live_001",
+  "validation_timestamp": "2026-10-04T14:51:41.964380+00:00",
+  "passed": true,
+  "observations_present": true,
+  "depth_present": true,
+  "checks": {
+    "malformed_json": {
+      "passed": true,
+      "malformed_count": 0
+    },
+    "required_fields": {
+      "passed": true,
+      "missing_count": 0
+    },
+    "positive_prices": {
+      "passed": true,
+      "invalid_count": 0
+    },
+    "high_low_validity": {
+      "passed": true,
+      "invalid_count": 0
+    },
+    "non_negative_volume": {
+      "passed": true,
+      "invalid_count": 0
+    },
+    "duplicate_records": {
+      "passed": true,
+      "duplicate_count": 0
+    },
+    "timestamp_ordering": {
+      "passed": true,
+      "out_of_order_count": 0
+    },
+    "duplicate_timestamps": {
+      "passed": true,
+      "duplicate_count": 0
+    },
+    "missing_intervals": {
+      "passed": true,
+      "gaps_over_expected": 0,
+      "max_gap_seconds": 1.536443
+    },
+    "candle_source_timestamps": {
+      "passed": true,
+      "out_of_order_count": 0,
+      "intra_candle_updates": 58,
+      "unique_candle_count": 2
+    },
+    "l2_uncrossed_books": {
+      "passed": true,
+      "crossed_count": 0
+    },
+    "l2_monotonic_sequence": {
+      "passed": true,
+      "non_monotonic_count": 0
+    },
+    "l2_valid_levels": {
+      "passed": true,
+      "invalid_count": 0
+    }
+  },
+  "summary": {
+    "total_observations_raw": 60,
+    "valid_observations": 60,
+    "total_depth_snapshots": 70,
+    "first_timestamp": "2026-10-04 12:03:09.504129+00:00",
+    "last_timestamp": "2026-10-04 12:04:07.838288+00:00",
+    "session_status": "COMPLETED"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "sequence_length": 60,
+  "feature_columns": [
+    "mid_price",
+    "spread",
+    "spread_bps",
+    "mid_return_1s",
+    "mid_return_3s",
+    "mid_return_5s",
+    "mid_volatility_5s",
+    "bid_change_1s",
+    "ask_change_1s",
+    "microprice",
+    "depth_imbalance"
+  ],
+  "n_features": 11,
+  "train_sequences": 4338,
+  "val_sequences": 930,
+  "test_sequences": 882,
+  "total_sequences": 6150,
+  "train_endpoints": 4338,
+  "val_endpoints": 930,
+  "test_endpoints": 882,
+  "duplicate_endpoints_count": 0,
+  "cross_split_violations": 0,
+  "cross_session_violations": 0,
+  "causality_violations": 0,
+  "class_distribution_train": {
+    "UP": 1717,
+    "DOWN": 1717,
+    "FLAT": 904
+  },
+  "class_distribution_val": {
+    "DOWN": 398,
+    "UP": 397,
+    "FLAT": 135
+  },
+  "class_distribution_test": {
+    "UP": 391,
+    "DOWN": 387,
+    "FLAT": 104
+  },
+  "deterministic_verification": true,
+  "train_span": "1791062512000 -> 1791210510000",
+  "val_span": "1791291601000 -> 1791294206000",
+  "test_span": "1791294302000 -> 1791296914000",
+  "artifacts": {
+    "train_sequences_parquet": "data\\clean_v2\\06_sequences\\expanded_L60\\train_sequences.parquet",
+    "validation_sequences_parquet": "data\\clean_v2\\06_sequences\\expanded_L60\\validation_sequences.parquet",
+    "test_sequences_parquet": "data\\clean_v2\\06_sequences\\expanded_L60\\test_sequences.parquet",
+    "train_sequences_npz": "data\\clean_v2\\06_sequences\\expanded_L60\\train_sequences.npz",
+    "validation_sequences_npz": "data\\clean_v2\\06_sequences\\expanded_L60\\validation_sequences.npz",
+    "test_sequences_npz": "data\\clean_v2\\06_sequences\\expanded_L60\\test_sequences.npz"
+  }
+}

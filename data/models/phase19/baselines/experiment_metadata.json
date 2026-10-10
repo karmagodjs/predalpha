@@ -1,0 +1,43 @@
+{
+  "execution_timestamp_utc": "2026-10-07T12:20:52.125135+00:00",
+  "input_directory": "data\\clean_v2\\07_scaled\\expanded_collection",
+  "output_directory": "data\\models\\phase19\\baselines",
+  "train_samples": 7514,
+  "val_samples": 1428,
+  "test_samples_locked": 1582,
+  "test_set_touched": false,
+  "feature_dim_3d": [
+    10,
+    11
+  ],
+  "feature_dim_flat": 110,
+  "feature_names": [
+    "mid_price",
+    "spread",
+    "spread_bps",
+    "mid_return_1s",
+    "mid_return_3s",
+    "mid_return_5s",
+    "mid_volatility_5s",
+    "bid_change_1s",
+    "ask_change_1s",
+    "microprice",
+    "depth_imbalance"
+  ],
+  "class_names": [
+    "DOWN",
+    "FLAT",
+    "UP"
+  ],
+  "train_class_counts": {
+    "DOWN": 3050,
+    "FLAT": 1414,
+    "UP": 3050
+  },
+  "hashes": {
+    "train_scaled_npz": "ea760f237dc97573f9f06aba3215cd0c63de3a4deeb4c35f08cd5d093c780dd7",
+    "validation_scaled_npz": "69b97fd243bec2d2b65757ab209faa72e48c2d26a1bf6c4d1f78d6697ad62138",
+    "warmup_masks_npz": "246728f2c4caa1a2bbaa4e3ad1bcb9e04c0a67f322759c3f178abf353683593c",
+    "scaler_params_json": "b6fc4ae36d328d3dcafc77564870ba9fec9fcf98ecdadac3e6f570e15e3e52e7"
+  }
+}

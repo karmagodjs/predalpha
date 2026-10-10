@@ -1,0 +1,246 @@
+{
+  "generated_at_utc": "2026-10-06T04:24:22.530464+00:00",
+  "execution_duration_sec": 0.34,
+  "input_directory": "data\\clean_v2\\06_sequences\\new_collection",
+  "output_directory": "data\\clean_v2\\07_scaled\\new_collection",
+  "scaler_type": "standard",
+  "fit_source": "train",
+  "n_samples_seen": 3248,
+  "sequence_length": 10,
+  "feature_dimension": 11,
+  "feature_names": [
+    "mid_price",
+    "spread",
+    "spread_bps",
+    "mid_return_1s",
+    "mid_return_3s",
+    "mid_return_5s",
+    "mid_volatility_5s",
+    "bid_change_1s",
+    "ask_change_1s",
+    "microprice",
+    "depth_imbalance"
+  ],
+  "verdict": "PASS",
+  "row_counts": {
+    "train_sequences": 3248,
+    "val_sequences": 722,
+    "test_sequences": 658,
+    "total_sequences": 4628
+  },
+  "shapes": {
+    "train_before": [
+      3248,
+      10,
+      11
+    ],
+    "train_after": [
+      3248,
+      10,
+      11
+    ],
+    "val_before": [
+      722,
+      10,
+      11
+    ],
+    "val_after": [
+      722,
+      10,
+      11
+    ],
+    "test_before": [
+      658,
+      10,
+      11
+    ],
+    "test_after": [
+      658,
+      10,
+      11
+    ]
+  },
+  "leakage_proof": {
+    "fit_source_quarantine": "STRICTLY TRAIN ONLY",
+    "val_fit_exception": "RAISED ValueError (PASSED)",
+    "test_fit_exception": "RAISED ValueError (PASSED)",
+    "val_perturbation_max_diff": 0.0,
+    "test_perturbation_max_diff": 0.0,
+    "deterministic_fit": true,
+    "inference_reloadability": true,
+    "proof_statement": "Scaler was fitted exclusively on training data and validation/test data were transformed using the frozen training scaler."
+  },
+  "fitted_statistics": {
+    "mid_price": {
+      "center": 0.4999999999999999,
+      "scale": 0.2905514163427555,
+      "is_zero_variance": false
+    },
+    "spread": {
+      "center": 0.010258312807877062,
+      "scale": 0.003989297394919475,
+      "is_zero_variance": false
+    },
+    "spread_bps": {
+      "center": 519.1321318008095,
+      "scale": 954.5079995790802,
+      "is_zero_variance": false
+    },
+    "mid_return_1s": {
+      "center": 0.003528418867888129,
+      "scale": 0.1594643596234536,
+      "is_zero_variance": false
+    },
+    "mid_return_3s": {
+      "center": 0.011977715725074623,
+      "scale": 0.30177548539746124,
+      "is_zero_variance": false
+    },
+    "mid_return_5s": {
+      "center": 0.019889294759088086,
+      "scale": 0.38368372674502355,
+      "is_zero_variance": false
+    },
+    "mid_volatility_5s": {
+      "center": 0.07960839195464926,
+      "scale": 0.13446120355298916,
+      "is_zero_variance": false
+    },
+    "bid_change_1s": {
+      "center": 3.5423854115327247e-06,
+      "scale": 0.03799734943830172,
+      "is_zero_variance": false
+    },
+    "ask_change_1s": {
+      "center": -3.542385411532785e-06,
+      "scale": 0.0379973494383017,
+      "is_zero_variance": false
+    },
+    "microprice": {
+      "center": 0.49999999999999956,
+      "scale": 0.2911883113204862,
+      "is_zero_variance": false
+    },
+    "depth_imbalance": {
+      "center": 9.878523833641324e-19,
+      "scale": 0.7196491946472754,
+      "is_zero_variance": false
+    }
+  },
+  "post_scaling_audit": {
+    "train_features": {
+      "mid_price": {
+        "mean": 3.7932164251447926e-16,
+        "std": 1.0000000000000702,
+        "min": -1.7139823521373685,
+        "max": 1.7139823521373692,
+        "nan_count": 0
+      },
+      "spread": {
+        "mean": 1.1809185266227655e-12,
+        "std": 0.9999999999998613,
+        "min": -2.3207878208498345,
+        "max": 17.482198063484,
+        "nan_count": 0
+      },
+      "spread_bps": {
+        "mean": 1.883813302394512e-14,
+        "std": 1.0000000000000036,
+        "min": -0.5333711916177489,
+        "max": 9.932727512372942,
+        "nan_count": 0
+      },
+      "mid_return_1s": {
+        "mean": 2.1777662089739394e-16,
+        "std": 0.9999999999998626,
+        "min": -5.781202570803624,
+        "max": 26.6977596523916,
+        "nan_count": 16
+      },
+      "mid_return_3s": {
+        "mean": -8.403466767419663e-16,
+        "std": 1.0000000000001115,
+        "min": -3.1039926827954787,
+        "max": 17.038721456611523,
+        "nan_count": 96
+      },
+      "mid_return_5s": {
+        "mean": -5.377556685033016e-17,
+        "std": 0.9999999999999584,
+        "min": -2.511316481322651,
+        "max": 13.2166663391485,
+        "nan_count": 240
+      },
+      "mid_volatility_5s": {
+        "mean": -1.1828861573733281e-14,
+        "std": 1.0000000000000098,
+        "min": -0.5920547328975587,
+        "max": 13.649639461183375,
+        "nan_count": 240
+      },
+      "bid_change_1s": {
+        "mean": 3.710547011207167e-18,
+        "std": 1.0000000000000908,
+        "min": -13.158905812556569,
+        "max": 12.63236685479822,
+        "nan_count": 16
+      },
+      "ask_change_1s": {
+        "mean": -9.808155601974338e-18,
+        "std": 1.0000000000000915,
+        "min": -12.632366854798228,
+        "max": 13.158905812556576,
+        "nan_count": 16
+      },
+      "microprice": {
+        "mean": 1.5269121489906278e-15,
+        "std": 0.999999999999974,
+        "min": -1.7101204277567732,
+        "max": 1.7101204277567765,
+        "nan_count": 0
+      },
+      "depth_imbalance": {
+        "mean": 2.529449009306083e-19,
+        "std": 1.0000000000000098,
+        "min": -1.388760877017264,
+        "max": 1.388760877017264,
+        "nan_count": 0
+      }
+    },
+    "train_nan_count": 624,
+    "val_nan_count": 390,
+    "test_nan_count": 468,
+    "train_nan_pct": 0.175,
+    "val_nan_pct": 0.491,
+    "test_nan_pct": 0.647,
+    "train_inf_count": 0,
+    "val_inf_count": 0,
+    "test_inf_count": 0,
+    "zero_variance_count": 0,
+    "train_min": -13.158905812556569,
+    "train_max": 26.6977596523916,
+    "val_min": -10.263967043771848,
+    "val_max": 15.171028293723026,
+    "test_min": -7.3690282749871265,
+    "test_max": 10.8839493665734,
+    "train_class_match": "MATCH (Identical to Phase 16)",
+    "val_class_match": "MATCH (Identical to Phase 16)",
+    "test_class_match": "MATCH (Identical to Phase 16)"
+  },
+  "hashes": {
+    "input_train_parquet": "c93ae311c1f6b6a12e09eb4d6375a0954ca14718c43013926e53f9be395fb86d",
+    "input_val_parquet": "03040fc8218c088c99a96362b305d7fb69b8d11def09066f43819cf6b8ec8acd",
+    "input_test_parquet": "bc7e709468b41fb309344cafe9b2148fd021367e542f86e64fc931a03fe828c3",
+    "input_train_npz": "eb8f9823fae6e1eaa81f737143745b5643085daeeaff68b41e5523d8d142348b",
+    "input_val_npz": "ef383211a6d7dc26e5848fd534dfd57e9f64085bc7b06cf6de9af8936401ff7b",
+    "input_test_npz": "36e2d8e2e7d5393b3e4e47449f3e189e22e22f3fe6f25f42629b5ffc0a3f9b85",
+    "train_scaled_parquet": "8d625b4b0a9af0318e3220170e34eeac45d1301ee776d22546722dc05627dfd2",
+    "validation_scaled_parquet": "59d14857b6885519276c90e18ac26d2c9f1a5288572ab9a728e85e2c8c046994",
+    "test_scaled_parquet": "73f8ef374b12074213bbc213ab0bd7b29b6d8531f10a4f958744e8ce1c8f2a03",
+    "train_scaled_npz": "2131060963552873c0e7080440be75e06aca124ce84bc7130750637e53efc694",
+    "validation_scaled_npz": "864d331fdb288222fa952fda72d3f0895c7959fa7615fc5756380412c7e23ac3",
+    "test_scaled_npz": "d99e7e21b0f8db551666533d5a7a21aab6a504fdfce3ba779285418bccb71732",
+    "scaled_production_npz": "d878dce32b17d6c43e6bc1e4159d3315666bcc53b98f1b31a8f183f7f20866c3",
+    "scaler_params_json": "22966ed3550bc4914a4fe9a710f4cb27fe1c35d8df42208bc33134af06ccfaa9"
+  }
+}

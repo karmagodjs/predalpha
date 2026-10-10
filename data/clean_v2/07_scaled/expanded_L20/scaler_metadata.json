@@ -1,0 +1,86 @@
+{
+  "scaler_type": "standard",
+  "fit_source": "train",
+  "n_samples_seen": 6894,
+  "sequence_length": 20,
+  "n_features": 11,
+  "feature_names": [
+    "mid_price",
+    "spread",
+    "spread_bps",
+    "mid_return_1s",
+    "mid_return_3s",
+    "mid_return_5s",
+    "mid_volatility_5s",
+    "bid_change_1s",
+    "ask_change_1s",
+    "microprice",
+    "depth_imbalance"
+  ],
+  "centers": {
+    "mid_price": 0.5000000000000002,
+    "spread": 0.010352277342608277,
+    "spread_bps": 556.5240921466749,
+    "mid_return_1s": 0.0020229953445280013,
+    "mid_return_3s": 0.007059760182628085,
+    "mid_return_5s": 0.011064106943091056,
+    "mid_volatility_5s": 0.07038971136782046,
+    "bid_change_1s": 1.5019808733255916e-06,
+    "ask_change_1s": -1.5019808733257299e-06,
+    "microprice": 0.5000000000000001,
+    "depth_imbalance": 1.087838197177681e-18
+  },
+  "scales": {
+    "mid_price": 0.29952300943503135,
+    "spread": 0.0039773484549251465,
+    "spread_bps": 1026.8090309382003,
+    "mid_return_1s": 0.1345878234701891,
+    "mid_return_3s": 0.2508425501547481,
+    "mid_return_5s": 0.32078721992336906,
+    "mid_volatility_5s": 0.11012371466902766,
+    "bid_change_1s": 0.035764938350269726,
+    "ask_change_1s": 0.03576493835026973,
+    "microprice": 0.2998206612905268,
+    "depth_imbalance": 0.699265400472225
+  },
+  "zero_variance_features": [],
+  "train_shape_before": [
+    6894,
+    20,
+    11
+  ],
+  "train_shape_after": [
+    6894,
+    20,
+    11
+  ],
+  "val_shape_before": [
+    1268,
+    20,
+    11
+  ],
+  "val_shape_after": [
+    1268,
+    20,
+    11
+  ],
+  "test_shape_before": [
+    1442,
+    20,
+    11
+  ],
+  "test_shape_after": [
+    1442,
+    20,
+    11
+  ],
+  "artifacts": {
+    "train_scaled_parquet": "data\\clean_v2\\07_scaled\\expanded_L20\\train_scaled.parquet",
+    "validation_scaled_parquet": "data\\clean_v2\\07_scaled\\expanded_L20\\validation_scaled.parquet",
+    "test_scaled_parquet": "data\\clean_v2\\07_scaled\\expanded_L20\\test_scaled.parquet",
+    "train_scaled_npz": "data\\clean_v2\\07_scaled\\expanded_L20\\train_scaled.npz",
+    "validation_scaled_npz": "data\\clean_v2\\07_scaled\\expanded_L20\\validation_scaled.npz",
+    "test_scaled_npz": "data\\clean_v2\\07_scaled\\expanded_L20\\test_scaled.npz",
+    "scaler_params_json": "data\\clean_v2\\07_scaled\\expanded_L20\\scaler_params.json"
+  }
+}

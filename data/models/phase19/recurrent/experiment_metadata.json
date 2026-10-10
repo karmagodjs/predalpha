@@ -1,0 +1,39 @@
+{
+  "phase": "19B",
+  "objective": "Small Recurrent Sequence Modeling (GRU & LSTM)",
+  "execution_timestamp_utc": "2026-10-07T12:52:17.985956+00:00",
+  "input_directory": "C:\\Users\\karma\\OneDrive\\Desktop\\predalpha\\data\\clean_v2\\07_scaled\\expanded_collection",
+  "output_directory": "C:\\Users\\karma\\OneDrive\\Desktop\\predalpha\\data\\models\\phase19\\recurrent",
+  "train_samples": 7514,
+  "validation_samples": 1428,
+  "sequence_length": 10,
+  "feature_dim": 11,
+  "features": [
+    "mid_price",
+    "spread",
+    "spread_bps",
+    "mid_return_1s",
+    "mid_return_3s",
+    "mid_return_5s",
+    "mid_volatility_5s",
+    "bid_change_1s",
+    "ask_change_1s",
+    "microprice",
+    "depth_imbalance"
+  ],
+  "classes": [
+    "DOWN",
+    "FLAT",
+    "UP"
+  ],
+  "random_seeds": [
+    42,
+    123,
+    999
+  ],
+  "test_set_touched": false,
+  "test_file_present_and_locked": true,
+  "train_scaled_sha256": "ea760f237dc97573f9f06aba3215cd0c63de3a4deeb4c35f08cd5d093c780dd7",
+  "val_scaled_sha256": "69b97fd243bec2d2b65757ab209faa72e48c2d26a1bf6c4d1f78d6697ad62138",
+  "scaler_params_sha256": "b6fc4ae36d328d3dcafc77564870ba9fec9fcf98ecdadac3e6f570e15e3e52e7"
+}

@@ -1,0 +1,96 @@
+{
+  "scaler_type": "standard",
+  "fit_source": "train",
+  "n_samples_seen": 249,
+  "sequence_length": 10,
+  "n_features": 11,
+  "feature_names": [
+    "mid_price",
+    "spread",
+    "spread_bps",
+    "mid_return_1s",
+    "mid_return_3s",
+    "mid_return_5s",
+    "mid_volatility_5s",
+    "bid_change_1s",
+    "ask_change_1s",
+    "microprice",
+    "depth_imbalance"
+  ],
+  "centers": {
+    "mid_price": 0.02550000000000063,
+    "spread": 0.0009999999999999345,
+    "spread_bps": 392.1568627450854,
+    "mid_return_1s": 0.0,
+    "mid_return_3s": 0.0,
+    "mid_return_5s": 0.0,
+    "mid_volatility_5s": 0.0,
+    "bid_change_1s": 0.0,
+    "ask_change_1s": 0.0,
+    "microprice": 0.02561348986136353,
+    "depth_imbalance": 0.22697972272765699
+  },
+  "scales": {
+    "mid_price": 1.0,
+    "spread": 1.0,
+    "spread_bps": 1.0,
+    "mid_return_1s": 1.0,
+    "mid_return_3s": 1.0,
+    "mid_return_5s": 1.0,
+    "mid_volatility_5s": 1.0,
+    "bid_change_1s": 1.0,
+    "ask_change_1s": 1.0,
+    "microprice": 3.0645699032019073e-06,
+    "depth_imbalance": 0.006129139806403663
+  },
+  "zero_variance_features": [
+    "mid_price",
+    "spread",
+    "spread_bps",
+    "mid_return_1s",
+    "mid_return_3s",
+    "mid_return_5s",
+    "mid_volatility_5s",
+    "bid_change_1s",
+    "ask_change_1s"
+  ],
+  "train_shape_before": [
+    249,
+    10,
+    11
+  ],
+  "train_shape_after": [
+    249,
+    10,
+    11
+  ],
+  "val_shape_before": [
+    47,
+    10,
+    11
+  ],
+  "val_shape_after": [
+    47,
+    10,
+    11
+  ],
+  "test_shape_before": [
+    46,
+    10,
+    11
+  ],
+  "test_shape_after": [
+    46,
+    10,
+    11
+  ],
+  "artifacts": {
+    "train_scaled_parquet": "data\\clean_v2\\07_scaled\\train_scaled.parquet",
+    "validation_scaled_parquet": "data\\clean_v2\\07_scaled\\validation_scaled.parquet",
+    "test_scaled_parquet": "data\\clean_v2\\07_scaled\\test_scaled.parquet",
+    "train_scaled_npz": "data\\clean_v2\\07_scaled\\train_scaled.npz",
+    "validation_scaled_npz": "data\\clean_v2\\07_scaled\\validation_scaled.npz",
+    "test_scaled_npz": "data\\clean_v2\\07_scaled\\test_scaled.npz",
+    "scaler_params_json": "data\\clean_v2\\07_scaled\\scaler_params.json"
+  }
+}

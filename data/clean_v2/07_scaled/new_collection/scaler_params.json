@@ -1,0 +1,50 @@
+{
+  "scaler_type": "standard",
+  "fit_source": "train",
+  "is_fitted": true,
+  "n_samples_seen": 3248,
+  "n_features": 11,
+  "feature_names": [
+    "mid_price",
+    "spread",
+    "spread_bps",
+    "mid_return_1s",
+    "mid_return_3s",
+    "mid_return_5s",
+    "mid_volatility_5s",
+    "bid_change_1s",
+    "ask_change_1s",
+    "microprice",
+    "depth_imbalance"
+  ],
+  "centers": {
+    "mid_price": 0.4999999999999999,
+    "spread": 0.010258312807877062,
+    "spread_bps": 519.1321318008095,
+    "mid_return_1s": 0.003528418867888129,
+    "mid_return_3s": 0.011977715725074623,
+    "mid_return_5s": 0.019889294759088086,
+    "mid_volatility_5s": 0.07960839195464926,
+    "bid_change_1s": 3.5423854115327247e-06,
+    "ask_change_1s": -3.542385411532785e-06,
+    "microprice": 0.49999999999999956,
+    "depth_imbalance": 9.878523833641324e-19
+  },
+  "scales": {
+    "mid_price": 0.2905514163427555,
+    "spread": 0.003989297394919475,
+    "spread_bps": 954.5079995790802,
+    "mid_return_1s": 0.1594643596234536,
+    "mid_return_3s": 0.30177548539746124,
+    "mid_return_5s": 0.38368372674502355,
+    "mid_volatility_5s": 0.13446120355298916,
+    "bid_change_1s": 0.03799734943830172,
+    "ask_change_1s": 0.0379973494383017,
+    "microprice": 0.2911883113204862,
+    "depth_imbalance": 0.7196491946472754
+  },
+  "zero_variance_features": [],
+  "eps": 1e-08,
+  "clip_min": null,
+  "clip_max": null
+}

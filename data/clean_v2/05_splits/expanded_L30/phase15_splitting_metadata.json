@@ -1,0 +1,144 @@
+{
+  "generated_at_utc": "2026-10-08T08:09:07.042185+00:00",
+  "execution_duration_sec": 1.89,
+  "input_file": "data\\clean_v2\\04_features\\expanded_collection\\features_production.parquet",
+  "output_directory": "data\\clean_v2\\05_splits\\expanded_L30",
+  "dependency_calculation": {
+    "max_label_horizon_ms": 7000,
+    "feature_lookback_ms": 5000,
+    "future_sequence_lookback_ms": 30000,
+    "formula": "max_label_horizon + feature_lookback + future_sequence_lookback",
+    "calculated_min_required_purge_ms": 42000
+  },
+  "purge_intervals_applied": {
+    "purge_gap_1_train_to_val_ms": 61000,
+    "purge_gap_1_satisfied": true,
+    "purge_gap_2_val_to_test_ms": 96000,
+    "purge_gap_2_satisfied": true
+  },
+  "row_counts": {
+    "input_total": 11352,
+    "train": 8072,
+    "validation": 1572,
+    "test": 1708,
+    "purged": 0,
+    "train_percentage": 71.11,
+    "val_percentage": 13.85,
+    "test_percentage": 15.05
+  },
+  "chronological_boundaries": {
+    "train_start_ts": 1791062512000,
+    "train_end_ts": 1791291840000,
+    "val_start_ts": 1791291901000,
+    "val_end_ts": 1791294206000,
+    "test_start_ts": 1791294302000,
+    "test_end_ts": 1791296914000
+  },
+  "class_distributions": {
+    "train": {
+      "total": 8072,
+      "up_count": 3273,
+      "down_count": 3273,
+      "flat_count": 1526,
+      "up_pct": 40.55,
+      "down_pct": 40.55,
+      "flat_pct": 18.9
+    },
+    "validation": {
+      "total": 1572,
+      "up_count": 681,
+      "down_count": 680,
+      "flat_count": 211,
+      "up_pct": 43.32,
+      "down_pct": 43.26,
+      "flat_pct": 13.42
+    },
+    "test": {
+      "total": 1708,
+      "up_count": 762,
+      "down_count": 758,
+      "flat_count": 188,
+      "up_pct": 44.61,
+      "down_pct": 44.38,
+      "flat_pct": 11.01
+    }
+  },
+  "market_distributions": {
+    "train_market_count": 31,
+    "val_market_count": 8,
+    "test_market_count": 7,
+    "train_markets": [
+      "0x06d0b3cfe98dd6947539816fd3781f5966addb8537c69d438487964d38077760",
+      "0x0eba481603f1365ac9345d58df8abd75654a1e51ffdc375617b3d470cc4216e0",
+      "0x1513370f3c00f9a6dde05dd146894c23708eaec8d6f2f7d37eb06f2c88b33121",
+      "0x178ac9dd3e21a3a3baf361876f26fade75d0a6a43a39c577a7b9b06796f191d8",
+      "0x1d0fb9a895dc5d0c59854935fabe11157917e6b2624008d6ed222580418f2d36",
+      "0x216e6859dff89c30f8919c5f9a4f2cde7522249487e5ab53db2ffe4e561032ad",
+      "0x2e222470f8d209085ae1a4b85ccbd6d602b538f2efd09f74ed50322cfaa99af9",
+      "0x4283a2a38aa82abd8841c1254d221c20ad23211a3927101ddffb6b7b22dafaee",
+      "0x639d1879ca678ccf02f699b6b0e7c23209fc08304b296c6746a0f1dab20f81c2",
+      "0x67d7111399311bee6c11ed2884c00d2d2032368f5ce736b8a9a53450d2081b92",
+      "0x6e6775675fe8b6cefd3059ac37c47724979f1786bf68a11520f1c98459e1298f",
+      "0x71fbaada8842a50ff41114e8b7654687e40facaded333657895cf607fd94e6da",
+      "0x724dc1be4ae7fefd9d14c473d71c60aa489b02ab8f54d0fadb515fb2bf4de53e",
+      "0x72ecff6555978fabe2ff902a3843a8b5e601ec238b8af1f164a14c8aee4f7a43",
+      "0x7944f37d88ba36ef1bcdc2b455f29c58a255b81bb539849952d6a7c505f6ed8c",
+      "0x7c470e1d274ed64b36413504b22eb0f8acf3560ae2bc80adeded92a5b3ac3a21",
+      "0x9223ab0a30b3405d83774950a856934df64db6632922166717cc2f6536061d0d",
+      "0x9523a610624fc281c139b2b005b939415fb3644416219108b9dffd4b77d2033f",
+      "0xa9a650633de03b264d0db82b03e2ba76693a1f687cf09528b088257650954004",
+      "0xae59df8807f60d9b711252fcefb4481a456a3aa481f59e633bd81d828a9aceb5",
+      "0xb2e7490977939e623731117ad11c9a325f6923648415d6f9f52b684b49564ca8",
+      "0xba005b7e518925a5af69b6f92308abf507a9aa7d3b4870298bc9df4d3597979d",
+      "0xc00c0afd4a0daad7ddb291c0436043559ce27e7e0f643d8bdd13e2c875c90501",
+      "0xcb01675a9c6e9406fe7c37adc64bf1fefc8748092fb9ac190ab9c85713502e5d",
+      "0xd18098910284bdfdb21af60907edd7d7ee7d342c76aec7b3e046e2dc13f0cef5",
+      "0xd63dc526d1c1def2bdf9044d5e7a02d985eda0fc5024b145ea5df037bd32b471",
+      "0xde773924630e62e7bfd9bbcdfef5fcaee14cae6920a6d102ea846df79ba426c2",
+      "0xe1948ec2ba75cc62fc3f54c8504a43184c8676bd7a6b300a1e48c76ad2c66065",
+      "0xe8d6899ca1b3d81c309fe9205abd02abdb31f0af0ab583d7ea2ce3db63cfeb69",
+      "0xece8b19e50895f7f6fdbf9128854fdb4255113fa9f833bbd69d8a1aefc45eb6c",
+      "0xf06734044f5c1f9719cf18a16287bd0f8b32ece54565425898100fffdb1d15aa"
+    ],
+    "val_markets": [
+      "0x2a913a6835ecd0965065ac8455b2bd4c98318576b7aed4a496bbf9ff18ed372e",
+      "0x2dd2a8584c637933b6b4d11fb5640893a821ae7650920b1496fab96ef943d19b",
+      "0x68b8c68e5edf988a85ec92c48e9317f3fd7cc81e310c0e5c25e79837e96b7d95",
+      "0x86909aef3a32ee7dae1f4dc891b06ebfc94568fb48d5e287f8be5355e289dae6",
+      "0x9a0e73f20dc197177bd61f09404d81f099797c68ac322faa25aabf62080f3e7e",
+      "0xbe86622cfefd0383269f3b73db3468089e7b7eb60d2fbd7127aa0d96f770dd6b",
+      "0xda142dd7275687883b56f881b63da678ce67828ab00a26801b8ef7670ce868f3",
+      "0xe997b76adf868bfee4c02b08482f38b3b494bb3c4311f8299318cb7f3fcc8393"
+    ],
+    "test_markets": [
+      "0x28e140c8bfeaf70d81d0d79ae09e26f4c5cfc9b0b06799767e4203dcc7f4f6b9",
+      "0x3d5331103c7be26997ca97527477cd130040b411a2141a17ffe150dd0d239138",
+      "0x4d55ff7079878a9ccbe84bd17f93cdbeb7a4f40d63127ea191810f97366a2e8d",
+      "0xb06566465891af040048b66ef8c1411d3de885bb3419586edc6571ccfdbbe32e",
+      "0xb9289dfc6893b6dc1eec566494ee7180f62c0f1f06fa1f7897abdde659b6fa98",
+      "0xddd6c9ea938b75d7e7dab48692d8d5cfa04e728b9bf2186c407800a813f6cd9d",
+      "0xe55d9cf4cc0b0f16f1f99e5e711ef9bfce0aa0132cebb39794f2a57f412a9131"
+    ],
+    "market_overlap_train_val": 0,
+    "market_overlap_train_test": 0,
+    "market_overlap_val_test": 0
+  },
+  "asset_distributions": {
+    "train_asset_count": 62,
+    "val_asset_count": 16,
+    "test_asset_count": 14
+  },
+  "invariants": {
+    "timestamp_overlap_count": 0,
+    "duplicate_overlap_count": 0,
+    "label_boundary_violations": 0,
+    "feature_lookback_violations": 0,
+    "session_boundary_violations": 0,
+    "market_boundary_isolation": true
+  },
+  "hashes": {
+    "train_sha256": "8f7c2affc333374be5b7d4376b1186b7ee87fdfe11d61e57e93bbf439c846e9a",
+    "val_sha256": "d839d3b572f5eca72cc4dc8bb88af1398a3f4855a0f382f83284ec45b623be13",
+    "test_sha256": "6982d68bdccd78327860b08e1a799876490c7732a3d0de6a251bbbb398ee9225"
+  }
+}

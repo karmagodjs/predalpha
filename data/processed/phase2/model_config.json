@@ -1,0 +1,52 @@
+{
+  "config": {
+    "feature_cols": [
+      "mid_price",
+      "spread",
+      "spread_bps",
+      "mid_return_1s",
+      "mid_return_3s",
+      "mid_return_5s",
+      "mid_volatility_5s",
+      "bid_change_1s",
+      "ask_change_1s"
+    ],
+    "target_col": "label",
+    "target_classes": [
+      "DOWN",
+      "FLAT",
+      "UP"
+    ],
+    "timestamp_col": "timestamp",
+    "asset_id_col": "asset_id",
+    "quote_cols": [
+      "bid",
+      "ask"
+    ],
+    "forbidden_cols": [
+      "future_delta",
+      "future_mid",
+      "future_return",
+      "price_change_5m",
+      "target_close",
+      "target_time",
+      "label_threshold"
+    ],
+    "random_seed": 42,
+    "dummy_strategy": "most_frequent",
+    "logistic_max_iter": 1000,
+    "logistic_class_weight": "balanced",
+    "logistic_solver": "lbfgs",
+    "selection_metric": "balanced_accuracy"
+  },
+  "forbidden_cols": [
+    "future_delta",
+    "future_mid",
+    "future_return",
+    "label_threshold",
+    "price_change_5m",
+    "target_close",
+    "target_time"
+  ],
+  "timestamp": "2026-10-04T11:24:43.678511+00:00"
+}

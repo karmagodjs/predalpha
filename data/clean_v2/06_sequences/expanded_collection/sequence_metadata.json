@@ -1,0 +1,150 @@
+{
+  "generated_at_utc": "2026-10-07T03:15:20.678844+00:00",
+  "execution_duration_sec": 3.92,
+  "input_directory": "data\\clean_v2\\05_splits\\expanded_collection",
+  "output_directory": "data\\clean_v2\\06_sequences\\expanded_collection",
+  "sequence_length": 10,
+  "feature_dimension": 11,
+  "feature_columns": [
+    "mid_price",
+    "spread",
+    "spread_bps",
+    "mid_return_1s",
+    "mid_return_3s",
+    "mid_return_5s",
+    "mid_volatility_5s",
+    "bid_change_1s",
+    "ask_change_1s",
+    "microprice",
+    "depth_imbalance"
+  ],
+  "verdict": "PASS",
+  "row_counts": {
+    "train_input_rows": 8072,
+    "val_input_rows": 1572,
+    "test_input_rows": 1708,
+    "total_input_rows": 11352,
+    "train_warmup_dropped": 558,
+    "val_warmup_dropped": 144,
+    "test_warmup_dropped": 126,
+    "total_warmup_dropped": 828,
+    "train_sequences": 7514,
+    "val_sequences": 1428,
+    "test_sequences": 1582,
+    "total_sequences": 10524,
+    "train_retention_pct": 93.09,
+    "val_retention_pct": 90.84,
+    "test_retention_pct": 92.62,
+    "total_retention_pct": 92.71
+  },
+  "market_distributions": {
+    "train_market_count": 31,
+    "val_market_count": 8,
+    "test_market_count": 7,
+    "train_stream_count": 62,
+    "val_stream_count": 16,
+    "test_stream_count": 14,
+    "total_stream_count": 92
+  },
+  "class_distributions": {
+    "train": {
+      "total": 7514,
+      "up_count": 3050,
+      "down_count": 3050,
+      "flat_count": 1414,
+      "up_pct": 40.59,
+      "down_pct": 40.59,
+      "flat_pct": 18.82,
+      "up_down_ratio": 1.0
+    },
+    "validation": {
+      "total": 1428,
+      "up_count": 617,
+      "down_count": 616,
+      "flat_count": 195,
+      "up_pct": 43.21,
+      "down_pct": 43.14,
+      "flat_pct": 13.66,
+      "up_down_ratio": 1.0016
+    },
+    "test": {
+      "total": 1582,
+      "up_count": 709,
+      "down_count": 705,
+      "flat_count": 168,
+      "up_pct": 44.82,
+      "down_pct": 44.56,
+      "flat_pct": 10.62,
+      "up_down_ratio": 1.0057
+    }
+  },
+  "combined_class_distribution": {
+    "total": 10524,
+    "up_count": 4376,
+    "down_count": 4371,
+    "flat_count": 1777,
+    "up_pct": 41.58,
+    "down_pct": 41.53,
+    "flat_pct": 16.89,
+    "up_down_ratio": 1.0011
+  },
+  "invariants": {
+    "min_seq_length": 10,
+    "max_seq_length": 10,
+    "feature_dim_observed": 11,
+    "forbidden_columns_found": 0,
+    "causality_violations": 0,
+    "internal_monotonicity_violations": 0,
+    "cross_split_violations": 0,
+    "cross_market_violations": 0,
+    "cross_asset_violations": 0,
+    "duplicate_endpoints_count": 0,
+    "target_alignment_mismatches": 0,
+    "deterministic_reproducibility": true
+  },
+  "hashes": {
+    "input_train_parquet": "bce005c8f67f809a386b0c12f9201fc45e6eab338a6d1bd4d9d04b49761e0af1",
+    "input_val_parquet": "a38bff9fbbd31564900e9a94aa5dca397569d0824ef44d5c774557a562d49390",
+    "input_test_parquet": "faa2952096545a8edf0fcf22ca655493e9ab27f80539b358da2ce112e2c05bfa",
+    "train_sequences_parquet": "20d73ec929fdeb0843d08ffe197fa15da7c535eadba84eb92b119cac8910a46e",
+    "validation_sequences_parquet": "51eac3800dec70024b747558854694b1f98e75b14ce80215ccd657396809a787",
+    "test_sequences_parquet": "2c2abe39c3eb278d8a98918ae50e4611e807ae4d194850e9ce4749313f01b2e6",
+    "train_sequences_npz": "f49c97683c1844847770bcf7c1fe81b0e67cc35a82e86b11156b60573558569b",
+    "validation_sequences_npz": "caabc3d101b2307932e08de8334528615159b5b8db98ed875352b7fff5dd9cf4",
+    "test_sequences_npz": "cbfb24c462de2fe868f2016b9e9f00165032f793137a7b7b71fc8f0c5236ffab",
+    "sequences_production_npz": "ceb1737020de56a353f9c2f0d0e80c339dbfc37bae9e7d295c30662ba7f86b52"
+  },
+  "nan_accounting": {
+    "nan_by_split": {
+      "train": 2418,
+      "validation": 624,
+      "test": 546,
+      "total": 3588
+    },
+    "nan_by_step": {
+      "step_0_t_minus_9s": 1472,
+      "step_1_t_minus_8s": 920,
+      "step_2_t_minus_7s": 644,
+      "step_3_t_minus_6s": 368,
+      "step_4_t_minus_5s": 184,
+      "step_5_t_minus_4s": 0,
+      "step_6_t_minus_3s": 0,
+      "step_7_t_minus_2s": 0,
+      "step_8_t_minus_1s": 0,
+      "step_9_t_minus_0s": 0
+    },
+    "nan_by_feature": {
+      "mid_price": 0,
+      "spread": 0,
+      "spread_bps": 0,
+      "mid_return_1s": 92,
+      "mid_return_3s": 552,
+      "mid_return_5s": 1380,
+      "mid_volatility_5s": 1380,
+      "bid_change_1s": 92,
+      "ask_change_1s": 92,
+      "microprice": 0,
+      "depth_imbalance": 0
+    }
+  }
+}

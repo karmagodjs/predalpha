@@ -1,0 +1,152 @@
+{
+  "train": {
+    "dummy": {
+      "labels": [
+        "DOWN",
+        "FLAT",
+        "UP"
+      ],
+      "matrix": [
+        [
+          0,
+          10,
+          0
+        ],
+        [
+          0,
+          164,
+          0
+        ],
+        [
+          0,
+          28,
+          0
+        ]
+      ]
+    },
+    "logistic_regression": {
+      "labels": [
+        "DOWN",
+        "FLAT",
+        "UP"
+      ],
+      "matrix": [
+        [
+          9,
+          0,
+          1
+        ],
+        [
+          53,
+          87,
+          24
+        ],
+        [
+          13,
+          2,
+          13
+        ]
+      ]
+    }
+  },
+  "validation": {
+    "dummy": {
+      "labels": [
+        "DOWN",
+        "FLAT",
+        "UP"
+      ],
+      "matrix": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          36,
+          0
+        ],
+        [
+          0,
+          2,
+          0
+        ]
+      ]
+    },
+    "logistic_regression": {
+      "labels": [
+        "DOWN",
+        "FLAT",
+        "UP"
+      ],
+      "matrix": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          22,
+          11,
+          3
+        ],
+        [
+          2,
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  "test": {
+    "dummy": {
+      "labels": [
+        "DOWN",
+        "FLAT",
+        "UP"
+      ],
+      "matrix": [
+        [
+          0,
+          2,
+          0
+        ],
+        [
+          0,
+          37,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "logistic_regression": {
+      "labels": [
+        "DOWN",
+        "FLAT",
+        "UP"
+      ],
+      "matrix": [
+        [
+          2,
+          0,
+          0
+        ],
+        [
+          22,
+          15,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ]
+    }
+  }
+}

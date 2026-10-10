@@ -1,0 +1,117 @@
+{
+  "generated_at_utc": "2026-10-06T04:10:44.235856+00:00",
+  "execution_duration_sec": 0.94,
+  "input_directory": "data\\clean_v2\\05_splits\\new_collection",
+  "output_directory": "data\\clean_v2\\06_sequences\\new_collection",
+  "sequence_length": 10,
+  "feature_dimension": 11,
+  "feature_columns": [
+    "mid_price",
+    "spread",
+    "spread_bps",
+    "mid_return_1s",
+    "mid_return_3s",
+    "mid_return_5s",
+    "mid_volatility_5s",
+    "bid_change_1s",
+    "ask_change_1s",
+    "microprice",
+    "depth_imbalance"
+  ],
+  "verdict": "PASS",
+  "row_counts": {
+    "train_input_rows": 3392,
+    "val_input_rows": 812,
+    "test_input_rows": 766,
+    "total_input_rows": 4970,
+    "train_warmup_dropped": 144,
+    "val_warmup_dropped": 90,
+    "test_warmup_dropped": 108,
+    "total_warmup_dropped": 342,
+    "train_sequences": 3248,
+    "val_sequences": 722,
+    "test_sequences": 658,
+    "total_sequences": 4628,
+    "train_retention_pct": 95.75,
+    "val_retention_pct": 88.92,
+    "test_retention_pct": 85.9,
+    "total_retention_pct": 93.12
+  },
+  "market_distributions": {
+    "train_market_count": 8,
+    "val_market_count": 5,
+    "test_market_count": 6,
+    "train_stream_count": 16,
+    "val_stream_count": 10,
+    "test_stream_count": 12,
+    "total_stream_count": 38
+  },
+  "class_distributions": {
+    "train": {
+      "total": 3248,
+      "up_count": 1386,
+      "down_count": 1386,
+      "flat_count": 476,
+      "up_pct": 42.67,
+      "down_pct": 42.67,
+      "flat_pct": 14.66,
+      "up_down_ratio": 1.0
+    },
+    "validation": {
+      "total": 722,
+      "up_count": 282,
+      "down_count": 281,
+      "flat_count": 159,
+      "up_pct": 39.06,
+      "down_pct": 38.92,
+      "flat_pct": 22.02,
+      "up_down_ratio": 1.0036
+    },
+    "test": {
+      "total": 658,
+      "up_count": 291,
+      "down_count": 291,
+      "flat_count": 76,
+      "up_pct": 44.22,
+      "down_pct": 44.22,
+      "flat_pct": 11.55,
+      "up_down_ratio": 1.0
+    }
+  },
+  "combined_class_distribution": {
+    "total": 4628,
+    "up_count": 1959,
+    "down_count": 1958,
+    "flat_count": 711,
+    "up_pct": 42.33,
+    "down_pct": 42.31,
+    "flat_pct": 15.36,
+    "up_down_ratio": 1.0005
+  },
+  "invariants": {
+    "min_seq_length": 10,
+    "max_seq_length": 10,
+    "feature_dim_observed": 11,
+    "forbidden_columns_found": 0,
+    "causality_violations": 0,
+    "internal_monotonicity_violations": 0,
+    "cross_split_violations": 0,
+    "cross_market_violations": 0,
+    "cross_asset_violations": 0,
+    "duplicate_endpoints_count": 0,
+    "target_alignment_mismatches": 0,
+    "deterministic_reproducibility": true
+  },
+  "hashes": {
+    "input_train_parquet": "51ad84ec1e8ffa819fb5fc3c3531e3292ecab1def07ae73596093ef366a969b8",
+    "input_val_parquet": "d19e16d3bf83abfbde12cc1a8b6fbbb40335725a6e61034247b627b14b1ca6e2",
+    "input_test_parquet": "ea03ff1a6f8907b8796a3d7bcc2a103275d347ae8169a66b6c4c610df531b9b0",
+    "train_sequences_parquet": "c93ae311c1f6b6a12e09eb4d6375a0954ca14718c43013926e53f9be395fb86d",
+    "validation_sequences_parquet": "03040fc8218c088c99a96362b305d7fb69b8d11def09066f43819cf6b8ec8acd",
+    "test_sequences_parquet": "bc7e709468b41fb309344cafe9b2148fd021367e542f86e64fc931a03fe828c3",
+    "train_sequences_npz": "eb8f9823fae6e1eaa81f737143745b5643085daeeaff68b41e5523d8d142348b",
+    "validation_sequences_npz": "ef383211a6d7dc26e5848fd534dfd57e9f64085bc7b06cf6de9af8936401ff7b",
+    "test_sequences_npz": "36e2d8e2e7d5393b3e4e47449f3e189e22e22f3fe6f25f42629b5ffc0a3f9b85",
+    "sequences_production_npz": "12fa2a1c0372b191accac1c72bb73a44d2505364bab881b6e880ab815787385b"
+  }
+}

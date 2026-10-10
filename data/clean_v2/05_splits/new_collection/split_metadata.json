@@ -1,0 +1,117 @@
+{
+  "generated_at_utc": "2026-10-06T03:51:09.873569+00:00",
+  "execution_duration_sec": 0.4,
+  "input_file": "C:\\Users\\karma\\OneDrive\\Desktop\\predalpha\\data\\clean_v2\\04_features\\new_collection\\features_production.parquet",
+  "output_directory": "C:\\Users\\karma\\OneDrive\\Desktop\\predalpha\\data\\clean_v2\\05_splits\\new_collection",
+  "dependency_calculation": {
+    "max_label_horizon_ms": 7000,
+    "feature_lookback_ms": 5000,
+    "future_sequence_lookback_ms": 10000,
+    "formula": "max_label_horizon + feature_lookback + future_sequence_lookback",
+    "calculated_min_required_purge_ms": 22000
+  },
+  "purge_intervals_applied": {
+    "purge_gap_1_train_to_val_ms": 88000,
+    "purge_gap_1_satisfied": true,
+    "purge_gap_2_val_to_test_ms": 69000,
+    "purge_gap_2_satisfied": true
+  },
+  "row_counts": {
+    "input_total": 4970,
+    "train": 3392,
+    "validation": 812,
+    "test": 766,
+    "purged": 0,
+    "train_percentage": 68.25,
+    "val_percentage": 16.34,
+    "test_percentage": 15.41
+  },
+  "chronological_boundaries": {
+    "train_start_ts": 1791204601000,
+    "train_end_ts": 1791206913000,
+    "val_start_ts": 1791207001000,
+    "val_end_ts": 1791208433000,
+    "test_start_ts": 1791208502000,
+    "test_end_ts": 1791210723000
+  },
+  "class_distributions": {
+    "train": {
+      "total": 3392,
+      "up_count": 1445,
+      "down_count": 1445,
+      "flat_count": 502,
+      "up_pct": 42.6,
+      "down_pct": 42.6,
+      "flat_pct": 14.8
+    },
+    "validation": {
+      "total": 812,
+      "up_count": 322,
+      "down_count": 321,
+      "flat_count": 169,
+      "up_pct": 39.66,
+      "down_pct": 39.53,
+      "flat_pct": 20.81
+    },
+    "test": {
+      "total": 766,
+      "up_count": 342,
+      "down_count": 342,
+      "flat_count": 82,
+      "up_pct": 44.65,
+      "down_pct": 44.65,
+      "flat_pct": 10.7
+    }
+  },
+  "market_distributions": {
+    "train_market_count": 8,
+    "val_market_count": 5,
+    "test_market_count": 6,
+    "train_markets": [
+      "0x1513370f3c00f9a6dde05dd146894c23708eaec8d6f2f7d37eb06f2c88b33121",
+      "0x2e222470f8d209085ae1a4b85ccbd6d602b538f2efd09f74ed50322cfaa99af9",
+      "0x67d7111399311bee6c11ed2884c00d2d2032368f5ce736b8a9a53450d2081b92",
+      "0x7944f37d88ba36ef1bcdc2b455f29c58a255b81bb539849952d6a7c505f6ed8c",
+      "0x9523a610624fc281c139b2b005b939415fb3644416219108b9dffd4b77d2033f",
+      "0xae59df8807f60d9b711252fcefb4481a456a3aa481f59e633bd81d828a9aceb5",
+      "0xde773924630e62e7bfd9bbcdfef5fcaee14cae6920a6d102ea846df79ba426c2",
+      "0xece8b19e50895f7f6fdbf9128854fdb4255113fa9f833bbd69d8a1aefc45eb6c"
+    ],
+    "val_markets": [
+      "0x06d0b3cfe98dd6947539816fd3781f5966addb8537c69d438487964d38077760",
+      "0x178ac9dd3e21a3a3baf361876f26fade75d0a6a43a39c577a7b9b06796f191d8",
+      "0xa9a650633de03b264d0db82b03e2ba76693a1f687cf09528b088257650954004",
+      "0xc00c0afd4a0daad7ddb291c0436043559ce27e7e0f643d8bdd13e2c875c90501",
+      "0xe1948ec2ba75cc62fc3f54c8504a43184c8676bd7a6b300a1e48c76ad2c66065"
+    ],
+    "test_markets": [
+      "0x1d0fb9a895dc5d0c59854935fabe11157917e6b2624008d6ed222580418f2d36",
+      "0x4283a2a38aa82abd8841c1254d221c20ad23211a3927101ddffb6b7b22dafaee",
+      "0x7c470e1d274ed64b36413504b22eb0f8acf3560ae2bc80adeded92a5b3ac3a21",
+      "0xba005b7e518925a5af69b6f92308abf507a9aa7d3b4870298bc9df4d3597979d",
+      "0xd18098910284bdfdb21af60907edd7d7ee7d342c76aec7b3e046e2dc13f0cef5",
+      "0xe8d6899ca1b3d81c309fe9205abd02abdb31f0af0ab583d7ea2ce3db63cfeb69"
+    ],
+    "market_overlap_train_val": 0,
+    "market_overlap_train_test": 0,
+    "market_overlap_val_test": 0
+  },
+  "asset_distributions": {
+    "train_asset_count": 16,
+    "val_asset_count": 10,
+    "test_asset_count": 12
+  },
+  "invariants": {
+    "timestamp_overlap_count": 0,
+    "duplicate_overlap_count": 0,
+    "label_boundary_violations": 0,
+    "feature_lookback_violations": 0,
+    "session_boundary_violations": 0,
+    "market_boundary_isolation": true
+  },
+  "hashes": {
+    "train_sha256": "6234e04192ab68c57e987b93a0770a8e9c6111895e31169d88607a47f274b164",
+    "val_sha256": "8826c1c7d555e01db01eff71f5901f6e68c78b7392c6ba25d539d10aad0ccdbb",
+    "test_sha256": "e8122c8cbd04c4b42788cd421b79f4d528233a74dc9d872d183a4f28dda6844b"
+  }
+}

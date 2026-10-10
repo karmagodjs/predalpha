@@ -1,0 +1,1182 @@
+{
+  "metadata": {
+    "execution_timestamp_utc": "2026-10-07T12:20:52.125135+00:00",
+    "input_directory": "data\\clean_v2\\07_scaled\\expanded_collection",
+    "output_directory": "data\\models\\phase19\\baselines",
+    "train_samples": 7514,
+    "val_samples": 1428,
+    "test_samples_locked": 1582,
+    "test_set_touched": false,
+    "feature_dim_3d": [
+      10,
+      11
+    ],
+    "feature_dim_flat": 110,
+    "feature_names": [
+      "mid_price",
+      "spread",
+      "spread_bps",
+      "mid_return_1s",
+      "mid_return_3s",
+      "mid_return_5s",
+      "mid_volatility_5s",
+      "bid_change_1s",
+      "ask_change_1s",
+      "microprice",
+      "depth_imbalance"
+    ],
+    "class_names": [
+      "DOWN",
+      "FLAT",
+      "UP"
+    ],
+    "train_class_counts": {
+      "DOWN": 3050,
+      "FLAT": 1414,
+      "UP": 3050
+    },
+    "hashes": {
+      "train_scaled_npz": "ea760f237dc97573f9f06aba3215cd0c63de3a4deeb4c35f08cd5d093c780dd7",
+      "validation_scaled_npz": "69b97fd243bec2d2b65757ab209faa72e48c2d26a1bf6c4d1f78d6697ad62138",
+      "warmup_masks_npz": "246728f2c4caa1a2bbaa4e3ad1bcb9e04c0a67f322759c3f178abf353683593c",
+      "scaler_params_json": "b6fc4ae36d328d3dcafc77564870ba9fec9fcf98ecdadac3e6f570e15e3e52e7"
+    }
+  },
+  "models": {
+    "majority_baseline": {
+      "model_name": "Majority-Class Baseline",
+      "parameters": 0,
+      "train_time_sec": 0.0002,
+      "inference_time_sec": 0.0001,
+      "majority_class": "UP",
+      "train_metrics": {
+        "accuracy": 0.4059,
+        "balanced_accuracy": 0.3333,
+        "macro_f1": 0.1925,
+        "weighted_f1": 0.2344,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 3050
+          },
+          "FLAT": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1414
+          },
+          "UP": {
+            "precision": 0.4059,
+            "recall": 1.0,
+            "f1": 0.5774,
+            "support": 3050
+          }
+        },
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            3050
+          ],
+          [
+            0,
+            0,
+            1414
+          ],
+          [
+            0,
+            0,
+            3050
+          ]
+        ],
+        "total_samples": 7514
+      },
+      "val_metrics": {
+        "accuracy": 0.4321,
+        "balanced_accuracy": 0.3333,
+        "macro_f1": 0.2011,
+        "weighted_f1": 0.2607,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 616
+          },
+          "FLAT": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 195
+          },
+          "UP": {
+            "precision": 0.4321,
+            "recall": 1.0,
+            "f1": 0.6034,
+            "support": 617
+          }
+        },
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            616
+          ],
+          [
+            0,
+            0,
+            195
+          ],
+          [
+            0,
+            0,
+            617
+          ]
+        ],
+        "total_samples": 1428
+      },
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          616
+        ],
+        [
+          0,
+          0,
+          195
+        ],
+        [
+          0,
+          0,
+          617
+        ]
+      ]
+    },
+    "logistic_regression": {
+      "model_name": "Logistic Regression (Standard)",
+      "parameters": 333,
+      "train_time_sec": 4.4396,
+      "inference_time_sec": 0.0004,
+      "train_metrics": {
+        "accuracy": 0.5113,
+        "balanced_accuracy": 0.4448,
+        "macro_f1": 0.4415,
+        "weighted_f1": 0.488,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.5223,
+            "recall": 0.5869,
+            "f1": 0.5527,
+            "support": 3050
+          },
+          "FLAT": {
+            "precision": 0.6314,
+            "recall": 0.1393,
+            "f1": 0.2283,
+            "support": 1414
+          },
+          "UP": {
+            "precision": 0.4914,
+            "recall": 0.6082,
+            "f1": 0.5436,
+            "support": 3050
+          }
+        },
+        "confusion_matrix": [
+          [
+            1790,
+            52,
+            1208
+          ],
+          [
+            505,
+            197,
+            712
+          ],
+          [
+            1132,
+            63,
+            1855
+          ]
+        ],
+        "total_samples": 7514
+      },
+      "val_metrics": {
+        "accuracy": 0.5609,
+        "balanced_accuracy": 0.4845,
+        "macro_f1": 0.4995,
+        "weighted_f1": 0.55,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.575,
+            "recall": 0.6039,
+            "f1": 0.5891,
+            "support": 616
+          },
+          "FLAT": {
+            "precision": 0.6027,
+            "recall": 0.2256,
+            "f1": 0.3284,
+            "support": 195
+          },
+          "UP": {
+            "precision": 0.5438,
+            "recall": 0.624,
+            "f1": 0.5811,
+            "support": 617
+          }
+        },
+        "confusion_matrix": [
+          [
+            372,
+            15,
+            229
+          ],
+          [
+            57,
+            44,
+            94
+          ],
+          [
+            218,
+            14,
+            385
+          ]
+        ],
+        "total_samples": 1428
+      },
+      "confusion_matrix": [
+        [
+          372,
+          15,
+          229
+        ],
+        [
+          57,
+          44,
+          94
+        ],
+        [
+          218,
+          14,
+          385
+        ]
+      ]
+    },
+    "logistic_regression_weighted": {
+      "model_name": "Logistic Regression (Class-Weighted)",
+      "parameters": 333,
+      "train_time_sec": 0.6373,
+      "inference_time_sec": 0.0005,
+      "class_weights": [
+        0.8212021589279175,
+        1.7713342905044556,
+        0.8212021589279175
+      ],
+      "train_metrics": {
+        "accuracy": 0.4961,
+        "balanced_accuracy": 0.4818,
+        "macro_f1": 0.4786,
+        "weighted_f1": 0.4978,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.5308,
+            "recall": 0.5118,
+            "f1": 0.5211,
+            "support": 3050
+          },
+          "FLAT": {
+            "precision": 0.3682,
+            "recall": 0.4158,
+            "f1": 0.3906,
+            "support": 1414
+          },
+          "UP": {
+            "precision": 0.5306,
+            "recall": 0.5177,
+            "f1": 0.5241,
+            "support": 3050
+          }
+        },
+        "confusion_matrix": [
+          [
+            1561,
+            522,
+            967
+          ],
+          [
+            396,
+            588,
+            430
+          ],
+          [
+            984,
+            487,
+            1579
+          ]
+        ],
+        "total_samples": 7514
+      },
+      "val_metrics": {
+        "accuracy": 0.5077,
+        "balanced_accuracy": 0.4925,
+        "macro_f1": 0.4753,
+        "weighted_f1": 0.517,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.5743,
+            "recall": 0.5146,
+            "f1": 0.5428,
+            "support": 616
+          },
+          "FLAT": {
+            "precision": 0.2687,
+            "recall": 0.441,
+            "f1": 0.334,
+            "support": 195
+          },
+          "UP": {
+            "precision": 0.5791,
+            "recall": 0.5219,
+            "f1": 0.549,
+            "support": 617
+          }
+        },
+        "confusion_matrix": [
+          [
+            317,
+            123,
+            176
+          ],
+          [
+            51,
+            86,
+            58
+          ],
+          [
+            184,
+            111,
+            322
+          ]
+        ],
+        "total_samples": 1428
+      },
+      "confusion_matrix": [
+        [
+          317,
+          123,
+          176
+        ],
+        [
+          51,
+          86,
+          58
+        ],
+        [
+          184,
+          111,
+          322
+        ]
+      ]
+    },
+    "small_mlp_seed_runs": {
+      "seed_42": {
+        "seed": 42,
+        "parameters": 9283,
+        "train_time_sec": 8.7041,
+        "inference_time_sec": 0.0011,
+        "train_metrics": {
+          "accuracy": 0.5394,
+          "balanced_accuracy": 0.4828,
+          "macro_f1": 0.4892,
+          "weighted_f1": 0.5248,
+          "per_class": {
+            "DOWN": {
+              "precision": 0.5451,
+              "recall": 0.6187,
+              "f1": 0.5795,
+              "support": 3050
+            },
+            "FLAT": {
+              "precision": 0.6034,
+              "recall": 0.2228,
+              "f1": 0.3254,
+              "support": 1414
+            },
+            "UP": {
+              "precision": 0.5244,
+              "recall": 0.6069,
+              "f1": 0.5626,
+              "support": 3050
+            }
+          },
+          "confusion_matrix": [
+            [
+              1887,
+              108,
+              1055
+            ],
+            [
+              475,
+              315,
+              624
+            ],
+            [
+              1100,
+              99,
+              1851
+            ]
+          ],
+          "total_samples": 7514
+        },
+        "val_metrics": {
+          "accuracy": 0.5658,
+          "balanced_accuracy": 0.493,
+          "macro_f1": 0.5067,
+          "weighted_f1": 0.5564,
+          "per_class": {
+            "DOWN": {
+              "precision": 0.5771,
+              "recall": 0.6136,
+              "f1": 0.5948,
+              "support": 616
+            },
+            "FLAT": {
+              "precision": 0.5393,
+              "recall": 0.2462,
+              "f1": 0.338,
+              "support": 195
+            },
+            "UP": {
+              "precision": 0.5585,
+              "recall": 0.6191,
+              "f1": 0.5872,
+              "support": 617
+            }
+          },
+          "confusion_matrix": [
+            [
+              378,
+              24,
+              214
+            ],
+            [
+              59,
+              48,
+              88
+            ],
+            [
+              218,
+              17,
+              382
+            ]
+          ],
+          "total_samples": 1428
+        },
+        "confusion_matrix": [
+          [
+            378,
+            24,
+            214
+          ],
+          [
+            59,
+            48,
+            88
+          ],
+          [
+            218,
+            17,
+            382
+          ]
+        ],
+        "epochs_trained": 34
+      },
+      "seed_123": {
+        "seed": 123,
+        "parameters": 9283,
+        "train_time_sec": 8.426,
+        "inference_time_sec": 0.0011,
+        "train_metrics": {
+          "accuracy": 0.5443,
+          "balanced_accuracy": 0.4892,
+          "macro_f1": 0.4974,
+          "weighted_f1": 0.5306,
+          "per_class": {
+            "DOWN": {
+              "precision": 0.5378,
+              "recall": 0.6393,
+              "f1": 0.5842,
+              "support": 3050
+            },
+            "FLAT": {
+              "precision": 0.6411,
+              "recall": 0.2362,
+              "f1": 0.3452,
+              "support": 1414
+            },
+            "UP": {
+              "precision": 0.5364,
+              "recall": 0.5921,
+              "f1": 0.5629,
+              "support": 3050
+            }
+          },
+          "confusion_matrix": [
+            [
+              1950,
+              96,
+              1004
+            ],
+            [
+              523,
+              334,
+              557
+            ],
+            [
+              1153,
+              91,
+              1806
+            ]
+          ],
+          "total_samples": 7514
+        },
+        "val_metrics": {
+          "accuracy": 0.5651,
+          "balanced_accuracy": 0.4936,
+          "macro_f1": 0.5071,
+          "weighted_f1": 0.556,
+          "per_class": {
+            "DOWN": {
+              "precision": 0.5723,
+              "recall": 0.6364,
+              "f1": 0.6026,
+              "support": 616
+            },
+            "FLAT": {
+              "precision": 0.5326,
+              "recall": 0.2513,
+              "f1": 0.3415,
+              "support": 195
+            },
+            "UP": {
+              "precision": 0.5622,
+              "recall": 0.5932,
+              "f1": 0.5773,
+              "support": 617
+            }
+          },
+          "confusion_matrix": [
+            [
+              392,
+              25,
+              199
+            ],
+            [
+              60,
+              49,
+              86
+            ],
+            [
+              233,
+              18,
+              366
+            ]
+          ],
+          "total_samples": 1428
+        },
+        "confusion_matrix": [
+          [
+            392,
+            25,
+            199
+          ],
+          [
+            60,
+            49,
+            86
+          ],
+          [
+            233,
+            18,
+            366
+          ]
+        ],
+        "epochs_trained": 35
+      },
+      "seed_999": {
+        "seed": 999,
+        "parameters": 9283,
+        "train_time_sec": 9.101,
+        "inference_time_sec": 0.0011,
+        "train_metrics": {
+          "accuracy": 0.5532,
+          "balanced_accuracy": 0.5035,
+          "macro_f1": 0.5137,
+          "weighted_f1": 0.5426,
+          "per_class": {
+            "DOWN": {
+              "precision": 0.5448,
+              "recall": 0.6397,
+              "f1": 0.5884,
+              "support": 3050
+            },
+            "FLAT": {
+              "precision": 0.6175,
+              "recall": 0.2751,
+              "f1": 0.3806,
+              "support": 1414
+            },
+            "UP": {
+              "precision": 0.5501,
+              "recall": 0.5957,
+              "f1": 0.572,
+              "support": 3050
+            }
+          },
+          "confusion_matrix": [
+            [
+              1951,
+              124,
+              975
+            ],
+            [
+              514,
+              389,
+              511
+            ],
+            [
+              1116,
+              117,
+              1817
+            ]
+          ],
+          "total_samples": 7514
+        },
+        "val_metrics": {
+          "accuracy": 0.5595,
+          "balanced_accuracy": 0.4998,
+          "macro_f1": 0.5128,
+          "weighted_f1": 0.5537,
+          "per_class": {
+            "DOWN": {
+              "precision": 0.5678,
+              "recall": 0.612,
+              "f1": 0.5891,
+              "support": 616
+            },
+            "FLAT": {
+              "precision": 0.5043,
+              "recall": 0.2974,
+              "f1": 0.3742,
+              "support": 195
+            },
+            "UP": {
+              "precision": 0.5609,
+              "recall": 0.59,
+              "f1": 0.575,
+              "support": 617
+            }
+          },
+          "confusion_matrix": [
+            [
+              377,
+              30,
+              209
+            ],
+            [
+              61,
+              58,
+              76
+            ],
+            [
+              226,
+              27,
+              364
+            ]
+          ],
+          "total_samples": 1428
+        },
+        "confusion_matrix": [
+          [
+            377,
+            30,
+            209
+          ],
+          [
+            61,
+            58,
+            76
+          ],
+          [
+            226,
+            27,
+            364
+          ]
+        ],
+        "epochs_trained": 38
+      }
+    },
+    "small_mlp_best": {
+      "seed": 999,
+      "parameters": 9283,
+      "train_time_sec": 9.101,
+      "inference_time_sec": 0.0011,
+      "train_metrics": {
+        "accuracy": 0.5532,
+        "balanced_accuracy": 0.5035,
+        "macro_f1": 0.5137,
+        "weighted_f1": 0.5426,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.5448,
+            "recall": 0.6397,
+            "f1": 0.5884,
+            "support": 3050
+          },
+          "FLAT": {
+            "precision": 0.6175,
+            "recall": 0.2751,
+            "f1": 0.3806,
+            "support": 1414
+          },
+          "UP": {
+            "precision": 0.5501,
+            "recall": 0.5957,
+            "f1": 0.572,
+            "support": 3050
+          }
+        },
+        "confusion_matrix": [
+          [
+            1951,
+            124,
+            975
+          ],
+          [
+            514,
+            389,
+            511
+          ],
+          [
+            1116,
+            117,
+            1817
+          ]
+        ],
+        "total_samples": 7514
+      },
+      "val_metrics": {
+        "accuracy": 0.5595,
+        "balanced_accuracy": 0.4998,
+        "macro_f1": 0.5128,
+        "weighted_f1": 0.5537,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.5678,
+            "recall": 0.612,
+            "f1": 0.5891,
+            "support": 616
+          },
+          "FLAT": {
+            "precision": 0.5043,
+            "recall": 0.2974,
+            "f1": 0.3742,
+            "support": 195
+          },
+          "UP": {
+            "precision": 0.5609,
+            "recall": 0.59,
+            "f1": 0.575,
+            "support": 617
+          }
+        },
+        "confusion_matrix": [
+          [
+            377,
+            30,
+            209
+          ],
+          [
+            61,
+            58,
+            76
+          ],
+          [
+            226,
+            27,
+            364
+          ]
+        ],
+        "total_samples": 1428
+      },
+      "confusion_matrix": [
+        [
+          377,
+          30,
+          209
+        ],
+        [
+          61,
+          58,
+          76
+        ],
+        [
+          226,
+          27,
+          364
+        ]
+      ],
+      "epochs_trained": 38
+    }
+  },
+  "ablations": {
+    "ablation_A_full_features": {
+      "description": "All 11 Causal Features (110 dims)",
+      "features": [
+        "mid_price",
+        "spread",
+        "spread_bps",
+        "mid_return_1s",
+        "mid_return_3s",
+        "mid_return_5s",
+        "mid_volatility_5s",
+        "bid_change_1s",
+        "ask_change_1s",
+        "microprice",
+        "depth_imbalance"
+      ],
+      "dim": 110,
+      "val_metrics": {
+        "accuracy": 0.5609,
+        "balanced_accuracy": 0.4845,
+        "macro_f1": 0.4995,
+        "weighted_f1": 0.55,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.575,
+            "recall": 0.6039,
+            "f1": 0.5891,
+            "support": 616
+          },
+          "FLAT": {
+            "precision": 0.6027,
+            "recall": 0.2256,
+            "f1": 0.3284,
+            "support": 195
+          },
+          "UP": {
+            "precision": 0.5438,
+            "recall": 0.624,
+            "f1": 0.5811,
+            "support": 617
+          }
+        },
+        "confusion_matrix": [
+          [
+            372,
+            15,
+            229
+          ],
+          [
+            57,
+            44,
+            94
+          ],
+          [
+            218,
+            14,
+            385
+          ]
+        ],
+        "total_samples": 1428
+      }
+    },
+    "ablation_B_microstructure_only": {
+      "description": "Price / Microstructure Only (50 dims)",
+      "features": [
+        "mid_price",
+        "spread",
+        "spread_bps",
+        "microprice",
+        "depth_imbalance"
+      ],
+      "dim": 50,
+      "val_metrics": {
+        "accuracy": 0.563,
+        "balanced_accuracy": 0.485,
+        "macro_f1": 0.4991,
+        "weighted_f1": 0.5517,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.5743,
+            "recall": 0.6088,
+            "f1": 0.591,
+            "support": 616
+          },
+          "FLAT": {
+            "precision": 0.589,
+            "recall": 0.2205,
+            "f1": 0.3209,
+            "support": 195
+          },
+          "UP": {
+            "precision": 0.5499,
+            "recall": 0.6256,
+            "f1": 0.5853,
+            "support": 617
+          }
+        },
+        "confusion_matrix": [
+          [
+            375,
+            18,
+            223
+          ],
+          [
+            59,
+            43,
+            93
+          ],
+          [
+            219,
+            12,
+            386
+          ]
+        ],
+        "total_samples": 1428
+      },
+      "confusion_matrix": [
+        [
+          375,
+          18,
+          223
+        ],
+        [
+          59,
+          43,
+          93
+        ],
+        [
+          219,
+          12,
+          386
+        ]
+      ]
+    },
+    "ablation_C_returns_volatility_only": {
+      "description": "Returns & Volatility Only (60 dims)",
+      "features": [
+        "mid_return_1s",
+        "mid_return_3s",
+        "mid_return_5s",
+        "mid_volatility_5s",
+        "bid_change_1s",
+        "ask_change_1s"
+      ],
+      "dim": 60,
+      "val_metrics": {
+        "accuracy": 0.4944,
+        "balanced_accuracy": 0.3934,
+        "macro_f1": 0.3794,
+        "weighted_f1": 0.4631,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.5036,
+            "recall": 0.4578,
+            "f1": 0.4796,
+            "support": 616
+          },
+          "FLAT": {
+            "precision": 0.7692,
+            "recall": 0.0513,
+            "f1": 0.0962,
+            "support": 195
+          },
+          "UP": {
+            "precision": 0.4842,
+            "recall": 0.671,
+            "f1": 0.5625,
+            "support": 617
+          }
+        },
+        "confusion_matrix": [
+          [
+            282,
+            3,
+            331
+          ],
+          [
+            75,
+            10,
+            110
+          ],
+          [
+            203,
+            0,
+            414
+          ]
+        ],
+        "total_samples": 1428
+      },
+      "confusion_matrix": [
+        [
+          282,
+          3,
+          331
+        ],
+        [
+          75,
+          10,
+          110
+        ],
+        [
+          203,
+          0,
+          414
+        ]
+      ]
+    }
+  },
+  "seed_stability": {
+    "small_mlp": {
+      "seeds_evaluated": [
+        42,
+        123,
+        999
+      ],
+      "accuracy": {
+        "mean": 0.5635,
+        "std": 0.0028,
+        "min": 0.5595,
+        "max": 0.5658
+      },
+      "balanced_accuracy": {
+        "mean": 0.4955,
+        "std": 0.0031,
+        "min": 0.493,
+        "max": 0.4998
+      },
+      "macro_f1": {
+        "mean": 0.5089,
+        "std": 0.0028,
+        "min": 0.5067,
+        "max": 0.5128
+      },
+      "weighted_f1": {
+        "mean": 0.5554,
+        "std": 0.0012,
+        "min": 0.5537,
+        "max": 0.5564
+      },
+      "best_seed": 999,
+      "worst_seed": 42
+    }
+  },
+  "summary_table": [
+    {
+      "model": "Majority Baseline",
+      "dim": 0,
+      "params": 0,
+      "train_acc": 0.4059,
+      "val_acc": 0.4321,
+      "val_bal_acc": 0.3333,
+      "val_macro_f1": 0.2011,
+      "val_weighted_f1": 0.2607,
+      "val_f1_down": 0.0,
+      "val_f1_flat": 0.0,
+      "val_f1_up": 0.6034
+    },
+    {
+      "model": "Logistic Regression (Standard)",
+      "dim": 110,
+      "params": 333,
+      "train_acc": 0.5113,
+      "val_acc": 0.5609,
+      "val_bal_acc": 0.4845,
+      "val_macro_f1": 0.4995,
+      "val_weighted_f1": 0.55,
+      "val_f1_down": 0.5891,
+      "val_f1_flat": 0.3284,
+      "val_f1_up": 0.5811
+    },
+    {
+      "model": "Logistic Regression (Class-Weighted)",
+      "dim": 110,
+      "params": 333,
+      "train_acc": 0.4961,
+      "val_acc": 0.5077,
+      "val_bal_acc": 0.4925,
+      "val_macro_f1": 0.4753,
+      "val_weighted_f1": 0.517,
+      "val_f1_down": 0.5428,
+      "val_f1_flat": 0.334,
+      "val_f1_up": 0.549
+    },
+    {
+      "model": "Small MLP (Best: Seed 999)",
+      "dim": 110,
+      "params": 9283,
+      "train_acc": 0.5532,
+      "val_acc": 0.5595,
+      "val_bal_acc": 0.4998,
+      "val_macro_f1": 0.5128,
+      "val_weighted_f1": 0.5537,
+      "val_f1_down": 0.5891,
+      "val_f1_flat": 0.3742,
+      "val_f1_up": 0.575
+    },
+    {
+      "model": "Small MLP (3-Seed Mean \u00b1 Std)",
+      "dim": 110,
+      "params": 9283,
+      "train_acc": 0.5456,
+      "val_acc": 0.5635,
+      "val_bal_acc": 0.4955,
+      "val_macro_f1": 0.5089,
+      "val_weighted_f1": 0.5554,
+      "val_f1_down": 0.5955,
+      "val_f1_flat": 0.3512,
+      "val_f1_up": 0.5798
+    },
+    {
+      "model": "Ablation B: Microstructure Only",
+      "dim": 50,
+      "params": 153,
+      "train_acc": 0.0,
+      "val_acc": 0.563,
+      "val_bal_acc": 0.485,
+      "val_macro_f1": 0.4991,
+      "val_weighted_f1": 0.5517,
+      "val_f1_down": 0.591,
+      "val_f1_flat": 0.3209,
+      "val_f1_up": 0.5853
+    },
+    {
+      "model": "Ablation C: Returns & Volatility Only",
+      "dim": 60,
+      "params": 183,
+      "train_acc": 0.0,
+      "val_acc": 0.4944,
+      "val_bal_acc": 0.3934,
+      "val_macro_f1": 0.3794,
+      "val_weighted_f1": 0.4631,
+      "val_f1_down": 0.4796,
+      "val_f1_flat": 0.0962,
+      "val_f1_up": 0.5625
+    }
+  ],
+  "signal_decision": {
+    "lr_beats_majority": true,
+    "lr_acc_delta": 0.1288,
+    "lr_macro_f1_delta": 0.2984,
+    "mlp_beats_majority": true,
+    "mlp_beats_lr": true,
+    "meaningful_predictive_signal_demonstrated": true,
+    "recommended_next_step": "GRU / LSTM Sequence Modeling",
+    "test_set_isolation_verified": true
+  }
+}

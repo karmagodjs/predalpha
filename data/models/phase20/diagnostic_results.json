@@ -1,0 +1,64 @@
+{
+  "validation_shape": [
+    1428,
+    10,
+    11
+  ],
+  "mean_confidence": 0.5440441966056824,
+  "median_confidence": 0.5311270952224731,
+  "confidence_p10": 0.44677484035491943,
+  "confidence_p90": 0.6579837799072266,
+  "actual_distribution": {
+    "DOWN": 616,
+    "FLAT": 195,
+    "UP": 617
+  },
+  "predicted_distribution": {
+    "DOWN": 631,
+    "FLAT": 118,
+    "UP": 679
+  },
+  "confusion_matrix": [
+    [
+      374,
+      22,
+      220
+    ],
+    [
+      62,
+      72,
+      61
+    ],
+    [
+      195,
+      24,
+      398
+    ]
+  ],
+  "confidence_analysis": {
+    "0.4": {
+      "coverage": 0.9747899159663865,
+      "accuracy": 0.5955459770114943
+    },
+    "0.5": {
+      "coverage": 0.6596638655462185,
+      "accuracy": 0.6273885350318471
+    },
+    "0.6": {
+      "coverage": 0.23879551820728293,
+      "accuracy": 0.6451612903225806
+    },
+    "0.7": {
+      "coverage": 0.05392156862745098,
+      "accuracy": 0.7272727272727273
+    },
+    "0.8": {
+      "coverage": 0.00980392156862745,
+      "accuracy": 0.8571428571428571
+    },
+    "0.9": {
+      "coverage": 0.0,
+      "accuracy": null
+    }
+  }
+}
