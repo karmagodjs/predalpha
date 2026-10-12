@@ -1,0 +1,474 @@
+{
+  "experiment_name": "Controlled_Experiment_2_Feature_Engineering",
+  "description": "Comparison of original 11 features (Arm A) vs causal microprice replacement with microprice - mid_price (Arm B)",
+  "collinearity_diagnostics": {
+    "training_sample_count": 75140,
+    "pearson_r_mid_micro": 0.999918,
+    "r2_mid_micro": 0.999836,
+    "pearson_r_endpoint_step9": 0.9999231,
+    "mean_abs_difference": 0.003294,
+    "max_abs_difference": 0.035344,
+    "condition_number_original_11": 361009.7,
+    "condition_number_modified_11": 627.44,
+    "condition_number_reduction_factor": 575.4,
+    "pearson_r_delta_micro_mid": 0.06672,
+    "pearson_r_delta_micro_depth_imbalance": 0.938824,
+    "pearson_r_delta_micro_analytic_formula": 1.0
+  },
+  "scaler_b_parameters": {
+    "center": {
+      "mid_price": 0.49999999999999983,
+      "spread": 0.010352009582105925,
+      "spread_bps": 574.4356901201239,
+      "mid_return_1s": 0.0019374167989989692,
+      "mid_return_3s": 0.00677026975998897,
+      "mid_return_5s": 0.01115810109583794,
+      "mid_volatility_5s": 0.07206567601045394,
+      "bid_change_1s": 1.944644236660477e-06,
+      "ask_change_1s": -1.944644236660542e-06,
+      "microprice_minus_mid": -6.614296990515773e-19,
+      "depth_imbalance": 7.077413212609129e-19
+    },
+    "scale": {
+      "mid_price": 0.29932481501349967,
+      "spread": 0.003925719921723,
+      "spread_bps": 1085.7906406662144,
+      "mid_return_1s": 0.13905774105530538,
+      "mid_return_3s": 0.2557850023968061,
+      "mid_return_5s": 0.32971403274505723,
+      "mid_volatility_5s": 0.11613593969817375,
+      "bid_change_1s": 0.03622024094515874,
+      "ask_change_1s": 0.036220240945158765,
+      "microprice_minus_mid": 0.003845847149809193,
+      "depth_imbalance": 0.6986703400239097
+    }
+  },
+  "arm_a_summary": {
+    "accuracy_mean": 0.591,
+    "accuracy_std": 0.0006,
+    "balanced_accuracy_mean": 0.5385,
+    "balanced_accuracy_std": 0.0031,
+    "macro_f1_mean": 0.5543,
+    "macro_f1_std": 0.0043,
+    "weighted_f1_mean": 0.5865,
+    "weighted_f1_std": 0.0012,
+    "directional_inversions_mean": 408.7,
+    "directional_inversions_std": 4.92,
+    "best_epoch_mean": 34.7,
+    "val_loss_mean": 0.89702,
+    "per_class": {
+      "DOWN": {
+        "precision": {
+          "mean": 0.5995,
+          "std": 0.0056
+        },
+        "recall": {
+          "mean": 0.599,
+          "std": 0.0115
+        },
+        "f1": {
+          "mean": 0.5991,
+          "std": 0.0036
+        },
+        "support": 616
+      },
+      "FLAT": {
+        "precision": {
+          "mean": 0.5815,
+          "std": 0.0231
+        },
+        "recall": {
+          "mean": 0.3607,
+          "std": 0.0121
+        },
+        "f1": {
+          "mean": 0.4452,
+          "std": 0.0153
+        },
+        "support": 195
+      },
+      "UP": {
+        "precision": {
+          "mean": 0.5854,
+          "std": 0.0016
+        },
+        "recall": {
+          "mean": 0.6559,
+          "std": 0.0142
+        },
+        "f1": {
+          "mean": 0.6185,
+          "std": 0.0054
+        },
+        "support": 617
+      }
+    },
+    "runs": [
+      {
+        "arm": "Arm_A_Original11",
+        "seed": 42,
+        "best_epoch": 26,
+        "best_val_loss": 0.8991,
+        "train_duration_sec": 19.82,
+        "accuracy": 0.5917,
+        "balanced_accuracy": 0.541,
+        "macro_f1": 0.5566,
+        "weighted_f1": 0.5877,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.5994,
+            "recall": 0.6071,
+            "f1": 0.6032,
+            "support": 616
+          },
+          "FLAT": {
+            "precision": 0.5806,
+            "recall": 0.3692,
+            "f1": 0.4514,
+            "support": 195
+          },
+          "UP": {
+            "precision": 0.5868,
+            "recall": 0.6467,
+            "f1": 0.6153,
+            "support": 617
+          }
+        },
+        "confusion_matrix": [
+          [
+            374,
+            27,
+            215
+          ],
+          [
+            57,
+            72,
+            66
+          ],
+          [
+            193,
+            25,
+            399
+          ]
+        ],
+        "directional_inversions": 408
+      },
+      {
+        "arm": "Arm_A_Original11",
+        "seed": 123,
+        "best_epoch": 47,
+        "best_val_loss": 0.89527,
+        "train_duration_sec": 22.74,
+        "accuracy": 0.5903,
+        "balanced_accuracy": 0.5341,
+        "macro_f1": 0.5482,
+        "weighted_f1": 0.5848,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.6064,
+            "recall": 0.5828,
+            "f1": 0.5944,
+            "support": 616
+          },
+          "FLAT": {
+            "precision": 0.5537,
+            "recall": 0.3436,
+            "f1": 0.4241,
+            "support": 195
+          },
+          "UP": {
+            "precision": 0.5832,
+            "recall": 0.6759,
+            "f1": 0.6261,
+            "support": 617
+          }
+        },
+        "confusion_matrix": [
+          [
+            359,
+            30,
+            227
+          ],
+          [
+            57,
+            67,
+            71
+          ],
+          [
+            176,
+            24,
+            417
+          ]
+        ],
+        "directional_inversions": 403
+      },
+      {
+        "arm": "Arm_A_Original11",
+        "seed": 999,
+        "best_epoch": 31,
+        "best_val_loss": 0.89668,
+        "train_duration_sec": 17.6,
+        "accuracy": 0.591,
+        "balanced_accuracy": 0.5405,
+        "macro_f1": 0.558,
+        "weighted_f1": 0.5869,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.5927,
+            "recall": 0.6071,
+            "f1": 0.5998,
+            "support": 616
+          },
+          "FLAT": {
+            "precision": 0.6102,
+            "recall": 0.3692,
+            "f1": 0.4601,
+            "support": 195
+          },
+          "UP": {
+            "precision": 0.5862,
+            "recall": 0.6451,
+            "f1": 0.6142,
+            "support": 617
+          }
+        },
+        "confusion_matrix": [
+          [
+            374,
+            22,
+            220
+          ],
+          [
+            62,
+            72,
+            61
+          ],
+          [
+            195,
+            24,
+            398
+          ]
+        ],
+        "directional_inversions": 415
+      }
+    ]
+  },
+  "arm_b_summary": {
+    "accuracy_mean": 0.5852,
+    "accuracy_std": 0.0098,
+    "balanced_accuracy_mean": 0.5336,
+    "balanced_accuracy_std": 0.0088,
+    "macro_f1_mean": 0.5485,
+    "macro_f1_std": 0.0076,
+    "weighted_f1_mean": 0.5811,
+    "weighted_f1_std": 0.0098,
+    "directional_inversions_mean": 412.7,
+    "directional_inversions_std": 16.5,
+    "best_epoch_mean": 32.0,
+    "val_loss_mean": 0.89688,
+    "per_class": {
+      "DOWN": {
+        "precision": {
+          "mean": 0.5904,
+          "std": 0.0131
+        },
+        "recall": {
+          "mean": 0.619,
+          "std": 0.0099
+        },
+        "f1": {
+          "mean": 0.6043,
+          "std": 0.0114
+        },
+        "support": 616
+      },
+      "FLAT": {
+        "precision": {
+          "mean": 0.5623,
+          "std": 0.0169
+        },
+        "recall": {
+          "mean": 0.359,
+          "std": 0.0073
+        },
+        "f1": {
+          "mean": 0.438,
+          "std": 0.0005
+        },
+        "support": 195
+      },
+      "UP": {
+        "precision": {
+          "mean": 0.5847,
+          "std": 0.011
+        },
+        "recall": {
+          "mean": 0.6229,
+          "std": 0.0116
+        },
+        "f1": {
+          "mean": 0.6032,
+          "std": 0.0113
+        },
+        "support": 617
+      }
+    },
+    "runs": [
+      {
+        "arm": "Arm_B_MicropriceMinusMid",
+        "seed": 42,
+        "best_epoch": 30,
+        "best_val_loss": 0.90345,
+        "train_duration_sec": 17.44,
+        "accuracy": 0.5756,
+        "balanced_accuracy": 0.5239,
+        "macro_f1": 0.5408,
+        "weighted_f1": 0.5713,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.5756,
+            "recall": 0.612,
+            "f1": 0.5932,
+            "support": 616
+          },
+          "FLAT": {
+            "precision": 0.5862,
+            "recall": 0.3487,
+            "f1": 0.4373,
+            "support": 195
+          },
+          "UP": {
+            "precision": 0.5738,
+            "recall": 0.611,
+            "f1": 0.5918,
+            "support": 617
+          }
+        },
+        "confusion_matrix": [
+          [
+            377,
+            23,
+            216
+          ],
+          [
+            63,
+            68,
+            64
+          ],
+          [
+            215,
+            25,
+            377
+          ]
+        ],
+        "directional_inversions": 431
+      },
+      {
+        "arm": "Arm_B_MicropriceMinusMid",
+        "seed": 123,
+        "best_epoch": 32,
+        "best_val_loss": 0.8949,
+        "train_duration_sec": 18.04,
+        "accuracy": 0.5987,
+        "balanced_accuracy": 0.5453,
+        "macro_f1": 0.5589,
+        "weighted_f1": 0.5945,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.6075,
+            "recall": 0.6331,
+            "f1": 0.62,
+            "support": 616
+          },
+          "FLAT": {
+            "precision": 0.5504,
+            "recall": 0.3641,
+            "f1": 0.4383,
+            "support": 195
+          },
+          "UP": {
+            "precision": 0.5997,
+            "recall": 0.6386,
+            "f1": 0.6185,
+            "support": 617
+          }
+        },
+        "confusion_matrix": [
+          [
+            390,
+            32,
+            194
+          ],
+          [
+            55,
+            71,
+            69
+          ],
+          [
+            197,
+            26,
+            394
+          ]
+        ],
+        "directional_inversions": 391
+      },
+      {
+        "arm": "Arm_B_MicropriceMinusMid",
+        "seed": 999,
+        "best_epoch": 34,
+        "best_val_loss": 0.8923,
+        "train_duration_sec": 18.65,
+        "accuracy": 0.5812,
+        "balanced_accuracy": 0.5317,
+        "macro_f1": 0.5458,
+        "weighted_f1": 0.5775,
+        "per_class": {
+          "DOWN": {
+            "precision": 0.5881,
+            "recall": 0.612,
+            "f1": 0.5998,
+            "support": 616
+          },
+          "FLAT": {
+            "precision": 0.5504,
+            "recall": 0.3641,
+            "f1": 0.4383,
+            "support": 195
+          },
+          "UP": {
+            "precision": 0.5805,
+            "recall": 0.6191,
+            "f1": 0.5992,
+            "support": 617
+          }
+        },
+        "confusion_matrix": [
+          [
+            377,
+            27,
+            212
+          ],
+          [
+            60,
+            71,
+            64
+          ],
+          [
+            204,
+            31,
+            382
+          ]
+        ],
+        "directional_inversions": 416
+      }
+    ]
+  },
+  "delta_comparison": {
+    "accuracy_diff": -0.0058,
+    "balanced_accuracy_diff": -0.0049,
+    "macro_f1_diff": -0.0058,
+    "directional_inversions_diff": 4.0,
+    "val_loss_diff": -0.00014
+  },
+  "total_elapsed_sec": 114.65
+}
