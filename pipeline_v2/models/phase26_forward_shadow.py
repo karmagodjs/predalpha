@@ -211,10 +211,23 @@ class ForwardShadowLogger:
         max_data_gap_ms: float = 5000.0,
     ) -> None:
         self.output_dir = Path(output_dir)
-        self.output_dir.mkdir(parents=True, exist_ok=True)
         self.run_id = run_id or f"shadow_{datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
         self.log_file = self.output_dir / f"{self.run_id}_observations.jsonl"
         self.manifest_file = self.output_dir / f"{self.run_id}_manifest.json"
+
+        # Session-artifact collision protection: reject if log or manifest already exists
+        if self.log_file.exists():
+            raise FileExistsError(
+                f"Artifact collision: log file already exists for run_id '{self.run_id}' at {self.log_file}. "
+                f"Reusing run_id is prohibited to prevent corrupting prior artifacts."
+            )
+        if self.manifest_file.exists():
+            raise FileExistsError(
+                f"Artifact collision: manifest file already exists for run_id '{self.run_id}' at {self.manifest_file}. "
+                f"Reusing run_id is prohibited to prevent corrupting prior artifacts."
+            )
+
+        self.output_dir.mkdir(parents=True, exist_ok=True)
         self.max_quote_age_ms = max_quote_age_ms
         self.max_data_gap_ms = max_data_gap_ms
 
@@ -381,6 +394,11 @@ class ForwardShadowLogger:
             raise RuntimeError("Shadow logger already closed.")
         self._is_closed = True
 
+        if self.manifest_file.exists():
+            raise FileExistsError(
+                f"Artifact collision: manifest file already exists at {self.manifest_file}."
+            )
+
         log_sha256 = sha256_file(self.log_file) if self.log_file.exists() else ""
         manifest: Dict[str, Any] = {
             "run_id": self.run_id,
@@ -535,12 +553,27 @@ def evaluate_stress_scenarios(
 
 def define_prospective_protocol() -> Dict[str, Any]:
     """
-    Define formal, predeclared prospective shadow evaluation protocol.
+    Define formal, predeclared prospective shadow evaluation protocol (Amendment v1.1).
     Predeclares targets, acceptance criteria, dependence adjustments, and stopping rules.
     """
     return {
-        "protocol_version": "1.0",
+        "protocol_version": "1.1",
         "protocol_status": "PREDECLARED_FROZEN",
+        "amendment_version": "1.1",
+        "amendment_metric_definitions": {
+            "missing_quote_rate": (
+                "invalid, missing, or crossed quotes divided by eligible grid steps processed "
+                "by the quote-validation path. Uninitialized-book steps tracked separately."
+            ),
+            "average_quote_staleness": (
+                "mean age in milliseconds of valid, timestamped eligible quote observations, "
+                "including stale observations. Invalid or missing timestamps must not be assigned age zero."
+            ),
+            "missing_quote_rate_threshold": 0.25,
+            "average_quote_staleness_threshold_ms": 2000.0,
+            "hard_stop_condition_missing_quotes": "Abort when cumulative missing quote rate is strictly > 25%",
+            "hard_stop_condition_staleness": "Abort when cumulative average quote staleness is strictly > 2000 ms",
+        },
         "model_architecture": "SmallLSTM (input 11, hidden 32, num_layers 1, classes 3)",
         "model_checkpoint": "data/models/phase19/recurrent/best_lstm.pt",
         "predeclared_regime_gates": {
@@ -908,12 +941,13 @@ def generate_phase26_markdown_report(
         "- **Stale Quote Detection**: Rejects quotes older than 2,000ms and flags data gaps > 5,000ms.",
         f"- **Verification Run**: Validated on all 1,428 validation sequences in run `{shadow_manifest['run_id']}` (SHA-256: `{shadow_manifest['log_sha256'][:16]}...`).\n",
         "---\n",
-        "## 5. Predeclared Prospective Evaluation Protocol\n",
+        "## 5. Predeclared Prospective Evaluation Protocol (Protocol Amendment v1.1)\n",
         "Before collecting forward shadow observations, the evaluation rules and abort triggers are permanently locked:",
+        "- **Protocol Version**: 1.1 (Amendment v1.1).",
         "- **Frozen Parameters**: Confidence >= 0.55, Scaled Spread <= -0.089668, |Depth Imbalance| <= 1.3681.",
         "- **Sample Size Target**: Minimum 500 executed trades across at least 50 distinct recording bursts ($N_{\\text{eff}} \\ge 40$).",
         "- **Acceptance Threshold**: Mean Net PnL >= +0.0020 units/trade under 5 bps fees with Cluster-Robust t-statistic >= 2.0.",
-        "- **Hard Safety Stops**: Immediate abort if drawdown exceeds 2.50 units, if 8 consecutive losses occur, or if missing quote rate exceeds 25%.\n",
+        "- **Hard Safety Stops**: Immediate abort if drawdown exceeds 2.50 units, if 8 consecutive losses occur, if missing quote rate strictly exceeds 25%, or if average quote staleness strictly exceeds 2000ms.\n",
         "---\n",
         "## 6. Safety & Verification Invariants\n",
         "- [x] **Test Set Locked**: `test_scaled.npz` was never loaded, evaluated, or tuned against.",
