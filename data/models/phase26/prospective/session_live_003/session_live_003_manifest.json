@@ -1,0 +1,8 @@
+{
+  "run_id": "session_live_003",
+  "total_records": 115,
+  "log_file": "session_live_003_observations.jsonl",
+  "log_sha256": "1442fc5ff01795cbf62b91ae6cfcae721a595ac17b3f44ff5975aa67177a9961",
+  "rolling_chain_hash": "f428418bd1e7634ed652e3e129ef4cf23ff9e6c54b3fb173cd8abe5f921ca589",
+  "closed_at_utc": "2026-10-09T20:16:08.634634+00:00"
+}

@@ -1,0 +1,17 @@
+{
+  "manifest_version": "1.0",
+  "phase": "Phase 24",
+  "generated_artifacts": {
+    "temporal_robustness_results.json": "5a8b593b087283735e48fb5dd2026fd6a1bc9e4cf0aae1cbd13ba29b989f39c1",
+    "temporal_window_metrics.csv": "d01dfe811ffca459f29aa217b533a65f5b733e2d5bc79b622824390be976b6e1",
+    "regime_analysis.csv": "3df0385dad04e51876a595fdacf2f7bdc5f47a2785ba439368fa3837e33a4c89"
+  },
+  "input_artifacts": {
+    "checkpoint_sha256": "d8b75bdbaffbb7f2c4b398beea484f83d851b37380bccd93ca07199a3d9c025d",
+    "validation_data_sha256": "69b97fd243bec2d2b65757ab209faa72e48c2d26a1bf6c4d1f78d6697ad62138",
+    "phase20_predictions_sha256": "2b14b14af433b36262b0a05f8c3030bced2bce518ab690d6a1b8d09a5871519d"
+  },
+  "checkpoint_weights_frozen": true,
+  "locked_test_set_accessed": false,
+  "chronological_purge_enforced": true
+}

@@ -1,0 +1,8 @@
+{
+  "run_id": "session_live_smoke_001",
+  "total_records": 15,
+  "log_file": "session_live_smoke_001_observations.jsonl",
+  "log_sha256": "835f68834c59588b80427b4990040491a0d7343f35aa72a7bfa59fd2e9e9fe71",
+  "rolling_chain_hash": "9807ef92b6cfc2d066175d34a170ee68d7aa206b9d88f1a6e56d680995864a79",
+  "closed_at_utc": "2026-10-09T12:06:22.609863+00:00"
+}

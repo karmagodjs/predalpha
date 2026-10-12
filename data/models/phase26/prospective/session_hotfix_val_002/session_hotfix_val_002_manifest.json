@@ -1,0 +1,8 @@
+{
+  "run_id": "session_hotfix_val_002",
+  "total_records": 50,
+  "log_file": "session_hotfix_val_002_observations.jsonl",
+  "log_sha256": "ca26d13e3a3b1a943dcec9ffbc18975c823f5dcbb362c9affedd9cbcd4dc0053",
+  "rolling_chain_hash": "1c00afd8e229ddc7d415ddf7608e822130aae72d898b13cbec50d4f7047240da",
+  "closed_at_utc": "2026-10-09T20:06:21.501965+00:00"
+}

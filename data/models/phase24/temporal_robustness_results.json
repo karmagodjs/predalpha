@@ -1,0 +1,1175 @@
+{
+  "metadata": {
+    "experiment": "Phase 24 \u2014 Temporal Robustness & Predictive-Signal Analysis",
+    "model_type": "SmallLSTM",
+    "checkpoint_path": "C:\\Users\\karma\\OneDrive\\Desktop\\predalpha\\data\\models\\phase19\\recurrent\\best_lstm.pt",
+    "val_data_path": "C:\\Users\\karma\\OneDrive\\Desktop\\predalpha\\data\\clean_v2\\07_scaled\\expanded_collection\\validation_scaled.npz",
+    "phase20_preds_path": "C:\\Users\\karma\\OneDrive\\Desktop\\predalpha\\data\\models\\phase20\\validation_predictions.npz",
+    "output_directory": "C:\\Users\\karma\\OneDrive\\Desktop\\predalpha\\data\\models\\phase24",
+    "provenance_hashes": {
+      "checkpoint_sha256": "d8b75bdbaffbb7f2c4b398beea484f83d851b37380bccd93ca07199a3d9c025d",
+      "validation_data_sha256": "69b97fd243bec2d2b65757ab209faa72e48c2d26a1bf6c4d1f78d6697ad62138",
+      "phase20_predictions_sha256": "2b14b14af433b36262b0a05f8c3030bced2bce518ab690d6a1b8d09a5871519d"
+    },
+    "weight_fingerprint_unchanged": true
+  },
+  "temporal_windows": [
+    {
+      "name": "Window 1 (Early Morning)",
+      "sample_count": 386,
+      "effective_sample_approx": 38,
+      "class_distribution": {
+        "DOWN": 176,
+        "FLAT": 33,
+        "UP": 177
+      },
+      "class_proportions": {
+        "DOWN": 0.456,
+        "FLAT": 0.0855,
+        "UP": 0.4585
+      },
+      "majority_class": "UP",
+      "majority_baseline_accuracy": 0.4585,
+      "delta_vs_majority": 0.0959,
+      "accuracy": 0.5544,
+      "accuracy_se_iid": 0.0253,
+      "accuracy_se_neff": 0.0806,
+      "balanced_accuracy": 0.4041,
+      "macro_f1": 0.3866,
+      "weighted_f1": 0.5303,
+      "per_class": {
+        "DOWN": {
+          "precision": 0.5526,
+          "recall": 0.5966,
+          "f1": 0.5738,
+          "support": 176
+        },
+        "FLAT": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 33
+        },
+        "UP": {
+          "precision": 0.559,
+          "recall": 0.6158,
+          "f1": 0.586,
+          "support": 177
+        }
+      },
+      "confusion_matrix": [
+        [
+          105,
+          0,
+          71
+        ],
+        [
+          18,
+          0,
+          15
+        ],
+        [
+          67,
+          1,
+          109
+        ]
+      ],
+      "nll": 0.9131,
+      "brier_score": 0.5605,
+      "ece": 0.0542,
+      "mean_confidence": 0.529,
+      "median_confidence": 0.5199,
+      "window_id": "W1",
+      "start_timestamp": 1791291910000,
+      "end_timestamp": 1791292587000,
+      "duration_sec": 677.0,
+      "purge_gap_before_ms": 0
+    },
+    {
+      "name": "Window 2 (Mid Morning)",
+      "sample_count": 446,
+      "effective_sample_approx": 44,
+      "class_distribution": {
+        "DOWN": 202,
+        "FLAT": 42,
+        "UP": 202
+      },
+      "class_proportions": {
+        "DOWN": 0.4529,
+        "FLAT": 0.0942,
+        "UP": 0.4529
+      },
+      "majority_class": "DOWN",
+      "majority_baseline_accuracy": 0.4529,
+      "delta_vs_majority": 0.1727,
+      "accuracy": 0.6256,
+      "accuracy_se_iid": 0.0229,
+      "accuracy_se_neff": 0.073,
+      "balanced_accuracy": 0.5421,
+      "macro_f1": 0.5577,
+      "weighted_f1": 0.6206,
+      "per_class": {
+        "DOWN": {
+          "precision": 0.6368,
+          "recall": 0.6337,
+          "f1": 0.6352,
+          "support": 202
+        },
+        "FLAT": {
+          "precision": 0.5,
+          "recall": 0.3095,
+          "f1": 0.3824,
+          "support": 42
+        },
+        "UP": {
+          "precision": 0.6301,
+          "recall": 0.6832,
+          "f1": 0.6556,
+          "support": 202
+        }
+      },
+      "confusion_matrix": [
+        [
+          128,
+          7,
+          67
+        ],
+        [
+          15,
+          13,
+          14
+        ],
+        [
+          58,
+          6,
+          138
+        ]
+      ],
+      "nll": 0.8772,
+      "brier_score": 0.5214,
+      "ece": 0.097,
+      "mean_confidence": 0.5428,
+      "median_confidence": 0.5397,
+      "window_id": "W2",
+      "start_timestamp": 1791292614000,
+      "end_timestamp": 1791293029000,
+      "duration_sec": 415.0,
+      "purge_gap_before_ms": 27000
+    },
+    {
+      "name": "Window 3 (Early Afternoon)",
+      "sample_count": 244,
+      "effective_sample_approx": 24,
+      "class_distribution": {
+        "DOWN": 93,
+        "FLAT": 58,
+        "UP": 93
+      },
+      "class_proportions": {
+        "DOWN": 0.3811,
+        "FLAT": 0.2377,
+        "UP": 0.3811
+      },
+      "majority_class": "DOWN",
+      "majority_baseline_accuracy": 0.3811,
+      "delta_vs_majority": 0.2378,
+      "accuracy": 0.6189,
+      "accuracy_se_iid": 0.0311,
+      "accuracy_se_neff": 0.0991,
+      "balanced_accuracy": 0.6126,
+      "macro_f1": 0.6157,
+      "weighted_f1": 0.6187,
+      "per_class": {
+        "DOWN": {
+          "precision": 0.5941,
+          "recall": 0.6452,
+          "f1": 0.6186,
+          "support": 93
+        },
+        "FLAT": {
+          "precision": 0.6226,
+          "recall": 0.569,
+          "f1": 0.5946,
+          "support": 58
+        },
+        "UP": {
+          "precision": 0.6444,
+          "recall": 0.6237,
+          "f1": 0.6339,
+          "support": 93
+        }
+      },
+      "confusion_matrix": [
+        [
+          60,
+          9,
+          24
+        ],
+        [
+          17,
+          33,
+          8
+        ],
+        [
+          24,
+          11,
+          58
+        ]
+      ],
+      "nll": 0.8905,
+      "brier_score": 0.5322,
+      "ece": 0.0689,
+      "mean_confidence": 0.5499,
+      "median_confidence": 0.5344,
+      "window_id": "W3",
+      "start_timestamp": 1791293110000,
+      "end_timestamp": 1791293308000,
+      "duration_sec": 198.0,
+      "purge_gap_before_ms": 81000
+    },
+    {
+      "name": "Window 4 (Late Afternoon)",
+      "sample_count": 352,
+      "effective_sample_approx": 35,
+      "class_distribution": {
+        "DOWN": 145,
+        "FLAT": 62,
+        "UP": 145
+      },
+      "class_proportions": {
+        "DOWN": 0.4119,
+        "FLAT": 0.1761,
+        "UP": 0.4119
+      },
+      "majority_class": "DOWN",
+      "majority_baseline_accuracy": 0.4119,
+      "delta_vs_majority": 0.1563,
+      "accuracy": 0.5682,
+      "accuracy_se_iid": 0.0264,
+      "accuracy_se_neff": 0.0837,
+      "balanced_accuracy": 0.5398,
+      "macro_f1": 0.5572,
+      "weighted_f1": 0.566,
+      "per_class": {
+        "DOWN": {
+          "precision": 0.5827,
+          "recall": 0.5586,
+          "f1": 0.5704,
+          "support": 145
+        },
+        "FLAT": {
+          "precision": 0.6842,
+          "recall": 0.4194,
+          "f1": 0.52,
+          "support": 62
+        },
+        "UP": {
+          "precision": 0.5314,
+          "recall": 0.6414,
+          "f1": 0.5813,
+          "support": 145
+        }
+      },
+      "confusion_matrix": [
+        [
+          81,
+          6,
+          58
+        ],
+        [
+          12,
+          26,
+          24
+        ],
+        [
+          46,
+          6,
+          93
+        ]
+      ],
+      "nll": 0.9076,
+      "brier_score": 0.5576,
+      "ece": 0.053,
+      "mean_confidence": 0.5581,
+      "median_confidence": 0.5343,
+      "window_id": "W4",
+      "start_timestamp": 1791293415000,
+      "end_timestamp": 1791294206000,
+      "duration_sec": 791.0,
+      "purge_gap_before_ms": 107000
+    }
+  ],
+  "two_period_comparison": {
+    "period_1_early": {
+      "name": "Period 1 (Early Val / Cal Subset)",
+      "sample_count": 832,
+      "effective_sample_approx": 83,
+      "class_distribution": {
+        "DOWN": 378,
+        "FLAT": 75,
+        "UP": 379
+      },
+      "class_proportions": {
+        "DOWN": 0.4543,
+        "FLAT": 0.0901,
+        "UP": 0.4555
+      },
+      "majority_class": "UP",
+      "majority_baseline_accuracy": 0.4555,
+      "delta_vs_majority": 0.137,
+      "accuracy": 0.5925,
+      "accuracy_se_iid": 0.017,
+      "accuracy_se_neff": 0.0539,
+      "balanced_accuracy": 0.4805,
+      "macro_f1": 0.4946,
+      "weighted_f1": 0.5821,
+      "per_class": {
+        "DOWN": {
+          "precision": 0.5959,
+          "recall": 0.6164,
+          "f1": 0.606,
+          "support": 378
+        },
+        "FLAT": {
+          "precision": 0.4815,
+          "recall": 0.1733,
+          "f1": 0.2549,
+          "support": 75
+        },
+        "UP": {
+          "precision": 0.5966,
+          "recall": 0.6517,
+          "f1": 0.623,
+          "support": 379
+        }
+      },
+      "confusion_matrix": [
+        [
+          233,
+          7,
+          138
+        ],
+        [
+          33,
+          13,
+          29
+        ],
+        [
+          125,
+          7,
+          247
+        ]
+      ],
+      "nll": 0.8939,
+      "brier_score": 0.5395,
+      "ece": 0.0705,
+      "mean_confidence": 0.5364,
+      "median_confidence": 0.5272
+    },
+    "period_2_late": {
+      "name": "Period 2 (Late Val / Eval Subset)",
+      "sample_count": 596,
+      "effective_sample_approx": 59,
+      "class_distribution": {
+        "DOWN": 238,
+        "FLAT": 120,
+        "UP": 238
+      },
+      "class_proportions": {
+        "DOWN": 0.3993,
+        "FLAT": 0.2013,
+        "UP": 0.3993
+      },
+      "majority_class": "DOWN",
+      "majority_baseline_accuracy": 0.3993,
+      "delta_vs_majority": 0.1896,
+      "accuracy": 0.5889,
+      "accuracy_se_iid": 0.0202,
+      "accuracy_se_neff": 0.0641,
+      "balanced_accuracy": 0.5729,
+      "macro_f1": 0.5832,
+      "weighted_f1": 0.588,
+      "per_class": {
+        "DOWN": {
+          "precision": 0.5875,
+          "recall": 0.5924,
+          "f1": 0.59,
+          "support": 238
+        },
+        "FLAT": {
+          "precision": 0.6484,
+          "recall": 0.4917,
+          "f1": 0.5592,
+          "support": 120
+        },
+        "UP": {
+          "precision": 0.5698,
+          "recall": 0.6345,
+          "f1": 0.6004,
+          "support": 238
+        }
+      },
+      "confusion_matrix": [
+        [
+          141,
+          15,
+          82
+        ],
+        [
+          29,
+          59,
+          32
+        ],
+        [
+          70,
+          17,
+          151
+        ]
+      ],
+      "nll": 0.9006,
+      "brier_score": 0.5472,
+      "ece": 0.0494,
+      "mean_confidence": 0.5548,
+      "median_confidence": 0.5343
+    }
+  },
+  "regime_analysis": [
+    {
+      "name": "Book_Balanced (|Imbalance| <= Median)",
+      "sample_count": 714,
+      "effective_sample_approx": 71,
+      "class_distribution": {
+        "DOWN": 290,
+        "FLAT": 133,
+        "UP": 291
+      },
+      "class_proportions": {
+        "DOWN": 0.4062,
+        "FLAT": 0.1863,
+        "UP": 0.4076
+      },
+      "majority_class": "UP",
+      "majority_baseline_accuracy": 0.4076,
+      "delta_vs_majority": 0.182,
+      "accuracy": 0.5896,
+      "accuracy_se_iid": 0.0184,
+      "accuracy_se_neff": 0.0584,
+      "balanced_accuracy": 0.5714,
+      "macro_f1": 0.5826,
+      "weighted_f1": 0.5885,
+      "per_class": {
+        "DOWN": {
+          "precision": 0.5862,
+          "recall": 0.5862,
+          "f1": 0.5862,
+          "support": 290
+        },
+        "FLAT": {
+          "precision": 0.6436,
+          "recall": 0.4887,
+          "f1": 0.5556,
+          "support": 133
+        },
+        "UP": {
+          "precision": 0.5759,
+          "recall": 0.6392,
+          "f1": 0.6059,
+          "support": 291
+        }
+      },
+      "confusion_matrix": [
+        [
+          170,
+          17,
+          103
+        ],
+        [
+          34,
+          65,
+          34
+        ],
+        [
+          86,
+          19,
+          186
+        ]
+      ],
+      "nll": 0.9028,
+      "brier_score": 0.5441,
+      "ece": 0.0675,
+      "mean_confidence": 0.5302,
+      "median_confidence": 0.5115,
+      "regime_name": "Book_Balanced (|Imbalance| <= Median)"
+    },
+    {
+      "name": "Book_Pressured (|Imbalance| > Median)",
+      "sample_count": 714,
+      "effective_sample_approx": 71,
+      "class_distribution": {
+        "DOWN": 326,
+        "FLAT": 62,
+        "UP": 326
+      },
+      "class_proportions": {
+        "DOWN": 0.4566,
+        "FLAT": 0.0868,
+        "UP": 0.4566
+      },
+      "majority_class": "DOWN",
+      "majority_baseline_accuracy": 0.4566,
+      "delta_vs_majority": 0.1358,
+      "accuracy": 0.5924,
+      "accuracy_se_iid": 0.0184,
+      "accuracy_se_neff": 0.0583,
+      "balanced_accuracy": 0.463,
+      "macro_f1": 0.4702,
+      "weighted_f1": 0.5785,
+      "per_class": {
+        "DOWN": {
+          "precision": 0.5982,
+          "recall": 0.6258,
+          "f1": 0.6117,
+          "support": 326
+        },
+        "FLAT": {
+          "precision": 0.4118,
+          "recall": 0.1129,
+          "f1": 0.1772,
+          "support": 62
+        },
+        "UP": {
+          "precision": 0.5955,
+          "recall": 0.6503,
+          "f1": 0.6217,
+          "support": 326
+        }
+      },
+      "confusion_matrix": [
+        [
+          204,
+          5,
+          117
+        ],
+        [
+          28,
+          7,
+          27
+        ],
+        [
+          109,
+          5,
+          212
+        ]
+      ],
+      "nll": 0.8906,
+      "brier_score": 0.5413,
+      "ece": 0.0486,
+      "mean_confidence": 0.5579,
+      "median_confidence": 0.5572,
+      "regime_name": "Book_Pressured (|Imbalance| > Median)"
+    },
+    {
+      "name": "Volatility_Calm (Vol <= Median)",
+      "sample_count": 714,
+      "effective_sample_approx": 71,
+      "class_distribution": {
+        "DOWN": 251,
+        "FLAT": 107,
+        "UP": 356
+      },
+      "class_proportions": {
+        "DOWN": 0.3515,
+        "FLAT": 0.1499,
+        "UP": 0.4986
+      },
+      "majority_class": "UP",
+      "majority_baseline_accuracy": 0.4986,
+      "delta_vs_majority": 0.0882,
+      "accuracy": 0.5868,
+      "accuracy_se_iid": 0.0184,
+      "accuracy_se_neff": 0.0584,
+      "balanced_accuracy": 0.5502,
+      "macro_f1": 0.5598,
+      "weighted_f1": 0.5839,
+      "per_class": {
+        "DOWN": {
+          "precision": 0.5165,
+          "recall": 0.498,
+          "f1": 0.5071,
+          "support": 251
+        },
+        "FLAT": {
+          "precision": 0.5682,
+          "recall": 0.4673,
+          "f1": 0.5128,
+          "support": 107
+        },
+        "UP": {
+          "precision": 0.6354,
+          "recall": 0.6854,
+          "f1": 0.6595,
+          "support": 356
+        }
+      },
+      "confusion_matrix": [
+        [
+          125,
+          16,
+          110
+        ],
+        [
+          27,
+          50,
+          30
+        ],
+        [
+          90,
+          22,
+          244
+        ]
+      ],
+      "nll": 0.9021,
+      "brier_score": 0.5452,
+      "ece": 0.0562,
+      "mean_confidence": 0.5426,
+      "median_confidence": 0.5321,
+      "regime_name": "Volatility_Calm (Vol <= Median)"
+    },
+    {
+      "name": "Volatility_Turbulent (Vol > Median)",
+      "sample_count": 714,
+      "effective_sample_approx": 71,
+      "class_distribution": {
+        "DOWN": 365,
+        "FLAT": 88,
+        "UP": 261
+      },
+      "class_proportions": {
+        "DOWN": 0.5112,
+        "FLAT": 0.1232,
+        "UP": 0.3655
+      },
+      "majority_class": "DOWN",
+      "majority_baseline_accuracy": 0.5112,
+      "delta_vs_majority": 0.084,
+      "accuracy": 0.5952,
+      "accuracy_se_iid": 0.0184,
+      "accuracy_se_neff": 0.0583,
+      "balanced_accuracy": 0.5074,
+      "macro_f1": 0.5291,
+      "weighted_f1": 0.5861,
+      "per_class": {
+        "DOWN": {
+          "precision": 0.6401,
+          "recall": 0.6822,
+          "f1": 0.6605,
+          "support": 365
+        },
+        "FLAT": {
+          "precision": 0.7333,
+          "recall": 0.25,
+          "f1": 0.3729,
+          "support": 88
+        },
+        "UP": {
+          "precision": 0.522,
+          "recall": 0.59,
+          "f1": 0.554,
+          "support": 261
+        }
+      },
+      "confusion_matrix": [
+        [
+          249,
+          6,
+          110
+        ],
+        [
+          35,
+          22,
+          31
+        ],
+        [
+          105,
+          2,
+          154
+        ]
+      ],
+      "nll": 0.8913,
+      "brier_score": 0.5403,
+      "ece": 0.0612,
+      "mean_confidence": 0.5454,
+      "median_confidence": 0.5293,
+      "regime_name": "Volatility_Turbulent (Vol > Median)"
+    },
+    {
+      "name": "Spread_Normal (Spread <= Median)",
+      "sample_count": 1382,
+      "effective_sample_approx": 138,
+      "class_distribution": {
+        "DOWN": 600,
+        "FLAT": 181,
+        "UP": 601
+      },
+      "class_proportions": {
+        "DOWN": 0.4342,
+        "FLAT": 0.131,
+        "UP": 0.4349
+      },
+      "majority_class": "UP",
+      "majority_baseline_accuracy": 0.4349,
+      "delta_vs_majority": 0.1606,
+      "accuracy": 0.5955,
+      "accuracy_se_iid": 0.0132,
+      "accuracy_se_neff": 0.0418,
+      "balanced_accuracy": 0.5495,
+      "macro_f1": 0.5666,
+      "weighted_f1": 0.5925,
+      "per_class": {
+        "DOWN": {
+          "precision": 0.597,
+          "recall": 0.605,
+          "f1": 0.601,
+          "support": 600
+        },
+        "FLAT": {
+          "precision": 0.6102,
+          "recall": 0.3978,
+          "f1": 0.4816,
+          "support": 181
+        },
+        "UP": {
+          "precision": 0.5915,
+          "recall": 0.6456,
+          "f1": 0.6173,
+          "support": 601
+        }
+      },
+      "confusion_matrix": [
+        [
+          363,
+          22,
+          215
+        ],
+        [
+          56,
+          72,
+          53
+        ],
+        [
+          189,
+          24,
+          388
+        ]
+      ],
+      "nll": 0.8863,
+      "brier_score": 0.5375,
+      "ece": 0.0562,
+      "mean_confidence": 0.544,
+      "median_confidence": 0.5315,
+      "regime_name": "Spread_Normal (Spread <= Median)"
+    },
+    {
+      "name": "Spread_Wide (Spread > Median)",
+      "sample_count": 46,
+      "effective_sample_approx": 4,
+      "class_distribution": {
+        "DOWN": 16,
+        "FLAT": 14,
+        "UP": 16
+      },
+      "class_proportions": {
+        "DOWN": 0.3478,
+        "FLAT": 0.3043,
+        "UP": 0.3478
+      },
+      "majority_class": "DOWN",
+      "majority_baseline_accuracy": 0.3478,
+      "delta_vs_majority": 0.1087,
+      "accuracy": 0.4565,
+      "accuracy_se_iid": 0.0734,
+      "accuracy_se_neff": 0.2491,
+      "balanced_accuracy": 0.4375,
+      "macro_f1": 0.359,
+      "weighted_f1": 0.3746,
+      "per_class": {
+        "DOWN": {
+          "precision": 0.4783,
+          "recall": 0.6875,
+          "f1": 0.5641,
+          "support": 16
+        },
+        "FLAT": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 14
+        },
+        "UP": {
+          "precision": 0.4348,
+          "recall": 0.625,
+          "f1": 0.5128,
+          "support": 16
+        }
+      },
+      "confusion_matrix": [
+        [
+          11,
+          0,
+          5
+        ],
+        [
+          6,
+          0,
+          8
+        ],
+        [
+          6,
+          0,
+          10
+        ]
+      ],
+      "nll": 1.2083,
+      "brier_score": 0.6988,
+      "ece": 0.2234,
+      "mean_confidence": 0.5468,
+      "median_confidence": 0.5235,
+      "regime_name": "Spread_Wide (Spread > Median)"
+    },
+    {
+      "name": "Confidence_Low (< 0.55)",
+      "sample_count": 819,
+      "effective_sample_approx": 81,
+      "class_distribution": {
+        "DOWN": 372,
+        "FLAT": 96,
+        "UP": 351
+      },
+      "class_proportions": {
+        "DOWN": 0.4542,
+        "FLAT": 0.1172,
+        "UP": 0.4286
+      },
+      "majority_class": "DOWN",
+      "majority_baseline_accuracy": 0.4542,
+      "delta_vs_majority": 0.105,
+      "accuracy": 0.5592,
+      "accuracy_se_iid": 0.0173,
+      "accuracy_se_neff": 0.0552,
+      "balanced_accuracy": 0.4731,
+      "macro_f1": 0.4857,
+      "weighted_f1": 0.5495,
+      "per_class": {
+        "DOWN": {
+          "precision": 0.575,
+          "recall": 0.6183,
+          "f1": 0.5959,
+          "support": 372
+        },
+        "FLAT": {
+          "precision": 0.4762,
+          "recall": 0.2083,
+          "f1": 0.2899,
+          "support": 96
+        },
+        "UP": {
+          "precision": 0.5517,
+          "recall": 0.5926,
+          "f1": 0.5714,
+          "support": 351
+        }
+      },
+      "confusion_matrix": [
+        [
+          230,
+          10,
+          132
+        ],
+        [
+          39,
+          20,
+          37
+        ],
+        [
+          131,
+          12,
+          208
+        ]
+      ],
+      "nll": 0.9286,
+      "brier_score": 0.5666,
+      "ece": 0.075,
+      "mean_confidence": 0.4842,
+      "median_confidence": 0.49,
+      "regime_name": "Confidence_Low (< 0.55)"
+    },
+    {
+      "name": "Confidence_High (>= 0.55)",
+      "sample_count": 609,
+      "effective_sample_approx": 60,
+      "class_distribution": {
+        "DOWN": 244,
+        "FLAT": 99,
+        "UP": 266
+      },
+      "class_proportions": {
+        "DOWN": 0.4007,
+        "FLAT": 0.1626,
+        "UP": 0.4368
+      },
+      "majority_class": "UP",
+      "majority_baseline_accuracy": 0.4368,
+      "delta_vs_majority": 0.197,
+      "accuracy": 0.6338,
+      "accuracy_se_iid": 0.0195,
+      "accuracy_se_neff": 0.0622,
+      "balanced_accuracy": 0.6099,
+      "macro_f1": 0.6232,
+      "weighted_f1": 0.6317,
+      "per_class": {
+        "DOWN": {
+          "precision": 0.6234,
+          "recall": 0.5902,
+          "f1": 0.6063,
+          "support": 244
+        },
+        "FLAT": {
+          "precision": 0.6842,
+          "recall": 0.5253,
+          "f1": 0.5943,
+          "support": 99
+        },
+        "UP": {
+          "precision": 0.6291,
+          "recall": 0.7143,
+          "f1": 0.669,
+          "support": 266
+        }
+      },
+      "confusion_matrix": [
+        [
+          144,
+          12,
+          88
+        ],
+        [
+          23,
+          52,
+          24
+        ],
+        [
+          64,
+          12,
+          190
+        ]
+      ],
+      "nll": 0.8537,
+      "brier_score": 0.5106,
+      "ece": 0.0318,
+      "mean_confidence": 0.6246,
+      "median_confidence": 0.6051,
+      "regime_name": "Confidence_High (>= 0.55)"
+    },
+    {
+      "name": "Prediction_DOWN",
+      "sample_count": 631,
+      "effective_sample_approx": 63,
+      "class_distribution": {
+        "DOWN": 374,
+        "FLAT": 62,
+        "UP": 195
+      },
+      "class_proportions": {
+        "DOWN": 0.5927,
+        "FLAT": 0.0983,
+        "UP": 0.309
+      },
+      "majority_class": "DOWN",
+      "majority_baseline_accuracy": 0.5927,
+      "delta_vs_majority": -0.0,
+      "accuracy": 0.5927,
+      "accuracy_se_iid": 0.0196,
+      "accuracy_se_neff": 0.0619,
+      "balanced_accuracy": 0.3333,
+      "macro_f1": 0.2481,
+      "weighted_f1": 0.4412,
+      "per_class": {
+        "DOWN": {
+          "precision": 0.5927,
+          "recall": 1.0,
+          "f1": 0.7443,
+          "support": 374
+        },
+        "FLAT": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 62
+        },
+        "UP": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 195
+        }
+      },
+      "confusion_matrix": [
+        [
+          374,
+          0,
+          0
+        ],
+        [
+          62,
+          0,
+          0
+        ],
+        [
+          195,
+          0,
+          0
+        ]
+      ],
+      "nll": 0.9113,
+      "brier_score": 0.5488,
+      "ece": 0.0701,
+      "mean_confidence": 0.5325,
+      "median_confidence": 0.5223,
+      "regime_name": "Prediction_DOWN"
+    },
+    {
+      "name": "Prediction_FLAT",
+      "sample_count": 118,
+      "effective_sample_approx": 11,
+      "class_distribution": {
+        "DOWN": 22,
+        "FLAT": 72,
+        "UP": 24
+      },
+      "class_proportions": {
+        "DOWN": 0.1864,
+        "FLAT": 0.6102,
+        "UP": 0.2034
+      },
+      "majority_class": "FLAT",
+      "majority_baseline_accuracy": 0.6102,
+      "delta_vs_majority": 0.0,
+      "accuracy": 0.6102,
+      "accuracy_se_iid": 0.0449,
+      "accuracy_se_neff": 0.147,
+      "balanced_accuracy": 0.3333,
+      "macro_f1": 0.2526,
+      "weighted_f1": 0.4624,
+      "per_class": {
+        "DOWN": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 22
+        },
+        "FLAT": {
+          "precision": 0.6102,
+          "recall": 1.0,
+          "f1": 0.7579,
+          "support": 72
+        },
+        "UP": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 24
+        }
+      },
+      "confusion_matrix": [
+        [
+          0,
+          22,
+          0
+        ],
+        [
+          0,
+          72,
+          0
+        ],
+        [
+          0,
+          24,
+          0
+        ]
+      ],
+      "nll": 0.8484,
+      "brier_score": 0.5173,
+      "ece": 0.0622,
+      "mean_confidence": 0.6137,
+      "median_confidence": 0.5746,
+      "regime_name": "Prediction_FLAT"
+    },
+    {
+      "name": "Prediction_UP",
+      "sample_count": 679,
+      "effective_sample_approx": 67,
+      "class_distribution": {
+        "DOWN": 220,
+        "FLAT": 61,
+        "UP": 398
+      },
+      "class_proportions": {
+        "DOWN": 0.324,
+        "FLAT": 0.0898,
+        "UP": 0.5862
+      },
+      "majority_class": "UP",
+      "majority_baseline_accuracy": 0.5862,
+      "delta_vs_majority": 0.0,
+      "accuracy": 0.5862,
+      "accuracy_se_iid": 0.0189,
+      "accuracy_se_neff": 0.0602,
+      "balanced_accuracy": 0.3333,
+      "macro_f1": 0.2464,
+      "weighted_f1": 0.4332,
+      "per_class": {
+        "DOWN": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 220
+        },
+        "FLAT": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 61
+        },
+        "UP": {
+          "precision": 0.5862,
+          "recall": 1.0,
+          "f1": 0.7391,
+          "support": 398
+        }
+      },
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          220
+        ],
+        [
+          0,
+          0,
+          61
+        ],
+        [
+          0,
+          0,
+          398
+        ]
+      ],
+      "nll": 0.8915,
+      "brier_score": 0.5415,
+      "ece": 0.0559,
+      "mean_confidence": 0.5427,
+      "median_confidence": 0.5339,
+      "regime_name": "Prediction_UP"
+    }
+  ]
+}

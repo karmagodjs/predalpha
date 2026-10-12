@@ -1,0 +1,18 @@
+{
+  "session_id": "session_live_smoke_001",
+  "session_type": "GENUINE_PROSPECTIVE_SHADOW",
+  "start_time_utc": "2026-10-09T12:05:47.548721+00:00",
+  "end_time_utc": "2026-10-09T12:06:22.612573+00:00",
+  "total_observations_logged": 15,
+  "trades_executed": 1,
+  "trades_suppressed": 14,
+  "trades_skipped_flat": 0,
+  "ws_messages_received": 24137,
+  "model_checkpoint_sha256": "d8b75bdbaffbb7f2c4b398beea484f83d851b37380bccd93ca07199a3d9c025d",
+  "log_file": "session_live_smoke_001_observations.jsonl",
+  "log_sha256": "835f68834c59588b80427b4990040491a0d7343f35aa72a7bfa59fd2e9e9fe71",
+  "health_report_sha256": "8b3bf8ab81d2547ddfe829c0e65b411d897e3b1e1b9b6edbb4a68e78dd497445",
+  "locked_test_set_touched": false,
+  "real_capital_used": false,
+  "exchange_orders_sent": false
+}

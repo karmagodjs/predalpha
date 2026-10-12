@@ -63,6 +63,7 @@ BASE_FEE_BPS = 0.0
 CONSERVATIVE_FEE_BPS = 5.0
 STRESSED_FEE_BPS = 10.0
 MAX_STRESSED_FEE_BPS = 15.0
+EMPTY_FILE_SHA256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 
 
 def sha256_file(path: Union[str, Path]) -> str:
@@ -235,6 +236,9 @@ class ForwardShadowLogger:
         self.rolling_hash = hashlib.sha256()
         self._is_closed = False
 
+        # Ensure deterministic observation-log artifact exists immediately, even for 0-record sessions
+        self.log_file.touch(exist_ok=False)
+
     def log_decision_point(
         self,
         event_timestamp_ms: int,
@@ -399,7 +403,7 @@ class ForwardShadowLogger:
                 f"Artifact collision: manifest file already exists at {self.manifest_file}."
             )
 
-        log_sha256 = sha256_file(self.log_file) if self.log_file.exists() else ""
+        log_sha256 = sha256_file(self.log_file) if self.log_file.exists() else EMPTY_FILE_SHA256
         manifest: Dict[str, Any] = {
             "run_id": self.run_id,
             "total_records": self.record_count,
@@ -553,13 +557,36 @@ def evaluate_stress_scenarios(
 
 def define_prospective_protocol() -> Dict[str, Any]:
     """
-    Define formal, predeclared prospective shadow evaluation protocol (Amendment v1.1).
+    Define formal, predeclared prospective shadow evaluation protocol (Amendment v1.2).
     Predeclares targets, acceptance criteria, dependence adjustments, and stopping rules.
     """
     return {
-        "protocol_version": "1.1",
+        "protocol_version": "1.2",
         "protocol_status": "PREDECLARED_FROZEN",
-        "amendment_version": "1.1",
+        "amendment_version": "1.2",
+        "amendment_v1_2_rules": {
+            "primary_evaluation_cohort": (
+                "Intention-to-Treat (ITT) Master Ledger pooling ALL completed trades from all prospective sessions "
+                "(completed, degraded, and aborted)."
+            ),
+            "eligible_completed_session_definition": (
+                "Session reaches nominal duration (300s), session_status == COMPLETE, zero hard stops, "
+                "zero buffer/queue drops, dual books initialized."
+            ),
+            "session_quota_target": 5,
+            "two_tier_circuit_breakers": {
+                "intra_session_loss_limit": 8,
+                "global_strategy_rejection_limit_v1_1": 3,
+                "session_008_classification": "Infrastructure-Invalidated Abort (zero trading risk, measurement bug, patched in causal buffer).",
+                "session_009_standing": "Strategy Abort #1 of 3 under v1.1+ causal code (2 strategy aborts remaining in budget).",
+            },
+            "filter_prohibitions": {
+                "contract_price_filter_rejected": "Proposed 0.15-0.85 filter formally rejected due to empirical counter-evidence and protocol freezing.",
+                "fee_hurdle_filters": "Prohibited in Phase 26; deferred to Phase 27.",
+                "entry_throttling": "Prohibited in Phase 26; deferred to Phase 27.",
+            },
+            "opposing_position_handling": "Frozen unconstrained entry; offline reporting of concurrent opposing positions and synthetic spread drag.",
+        },
         "amendment_metric_definitions": {
             "missing_quote_rate": (
                 "invalid, missing, or crossed quotes divided by eligible grid steps processed "
@@ -610,11 +637,9 @@ def define_prospective_protocol() -> Dict[str, Any]:
             "full_observation_accounting": True,
         },
         "current_prospective_data_availability": {
-            "has_forward_shadow_data_collected": False,
+            "has_forward_shadow_data_collected": True,
             "status_statement": (
-                "The prospective shadow logger infrastructure, schema, and protocol are fully implemented. "
-                "However, zero forward shadow data has been collected in live forward time. Prospective data "
-                "must be collected in a subsequent research session following this predeclared protocol."
+                "Prospective shadow data collection underway under Protocol Amendment v1.2 with full ITT observation accounting."
             ),
         },
     }

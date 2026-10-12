@@ -24,6 +24,8 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import collections
+from dataclasses import dataclass, field
 import datetime
 import hashlib
 import json
@@ -32,6 +34,7 @@ import math
 from pathlib import Path
 import random
 import sys
+import threading
 import time
 from typing import Any, Dict, List, Optional, Tuple, Union
 import urllib.request
@@ -75,6 +78,7 @@ from pipeline_v2.models.phase26_forward_shadow import (
     TRAIN_DEPTH_IMBALANCE_P90,
     LOCKED_TEST_PATH,
     sha256_file,
+    EMPTY_FILE_SHA256,
 )
 from pipeline_v2.models.recurrent_models import SmallLSTMModule
 
@@ -137,6 +141,151 @@ def classify_and_parse_ws_message(
         return "JSON", data, None
     except json.JSONDecodeError as exc:
         return "MALFORMED", None, f"JSONDecodeError: {exc}"
+
+
+# -----------------------------------------------------------------------------
+# Section 1b: Causal Point-In-Time Event Buffering (Strict As-Of Parity)
+# -----------------------------------------------------------------------------
+
+@dataclass
+class BufferedMarketEvent:
+    """Represents a staged market event awaiting causal point-in-time grid evaluation."""
+    receipt_timestamp_ms: int
+    data: Any
+    raw_message: Any = None
+    source_timestamp_ms: Optional[int] = None
+
+
+class PointInTimeEventBuffer:
+    """
+    Bounded, thread-safe FIFO buffer for incoming market events.
+    Enforces causal point-in-time sampling consistent with PointInTimeResampler:
+    Events are drained strictly up to grid boundary T (receipt_timestamp_ms <= T).
+    Events with receipt_timestamp_ms > T remain buffered for subsequent grid steps.
+    """
+
+    def __init__(self, maxsize: int = 20000, future_tolerance_ms: int = 5000):
+        self.maxsize = maxsize
+        self.future_tolerance_ms = future_tolerance_ms
+        self._queue: collections.deque[BufferedMarketEvent] = collections.deque()
+        self._lock = threading.Lock()
+        self.overflow_count: int = 0
+        self.future_dated_rejected_count: int = 0
+        self.invalid_timestamp_rejected_count: int = 0
+
+    def push(
+        self,
+        receipt_timestamp_ms: int,
+        data: Any,
+        raw_message: Any = None,
+        source_timestamp_ms: Optional[int] = None,
+    ) -> bool:
+        """
+        Validate and push an event to the buffer.
+        Rejects invalid or future-dated events without lookahead leakage.
+        Returns True if enqueued, False if rejected or dropped.
+        """
+        if receipt_timestamp_ms is None or not isinstance(receipt_timestamp_ms, (int, float)) or receipt_timestamp_ms <= 0:
+            with self._lock:
+                self.invalid_timestamp_rejected_count += 1
+            return False
+
+        receipt_ts_int = int(receipt_timestamp_ms)
+
+        eff_source_ts = source_timestamp_ms
+        if eff_source_ts is None:
+            if isinstance(data, dict):
+                raw_ts = data.get("timestamp") or data.get("timestamp_ms")
+                if raw_ts is not None:
+                    try:
+                        eff_source_ts = int(raw_ts)
+                    except (ValueError, TypeError):
+                        pass
+            elif isinstance(data, list):
+                for item in data:
+                    if isinstance(item, dict):
+                        raw_ts = item.get("timestamp") or item.get("timestamp_ms")
+                        if raw_ts is not None:
+                            try:
+                                cand_ts = int(raw_ts)
+                                if eff_source_ts is None or cand_ts > eff_source_ts:
+                                    eff_source_ts = cand_ts
+                            except (ValueError, TypeError):
+                                pass
+
+        # Reject future-dated events relative to receipt time + tolerance
+        if eff_source_ts is not None and eff_source_ts > receipt_ts_int + self.future_tolerance_ms:
+            with self._lock:
+                self.future_dated_rejected_count += 1
+            return False
+
+        event = BufferedMarketEvent(
+            receipt_timestamp_ms=receipt_ts_int,
+            data=data,
+            raw_message=raw_message,
+            source_timestamp_ms=eff_source_ts,
+        )
+
+        with self._lock:
+            if len(self._queue) >= self.maxsize:
+                self.overflow_count += 1
+                return False
+            # Maintain monotonic ordering by receipt_timestamp_ms
+            if not self._queue or receipt_ts_int >= self._queue[-1].receipt_timestamp_ms:
+                self._queue.append(event)
+            else:
+                self._queue.append(event)
+                self._queue = collections.deque(sorted(self._queue, key=lambda x: x.receipt_timestamp_ms))
+            return True
+
+    def drain_up_to(self, boundary_timestamp_ms: int) -> List[BufferedMarketEvent]:
+        """
+        Pop and return all events with receipt_timestamp_ms <= boundary_timestamp_ms
+        in FIFO order. Events with receipt_timestamp_ms > boundary_timestamp_ms
+        remain in the buffer.
+        """
+        ready: List[BufferedMarketEvent] = []
+        with self._lock:
+            while self._queue and self._queue[0].receipt_timestamp_ms <= boundary_timestamp_ms:
+                ready.append(self._queue.popleft())
+        return ready
+
+    def peek_next_timestamp_ms(self) -> Optional[int]:
+        """Return the receipt timestamp of the earliest buffered event without popping."""
+        with self._lock:
+            return self._queue[0].receipt_timestamp_ms if self._queue else None
+
+    def clear(self) -> int:
+        """Clear all buffered events (e.g. on market rollover or reconnect). Returns count cleared."""
+        with self._lock:
+            n = len(self._queue)
+            self._queue.clear()
+            return n
+
+    def clear_for_asset(self, asset_id: str) -> int:
+        """Clear events for a specific asset ID (e.g. expired token on rollover)."""
+        with self._lock:
+            initial_len = len(self._queue)
+            remaining: collections.deque[BufferedMarketEvent] = collections.deque()
+            for ev in self._queue:
+                keep = True
+                if isinstance(ev.data, dict):
+                    if str(ev.data.get("asset_id", "")) == asset_id:
+                        keep = False
+                    elif "price_changes" in ev.data:
+                        changes = [c for c in ev.data.get("price_changes", []) if str(c.get("asset_id", "")) != asset_id]
+                        if not changes:
+                            keep = False
+                        else:
+                            ev.data["price_changes"] = changes
+                if keep:
+                    remaining.append(ev)
+            self._queue = remaining
+            return initial_len - len(self._queue)
+
+    def __len__(self) -> int:
+        with self._lock:
+            return len(self._queue)
 
 
 # -----------------------------------------------------------------------------
@@ -538,6 +687,15 @@ class ProspectiveShadowSession:
         # Decoupled message queue
         self.message_queue: asyncio.Queue = asyncio.Queue(maxsize=queue_maxsize)
 
+        # Strict Point-In-Time Staging Buffer (Option 2)
+        self.event_buffer = PointInTimeEventBuffer(
+            maxsize=queue_maxsize * 2,
+            future_tolerance_ms=5000,
+        )
+        self.buffered_events_drained_count = 0
+        self.future_dated_events_rejected = 0
+        self.invalid_events_rejected = 0
+
         # Operational state flags
         self.is_running = False
         self.is_book_valid = False
@@ -551,6 +709,7 @@ class ProspectiveShadowSession:
         self.protocol_errors_count = 0
         self.malformed_messages_count = 0
         self.queue_overflow_count = 0
+        self.event_buffer_overflow_count = 0
         self.max_queue_depth_seen = 0
         self.reconnect_count = 0
         self.rollover_events_count = 0
@@ -568,9 +727,10 @@ class ProspectiveShadowSession:
         self.session_fatal_error: Optional[str] = None
         self.malformed_samples: List[Dict[str, Any]] = []
         self.rollover_records: List[Dict[str, Any]] = []
+        self.unquotable_diagnostics: List[Dict[str, Any]] = []
 
-        # Protocol Amendment v1.1 telemetry & metric definitions
-        self.protocol_version = "1.1"
+        # Protocol Amendment v1.2 telemetry & metric definitions
+        self.protocol_version = "1.2"
         self.eligible_grid_steps_count = 0
         self.valid_staleness_observation_count = 0
         self.total_quote_age_ms = 0.0
@@ -640,6 +800,7 @@ class ProspectiveShadowSession:
         while self.is_running:
             try:
                 msg = await ws.recv()
+                recv_ms = int(time.time() * 1000)
                 self.ws_messages_received += 1
 
                 # Track queue depth telemetry
@@ -648,7 +809,7 @@ class ProspectiveShadowSession:
                     self.max_queue_depth_seen = depth
 
                 try:
-                    self.message_queue.put_nowait(msg)
+                    self.message_queue.put_nowait((msg, recv_ms))
                 except asyncio.QueueFull:
                     self.queue_overflow_count += 1
                     self.is_book_degraded = True
@@ -702,7 +863,8 @@ class ProspectiveShadowSession:
                         self.is_book_valid = False
                         self.is_book_degraded = False
 
-                        # Clear queue of any stale messages from prior disconnect
+                        # Clear queue and event buffer of any stale messages from prior disconnect
+                        self.event_buffer.clear()
                         while not self.message_queue.empty():
                             try:
                                 self.message_queue.get_nowait()
@@ -802,9 +964,15 @@ class ProspectiveShadowSession:
                                     self.is_book_valid = False
                                     rollover_pending_snapshot_since = time.time()
 
-                                    # Reset feature engine so previous market's returns do not contaminate new market
+                                    # Reset feature engine and buffers so previous market's quotes do not contaminate new market
                                     self.feature_engine.reset()
-                                    logger.info("Feature engine and order books reset for new market %s (UP: %s, DOWN: %s)", slug, up_token_id[:10], down_token_id[:10])
+                                    self.event_buffer.clear()
+                                    while not self.message_queue.empty():
+                                        try:
+                                            self.message_queue.get_nowait()
+                                        except asyncio.QueueEmpty:
+                                            break
+                                    logger.info("Feature engine, buffers, and order books reset for new market %s (UP: %s, DOWN: %s)", slug, up_token_id[:10], down_token_id[:10])
 
                                     # Subscribe new tokens
                                     await ws.send(json.dumps({
@@ -836,48 +1004,8 @@ class ProspectiveShadowSession:
                                 rollover_pending_snapshot_since = None
                                 raise ConnectionClosedOK(None, None)
 
-                            # Drain messages from queue and update order book state
-                            now_ms = int(now * 1000)
-                            drain_count = 0
-                            while not self.message_queue.empty() and drain_count < 500:
-                                drain_count += 1
-                                raw_msg = self.message_queue.get_nowait()
-                                classification, parsed_data, err_detail = classify_and_parse_ws_message(raw_msg)
-
-                                if classification == "JSON":
-                                    self.json_messages_parsed += 1
-                                    self._apply_parsed_market_data(parsed_data, up_book, down_book, now_ms, up_token_id, down_token_id)
-                                elif classification in ("EMPTY", "CONTROL"):
-                                    self.control_messages_count += 1
-                                elif classification == "PROTOCOL_ERROR":
-                                    self.protocol_errors_count += 1
-                                    logger.warning("Protocol message received (%s): %s", slug, raw_msg)
-                                    # If books uninitialized, subscription may have failed; trigger reconnect for snapshots
-                                    if not (up_book.is_initialized and down_book.is_initialized):
-                                        logger.info("Protocol error on uninitialized books; triggering clean reconnect.")
-                                        raise ConnectionClosedOK(None, None)
-                                elif classification == "MALFORMED":
-                                    self.malformed_messages_count += 1
-                                    snippet = repr(raw_msg[:120]) if hasattr(raw_msg, "__getitem__") else repr(raw_msg)
-                                    logger.warning(
-                                        "Malformed WebSocket frame received (len=%s, market=%s): %s | %s",
-                                        len(raw_msg) if hasattr(raw_msg, "__len__") else 0,
-                                        slug, snippet, err_detail
-                                    )
-                                    if len(self.malformed_samples) < 50:
-                                        self.malformed_samples.append({
-                                            "timestamp_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                                            "length": len(raw_msg) if hasattr(raw_msg, "__len__") else 0,
-                                            "snippet": snippet,
-                                            "error": err_detail,
-                                        })
-
-                            # Check book validity: valid once both UP and DOWN have received initial snapshots
-                            if up_book.is_initialized and down_book.is_initialized and not self.is_book_degraded:
-                                self.is_book_valid = True
-                                rollover_pending_snapshot_since = None
-                            else:
-                                self.is_book_valid = False
+                            # Drain incoming items from message_queue into staged point-in-time event buffer
+                            self._drain_message_queue_into_buffer(slug, up_book, down_book, max_drain=500)
 
                             # 1-Second Grid Sampling
                             curr_sec = int(time.time())
@@ -889,13 +1017,20 @@ class ProspectiveShadowSession:
                                 last_grid_sample_sec += 1
                                 grid_ts_ms = last_grid_sample_sec * 1000
 
-                                await self._process_grid_step(
+                                # Drain any frames that arrived before this integer-second boundary
+                                self._drain_message_queue_into_buffer(slug, up_book, down_book, max_drain=500)
+
+                                await self.process_buffered_grid_step(
+                                    grid_timestamp_ms=grid_ts_ms,
                                     up_book=up_book,
+                                    down_book=down_book,
                                     market_id=slug,
                                     asset_id=up_token_id,
-                                    grid_timestamp_ms=grid_ts_ms,
-                                    down_book=down_book,
+                                    down_token_id=down_token_id,
                                 )
+
+                                if self.is_book_valid:
+                                    rollover_pending_snapshot_since = None
 
                             # Yield control briefly to event loop
                             await asyncio.sleep(0.01)
@@ -930,6 +1065,115 @@ class ProspectiveShadowSession:
             # Guaranteed safe finalization on ALL paths
             manifest = self._finalize_session()
             return manifest
+
+    def _drain_message_queue_into_buffer(
+        self,
+        slug: str,
+        up_book: LiveTokenOrderBook,
+        down_book: LiveTokenOrderBook,
+        max_drain: int = 500,
+    ) -> int:
+        """
+        Drain raw items from message_queue, classify them, handle protocol/control frames,
+        and stage validated market data frames in the point-in-time event buffer.
+        """
+        drain_count = 0
+        while not self.message_queue.empty() and drain_count < max_drain:
+            drain_count += 1
+            item = self.message_queue.get_nowait()
+            if isinstance(item, tuple) and len(item) == 2:
+                raw_msg, recv_ms = item
+            else:
+                raw_msg, recv_ms = item, int(time.time() * 1000)
+
+            classification, parsed_data, err_detail = classify_and_parse_ws_message(raw_msg)
+
+            if classification in ("EMPTY", "CONTROL"):
+                self.control_messages_count += 1
+            elif classification == "PROTOCOL_ERROR":
+                self.protocol_errors_count += 1
+                logger.warning("Protocol message received (%s): %s", slug, raw_msg)
+                # If books uninitialized, subscription may have failed; trigger reconnect for snapshots
+                if not (up_book.is_initialized and down_book.is_initialized):
+                    logger.info("Protocol error on uninitialized books; triggering clean reconnect.")
+                    raise ConnectionClosedOK(None, None)
+            elif classification == "MALFORMED":
+                self.malformed_messages_count += 1
+                snippet = repr(raw_msg[:120]) if hasattr(raw_msg, "__getitem__") else repr(raw_msg)
+                logger.warning(
+                    "Malformed WebSocket frame received (len=%s, market=%s): %s | %s",
+                    len(raw_msg) if hasattr(raw_msg, "__len__") else 0,
+                    slug, snippet, err_detail
+                )
+                if len(self.malformed_samples) < 50:
+                    self.malformed_samples.append({
+                        "timestamp_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                        "length": len(raw_msg) if hasattr(raw_msg, "__len__") else 0,
+                        "snippet": snippet,
+                        "error": err_detail,
+                    })
+            elif classification == "JSON":
+                self.json_messages_parsed += 1
+                pushed = self.event_buffer.push(
+                    receipt_timestamp_ms=recv_ms,
+                    data=parsed_data,
+                    raw_message=raw_msg,
+                )
+                if not pushed:
+                    if self.event_buffer.overflow_count > self.event_buffer_overflow_count:
+                        self.event_buffer_overflow_count = self.event_buffer.overflow_count
+                        self.is_book_degraded = True
+                        logger.warning(
+                            "Event buffer overflow (overflow_count=%d). Marking order book degraded.",
+                            self.event_buffer.overflow_count,
+                        )
+                    else:
+                        self.invalid_events_rejected += 1
+
+        return drain_count
+
+    async def process_buffered_grid_step(
+        self,
+        grid_timestamp_ms: int,
+        up_book: LiveTokenOrderBook,
+        down_book: LiveTokenOrderBook,
+        market_id: str,
+        asset_id: str,
+        down_token_id: Optional[str] = None,
+    ) -> None:
+        """
+        Drain strictly point-in-time buffered events where receipt_timestamp_ms <= grid_timestamp_ms,
+        apply them to the active token order books, update book validity, and evaluate the 1-second grid step.
+        """
+        effective_down_token = down_token_id or getattr(down_book, "asset_id", "")
+
+        # Drain strictly causal events at or before grid boundary T
+        events_to_apply = self.event_buffer.drain_up_to(grid_timestamp_ms)
+        for ev in events_to_apply:
+            self.buffered_events_drained_count += 1
+            self._apply_parsed_market_data(
+                data=ev.data,
+                up_book=up_book,
+                down_book=down_book,
+                now_ms=ev.receipt_timestamp_ms,
+                up_token_id=asset_id,
+                down_token_id=effective_down_token,
+            )
+
+        # Update book validity state based on updated books
+        if up_book.is_initialized and down_book.is_initialized and not self.is_book_degraded:
+            self.is_book_valid = True
+        else:
+            self.is_book_valid = False
+
+        # Execute grid step evaluation
+        await self._process_grid_step(
+            up_book=up_book,
+            market_id=market_id,
+            asset_id=asset_id,
+            grid_timestamp_ms=grid_timestamp_ms,
+            down_book=down_book,
+        )
 
     def _apply_parsed_market_data(
         self,
@@ -1045,6 +1289,70 @@ class ProspectiveShadowSession:
 
         if not has_valid_prices or not has_valid_timestamp:
             self.unquotable_quotes_count += 1
+
+            missing_or_nonpositive_bid = bool(bid is None or bid <= 0)
+            missing_or_nonpositive_ask = bool(ask is None or ask <= 0)
+            crossed_or_locked_quotes = bool(
+                bid is not None
+                and ask is not None
+                and bid >= ask
+            )
+            invalid_or_missing_timestamp = bool(
+                up_book.last_update_ms is None
+                or up_book.last_update_ms <= 0
+            )
+            grid_earlier_than_book_update = bool(
+                up_book.last_update_ms is not None
+                and up_book.last_update_ms > 0
+                and grid_timestamp_ms < up_book.last_update_ms
+            )
+
+            failure_reasons: List[str] = []
+            if missing_or_nonpositive_bid:
+                failure_reasons.append("MISSING_OR_NONPOSITIVE_BID")
+            if missing_or_nonpositive_ask:
+                failure_reasons.append("MISSING_OR_NONPOSITIVE_ASK")
+            if crossed_or_locked_quotes:
+                failure_reasons.append("CROSSED_OR_LOCKED_QUOTES")
+            if invalid_or_missing_timestamp:
+                failure_reasons.append("INVALID_OR_MISSING_TIMESTAMP")
+            if grid_earlier_than_book_update:
+                failure_reasons.append("GRID_EARLIER_THAN_BOOK_UPDATE")
+
+            diag = {
+                "session_id": self.session_id,
+                "market_id": market_id,
+                "asset_id": asset_id,
+                "grid_timestamp_ms": grid_timestamp_ms,
+                "book_last_update_ms": up_book.last_update_ms,
+                "bid": float(bid) if bid is not None else None,
+                "ask": float(ask) if ask is not None else None,
+                "bid_size": float(bid_size) if bid_size is not None else None,
+                "ask_size": float(ask_size) if ask_size is not None else None,
+                "validation_flags": {
+                    "missing_or_nonpositive_bid": missing_or_nonpositive_bid,
+                    "missing_or_nonpositive_ask": missing_or_nonpositive_ask,
+                    "crossed_or_locked_quotes": crossed_or_locked_quotes,
+                    "invalid_or_missing_timestamp": invalid_or_missing_timestamp,
+                    "grid_earlier_than_book_update": grid_earlier_than_book_update,
+                },
+                "failure_reasons": failure_reasons,
+                "timestamp_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            }
+            if len(self.unquotable_diagnostics) < 100:
+                self.unquotable_diagnostics.append(diag)
+
+            logger.warning(
+                "Unquotable quote on grid step %d for %s (session=%s): bid=%s, ask=%s, book_ts=%s, reasons=%s",
+                grid_timestamp_ms,
+                market_id,
+                self.session_id,
+                bid,
+                ask,
+                up_book.last_update_ms,
+                ",".join(failure_reasons),
+            )
+
             self._check_grid_metric_hard_stops()
             return
 
@@ -1263,7 +1571,12 @@ class ProspectiveShadowSession:
             session_status = "FAILED"
         elif self.hard_stop_reason is not None:
             session_status = "ABORTED_HARD_STOP"
-        elif self.queue_overflow_count > 0 or self.malformed_messages_count > 0 or self.reconnect_count >= 3:
+        elif (
+            self.queue_overflow_count > 0
+            or self.event_buffer_overflow_count > 0
+            or self.malformed_messages_count > 0
+            or self.reconnect_count >= 3
+        ):
             session_status = "DEGRADED"
         else:
             session_status = "COMPLETE"
@@ -1294,6 +1607,8 @@ class ProspectiveShadowSession:
             "warmup_steps_count": self.warmup_steps_count,
             "eligible_grid_steps_count": self.eligible_grid_steps_count,
             "unquotable_quotes_count": self.unquotable_quotes_count,
+            "unquotable_diagnostics_count": len(self.unquotable_diagnostics),
+            "first_unquotable_diagnostic": self.unquotable_diagnostics[0] if self.unquotable_diagnostics else None,
             "missing_quote_rate": round(self.missing_quote_rate, 6),
             "missing_quote_rate_threshold": self.max_missing_quote_rate_threshold,
             "valid_staleness_observation_count": self.valid_staleness_observation_count,
@@ -1303,6 +1618,10 @@ class ProspectiveShadowSession:
             "trades_executed": self.trades_executed,
             "trades_suppressed": self.trades_suppressed,
             "trades_skipped_flat": self.trades_skipped_flat,
+            "buffered_events_drained": self.buffered_events_drained_count,
+            "future_dated_events_rejected": self.event_buffer.future_dated_rejected_count + self.future_dated_events_rejected,
+            "invalid_events_rejected": self.event_buffer.invalid_timestamp_rejected_count + self.invalid_events_rejected,
+            "event_buffer_overflow_count": self.event_buffer.overflow_count,
             "ws_messages_received": self.ws_messages_received,
             "json_messages_parsed": self.json_messages_parsed,
             "control_messages_count": self.control_messages_count,
@@ -1315,7 +1634,7 @@ class ProspectiveShadowSession:
             "fatal_error": self.session_fatal_error,
             "model_checkpoint_sha256": final_model_hash,
             "log_file": logger_manifest["log_file"],
-            "log_sha256": logger_manifest["log_sha256"],
+            "log_sha256": logger_manifest["log_sha256"] or EMPTY_FILE_SHA256,
             "health_report_sha256": sha256_file(health_report_path),
             "locked_test_set_touched": False,
             "real_capital_used": False,
@@ -1353,7 +1672,7 @@ class ProspectiveShadowSession:
             f"## 1. Session Status: {status_badge}\n",
             "| Telemetry Metric | Session Value | Quality Benchmark |",
             "| :--- | :---: | :--- |",
-            f"| **Protocol Version** | `{self.protocol_version}` | Protocol Amendment v1.1 |",
+            f"| **Protocol Version** | `{self.protocol_version}` | Protocol Amendment v1.2 |",
             f"| **Start Timestamp (UTC)** | `{self.start_utc}` | Recorded |",
             f"| **End Timestamp (UTC)** | `{end_utc}` | Recorded |",
             f"| **Session Status** | `{session_status}` | Operational certification |",
@@ -1376,8 +1695,11 @@ class ProspectiveShadowSession:
             f"| **Feature Warm-up Steps** | `{self.warmup_steps_count:,}` | Initial sequence building |",
             f"| **Trades Triggered (EXECUTE)** | `{self.trades_executed:,}` | Evaluated under frozen regime gates |",
             f"| **Trades Suppressed by Gates** | `{self.trades_suppressed:,}` | Strict regime gating |",
-            f"| **Predictions Skipped (FLAT)** | `{self.trades_skipped_flat:,}` | Non-directional model output |",
-            f"| **Stale Quote Events** | `{self.stale_quotes_count:,}` | Quote age > 2000ms threshold |\n",
+            f"| **Stale Quote Events** | `{self.stale_quotes_count:,}` | Quote age > 2000ms threshold |",
+            f"| **Buffered Events Drained** | `{self.buffered_events_drained_count:,}` | Causal point-in-time event alignment |",
+            f"| **Future-Dated Frames Rejected** | `{self.event_buffer.future_dated_rejected_count + self.future_dated_events_rejected:,}` | 0 expected (rejected safely) |",
+            f"| **Invalid Timestamp Frames Rejected** | `{self.event_buffer.invalid_timestamp_rejected_count + self.invalid_events_rejected:,}` | 0 expected (rejected safely) |",
+            f"| **Event Buffer Overflows** | `{self.event_buffer.overflow_count:,}` | Capacity: {self.event_buffer.maxsize:,} |\n",
             "---\n",
             "## 2. Invariants & Safety Verification\n",
             "- [x] **Zero Live Orders**: Process operates strictly as a read-only WebSocket subscriber.",
@@ -1388,7 +1710,7 @@ class ProspectiveShadowSession:
         ]
 
         if self.hard_stop_reason:
-            md.extend([
+            hard_stop_lines = [
                 "---\n",
                 "## 3. Hard Stopping Abort Trigger\n",
                 f"- **Trigger Code**: `{self.hard_stop_reason}`\n",
@@ -1396,19 +1718,42 @@ class ProspectiveShadowSession:
                 f"- **Missing Quote Rate**: `{self.missing_quote_rate * 100:.2f}%` (Threshold: `{self.max_missing_quote_rate_threshold * 100:.1f}%`)\n",
                 f"- **Average Quote Staleness**: `{self.average_quote_age_ms:.2f} ms` (Threshold: `{self.max_average_staleness_threshold_ms:.1f} ms`)\n",
                 "- **Enforcement**: New hypothetical trade entries halted immediately; pending in-flight positions drained before session exit.\n",
+            ]
+            if self.unquotable_diagnostics:
+                d0 = self.unquotable_diagnostics[0]
+                hard_stop_lines.append(
+                    f"- **Initial Unquotable Diagnostic**: Reasons=`{','.join(d0['failure_reasons'])}`, GridTS=`{d0['grid_timestamp_ms']}`, BookTS=`{d0['book_last_update_ms']}`, Bid=`{d0['bid']}`, Ask=`{d0['ask']}`\n"
+                )
+            md.extend(hard_stop_lines)
+
+        if self.unquotable_diagnostics:
+            md.extend([
+                "---\n",
+                "## 4. Unquotable Quote Diagnostics (First 10 Samples)\n",
+                "| Grid TS (ms) | Book Update (ms) | Bid | Ask | Failure Reasons | Timestamp (UTC) |",
+                "| :---: | :---: | :---: | :---: | :--- | :--- |",
             ])
+            for d in self.unquotable_diagnostics[:10]:
+                bid_str = f"{d['bid']:.4f}" if d['bid'] is not None else "None"
+                ask_str = f"{d['ask']:.4f}" if d['ask'] is not None else "None"
+                book_ts_str = str(d['book_last_update_ms']) if d['book_last_update_ms'] is not None else "None"
+                reasons_str = ", ".join(d['failure_reasons'])
+                md.append(
+                    f"| `{d['grid_timestamp_ms']}` | `{book_ts_str}` | `{bid_str}` | `{ask_str}` | `{reasons_str}` | `{d['timestamp_utc']}` |"
+                )
+            md.append("\n")
 
         if self.session_fatal_error:
             md.extend([
                 "---\n",
-                "## 3. Fatal Error Diagnostics\n",
+                "## 4. Fatal Error Diagnostics\n",
                 f"```text\n{self.session_fatal_error}\n```\n",
             ])
 
         if self.malformed_samples:
             md.extend([
                 "---\n",
-                "## 4. Malformed Message Samples (First 5)\n",
+                "## 5. Malformed Message Samples (First 5)\n",
                 "| Timestamp UTC | Length | Sample Snippet | Error Detail |",
                 "| :--- | :---: | :--- | :--- |",
             ])
@@ -1424,6 +1769,17 @@ class ProspectiveShadowSession:
 # Section 5: CLI Entrypoint
 # -----------------------------------------------------------------------------
 
+def setup_utc_logging(level: int = logging.INFO) -> None:
+    """Configure root logging with explicit UTC timestamps matching manifests and health reports."""
+    logging.Formatter.converter = time.gmtime
+    logging.basicConfig(
+        level=level,
+        format="%(asctime)s UTC [%(levelname)s] %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+        force=True,
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Start Genuine Prospective Shadow Session for PredAlpha-HFT")
     parser.add_argument("--duration-seconds", type=int, default=None, help="Stop session after N seconds (e.g. 60 or 300)")
@@ -1432,7 +1788,7 @@ def main() -> None:
     parser.add_argument("--out-dir", type=Path, default=PROSPECTIVE_BASE_DIR, help="Base directory for prospective output")
     args = parser.parse_args()
 
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+    setup_utc_logging(level=logging.INFO)
 
     session = ProspectiveShadowSession(
         output_base_dir=args.out_dir,

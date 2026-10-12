@@ -1,0 +1,38 @@
+{
+  "timestamp_utc": "2026-10-09T11:46:21.310237+00:00",
+  "verified_items": {
+    "holding_horizon": {
+      "expected_nominal_ms": 5000,
+      "actual_min_ms": 5000,
+      "actual_mean_ms": 5012.8,
+      "actual_max_ms": 6114,
+      "alignment_status": "SYNCHRONIZED_PHYSICAL_EVENT_HORIZON",
+      "description": "5-second target timestamp represents the first physical event >= t + 5000ms from labeling_audit_production.parquet."
+    },
+    "burst_structure": {
+      "total_validation_sequences": 1428,
+      "distinct_recording_bursts_gt_5s": 28,
+      "max_inter_burst_gap_ms": 252000,
+      "within_burst_step_ms": 1000,
+      "holding_overlap_seconds": 4.0,
+      "effective_sample_size_justification": "1,428 sequences are partitioned across 28 bursts separated by up to 252s gaps. Within each burst, 1s stepping against a 5s holding horizon creates 4s (80%) price path overlap between adjacent trades. The N_eff estimate of ~35 independent clusters is methodologically justified."
+    },
+    "temporal_reproduction": {
+      "period_1_trades": 227,
+      "period_1_cum_pnl": 1.73,
+      "period_2_trades": 119,
+      "period_2_cum_pnl": 0.02,
+      "status": "BITWISE_REPRODUCED"
+    }
+  },
+  "discrepancies_identified": [
+    {
+      "component": "fee_accounting",
+      "severity": "MINOR_MATHEMATICAL_IMPRECISION",
+      "description": "Phase 25 used `exit_prices = np.clip(entry_prices + gross_pnls, 0.001, 0.999)` for fee calculation. For LONG trades, entry_price + gross_pnl = ask_entry + (bid_exit - ask_entry) = bid_exit (exact). For SHORT trades, entry_price + gross_pnl = 2*bid_entry - ask_exit, which deviates from true exit notional (ask_exit) by 2 * gross_pnl. While the resulting absolute dollar fee variance is tiny (~1e-5 per contract), Phase 26 corrects this by explicitly charging entry fees on entry_price and exit fees on exit_price.",
+      "impact_on_p25_conclusions": "NEGLIGIBLE (does not alter net PnL sign, rankings, or drawdowns)",
+      "phase26_resolution": "Implement rigorous separate entry_price and exit_price fee debiting."
+    }
+  ],
+  "reproduction_status": "EXACT"
+}

@@ -1,0 +1,21 @@
+{
+  "manifest_version": "1.0",
+  "phase": "Phase 25",
+  "generated_artifacts": {
+    "phase25_results.json": "7d68cf128f5c3effcc872e3d7cce1fec2c83887bebb0bacff23f2a57bb06f71e",
+    "decision_coverage.csv": "39c45276e386a89c2fa71a0630ec6d015642e3bbe8c1640be29888f37557d043",
+    "policy_comparison.csv": "d3afd7544f5ef8fb5d04a9ec27f0127b5fdec6139c29c0202d0bb85ed134ea19"
+  },
+  "input_artifacts": {
+    "checkpoint_sha256": "d8b75bdbaffbb7f2c4b398beea484f83d851b37380bccd93ca07199a3d9c025d",
+    "validation_scaled_sha256": "69b97fd243bec2d2b65757ab209faa72e48c2d26a1bf6c4d1f78d6697ad62138",
+    "validation_sequences_sha256": "51eac3800dec70024b747558854694b1f98e75b14ce80215ccd657396809a787",
+    "validation_quotes_sha256": "a38bff9fbbd31564900e9a94aa5dca397569d0824ef44d5c774557a562d49390",
+    "labeling_audit_sha256": "0f7cf0c712a2da2cbfffb7ef61b2c4e6e5291bb7f8a43a218c9e290e3abe20ab",
+    "train_scaled_sha256": "ea760f237dc97573f9f06aba3215cd0c63de3a4deeb4c35f08cd5d093c780dd7",
+    "phase20_preds_sha256": "2b14b14af433b36262b0a05f8c3030bced2bce518ab690d6a1b8d09a5871519d"
+  },
+  "checkpoint_weights_frozen": true,
+  "locked_test_set_accessed": false,
+  "realistic_cost_modeling_enforced": true
+}

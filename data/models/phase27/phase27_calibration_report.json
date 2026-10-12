@@ -1,0 +1,102 @@
+{
+  "metadata": {
+    "experiment": "Phase 27.2 \u2014 Historical Directional Calibration Validation",
+    "timestamp_utc": "2026-10-11T20:48:23.781195+00:00",
+    "checkpoint_sha256": "d8b75bdbaffbb7f2c4b398beea484f83d851b37380bccd93ca07199a3d9c025d",
+    "locked_test_set_isolation": "STRICT_ZERO_ACCESS (Unaccessed)",
+    "validation_samples_total": 1428
+  },
+  "split_information": {
+    "total_samples": 1428,
+    "period_1_cal_samples": 832,
+    "purged_buffer_samples": 38,
+    "period_2_eval_samples": 558,
+    "p1_start_ts": 1791291910000,
+    "p1_end_ts": 1791293029000,
+    "p2_start_ts": 1791293168000,
+    "p2_end_ts": 1791294206000,
+    "requested_purge_gap_ms": 100000,
+    "actual_purge_gap_ms": 139000,
+    "purge_satisfied": true
+  },
+  "period_1_calibration_fit": {
+    "temperature": 0.7951179763997563,
+    "initial_nll": 0.8938561904524099,
+    "calibrated_nll": 0.887132367710617,
+    "delta_nll": -0.006723822741792951,
+    "bounds": [
+      0.01,
+      10.0
+    ],
+    "iterations": 36,
+    "method": "golden_section_search"
+  },
+  "period_2_comparison": {
+    "approach_1_uncalibrated_baseline": {
+      "description": "Raw SmallLSTM logits with T=1.0 and fixed confidence >= 0.55",
+      "itt_signals": 155,
+      "filled_trades": 50,
+      "fill_rate": 0.3226,
+      "mean_itt_pnl": -0.00085,
+      "mean_filled_pnl": -0.002635,
+      "profit_factor": 0.8706,
+      "decisive_win_rate": 0.32,
+      "overall_win_rate": 0.32,
+      "directional_asymmetry": 0.0968,
+      "directional_balance_ratio": 0.8235,
+      "cluster_robust_t": -0.1486,
+      "empirical_n_eff": 2.66,
+      "hurdles_passed": {
+        "itt_hurdle": false,
+        "filled_hurdle": false,
+        "profit_factor": false
+      }
+    },
+    "approach_2_temperature_scaling": {
+      "description": "Logits scaled by Period 1 fitted T=0.7951 with fixed confidence >= 0.55",
+      "itt_signals": 214,
+      "filled_trades": 62,
+      "fill_rate": 0.2897,
+      "mean_itt_pnl": 0.000255,
+      "mean_filled_pnl": 0.000882,
+      "profit_factor": 1.0488,
+      "decisive_win_rate": 0.3548,
+      "overall_win_rate": 0.3548,
+      "directional_asymmetry": 0.0748,
+      "directional_balance_ratio": 0.8609,
+      "cluster_robust_t": 0.0628,
+      "empirical_n_eff": 2.83,
+      "hurdles_passed": {
+        "itt_hurdle": false,
+        "filled_hurdle": false,
+        "profit_factor": false
+      }
+    },
+    "approach_3_directionally_balanced_gating": {
+      "description": "T=0.7951 with class-specific thresholds calibrated on Period 1 (Down>=0.58, Up>=0.61)",
+      "itt_signals": 145,
+      "filled_trades": 46,
+      "fill_rate": 0.3172,
+      "mean_itt_pnl": 0.000409,
+      "mean_filled_pnl": 0.001288,
+      "profit_factor": 1.0716,
+      "decisive_win_rate": 0.3478,
+      "overall_win_rate": 0.3478,
+      "directional_asymmetry": 0.0207,
+      "directional_balance_ratio": 0.9595,
+      "cluster_robust_t": 0.0713,
+      "empirical_n_eff": 2.8,
+      "hurdles_passed": {
+        "itt_hurdle": false,
+        "filled_hurdle": false,
+        "profit_factor": false
+      }
+    }
+  },
+  "empirical_limitations_declared": [
+    "Period 2 sample count (N_filled=50 to 62) is below the contractual completion target (N_filled>=400).",
+    "Fill rate on historical 1s grid is low (28.9% to 32.3%) due to coarse quote discretization compared to live sub-millisecond CLOB.",
+    "Under strict price-through logic, maker fills suffer immediate adverse selection on historical breakout bars.",
+    "Neither approach satisfies the dual-hurdle acceptance threshold (+0.0025 ITT, +0.0030 Filled, PF 1.25) on Period 2."
+  ]
+}

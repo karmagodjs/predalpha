@@ -1,0 +1,521 @@
+{
+  "metadata": {
+    "experiment": "Phase 25 \u2014 Regime-Gated Decision Rules & Cost-Aware Backtesting",
+    "model_type": "SmallLSTM",
+    "checkpoint_path": "C:\\Users\\karma\\OneDrive\\Desktop\\predalpha\\data\\models\\phase19\\recurrent\\best_lstm.pt",
+    "output_directory": "C:\\Users\\karma\\OneDrive\\Desktop\\predalpha\\data\\models\\phase25",
+    "provenance_hashes": {
+      "checkpoint_sha256": "d8b75bdbaffbb7f2c4b398beea484f83d851b37380bccd93ca07199a3d9c025d",
+      "validation_scaled_sha256": "69b97fd243bec2d2b65757ab209faa72e48c2d26a1bf6c4d1f78d6697ad62138",
+      "validation_sequences_sha256": "51eac3800dec70024b747558854694b1f98e75b14ce80215ccd657396809a787",
+      "validation_quotes_sha256": "a38bff9fbbd31564900e9a94aa5dca397569d0824ef44d5c774557a562d49390",
+      "labeling_audit_sha256": "0f7cf0c712a2da2cbfffb7ef61b2c4e6e5291bb7f8a43a218c9e290e3abe20ab",
+      "train_scaled_sha256": "ea760f237dc97573f9f06aba3215cd0c63de3a4deeb4c35f08cd5d093c780dd7",
+      "phase20_preds_sha256": "2b14b14af433b36262b0a05f8c3030bced2bce518ab690d6a1b8d09a5871519d"
+    },
+    "weight_fingerprint_unchanged": true,
+    "threshold_provenance": {
+      "confidence_threshold": 0.55,
+      "spread_threshold_train_p90": -0.08966752318678373,
+      "depth_imbalance_threshold_train_p90": 1.3681085005226963
+    }
+  },
+  "coverage_stats": {
+    "Policy_0_Mid_Counterfactual": {
+      "total_samples": 1428,
+      "executed_trades": 1067,
+      "skipped_flat": 118,
+      "rejected_missing_quotes": 243,
+      "gated_by_filter": 0,
+      "execution_coverage_pct": 74.72
+    },
+    "Policy_1_Unfiltered_Baseline": {
+      "total_samples": 1428,
+      "executed_trades": 1067,
+      "skipped_flat": 118,
+      "rejected_missing_quotes": 243,
+      "gated_by_filter": 0,
+      "execution_coverage_pct": 74.72
+    },
+    "Policy_2_Confidence_Gate": {
+      "total_samples": 1428,
+      "executed_trades": 439,
+      "skipped_flat": 118,
+      "rejected_missing_quotes": 243,
+      "gated_by_filter": 628,
+      "execution_coverage_pct": 30.74
+    },
+    "Policy_3_Spread_Gate": {
+      "total_samples": 1428,
+      "executed_trades": 1031,
+      "skipped_flat": 118,
+      "rejected_missing_quotes": 243,
+      "gated_by_filter": 36,
+      "execution_coverage_pct": 72.2
+    },
+    "Policy_4_Depth_Imbalance_Gate": {
+      "total_samples": 1428,
+      "executed_trades": 922,
+      "skipped_flat": 118,
+      "rejected_missing_quotes": 243,
+      "gated_by_filter": 145,
+      "execution_coverage_pct": 64.57
+    },
+    "Policy_5_Combined_Gate": {
+      "total_samples": 1428,
+      "executed_trades": 346,
+      "skipped_flat": 118,
+      "rejected_missing_quotes": 243,
+      "gated_by_filter": 721,
+      "execution_coverage_pct": 24.23
+    }
+  },
+  "policy_results": {
+    "Policy_0_Mid_Counterfactual": {
+      "fee_0bps": {
+        "trade_count": 1067,
+        "decision_coverage": 0.7472,
+        "cumulative_pnl": 11.24,
+        "mean_pnl_per_trade": 0.010534,
+        "std_pnl_per_trade": 0.049653,
+        "win_rate": 0.5951,
+        "loss_rate": 0.3112,
+        "scratch_rate": 0.0937,
+        "profit_factor": 1.8397,
+        "max_drawdown": 1.185,
+        "sharpe_per_trade": 0.2122,
+        "sortino_per_trade": 0.1933
+      },
+      "fee_5bps": {
+        "trade_count": 1067,
+        "decision_coverage": 0.7472,
+        "cumulative_pnl": 10.7016,
+        "mean_pnl_per_trade": 0.01003,
+        "std_pnl_per_trade": 0.049629,
+        "win_rate": 0.5951,
+        "loss_rate": 0.4049,
+        "scratch_rate": 0.0,
+        "profit_factor": 1.7873,
+        "max_drawdown": 1.2094,
+        "sharpe_per_trade": 0.2021,
+        "sortino_per_trade": 0.2083
+      },
+      "fee_10bps": {
+        "trade_count": 1067,
+        "decision_coverage": 0.7472,
+        "cumulative_pnl": 10.1633,
+        "mean_pnl_per_trade": 0.009525,
+        "std_pnl_per_trade": 0.049608,
+        "win_rate": 0.5951,
+        "loss_rate": 0.4049,
+        "scratch_rate": 0.0,
+        "profit_factor": 1.7365,
+        "max_drawdown": 1.2338,
+        "sharpe_per_trade": 0.192,
+        "sortino_per_trade": 0.1966
+      }
+    },
+    "Policy_1_Unfiltered_Baseline": {
+      "fee_0bps": {
+        "trade_count": 1067,
+        "decision_coverage": 0.7472,
+        "cumulative_pnl": -0.03,
+        "mean_pnl_per_trade": -2.8e-05,
+        "std_pnl_per_trade": 0.049639,
+        "win_rate": 0.4302,
+        "loss_rate": 0.4124,
+        "scratch_rate": 0.1575,
+        "profit_factor": 0.9983,
+        "max_drawdown": 3.29,
+        "sharpe_per_trade": -0.0006,
+        "sortino_per_trade": -0.0005
+      },
+      "fee_5bps": {
+        "trade_count": 1067,
+        "decision_coverage": 0.7472,
+        "cumulative_pnl": -0.5629,
+        "mean_pnl_per_trade": -0.000528,
+        "std_pnl_per_trade": 0.049616,
+        "win_rate": 0.4302,
+        "loss_rate": 0.5698,
+        "scratch_rate": 0.0,
+        "profit_factor": 0.9693,
+        "max_drawdown": 3.5615,
+        "sharpe_per_trade": -0.0106,
+        "sortino_per_trade": -0.0112
+      },
+      "fee_10bps": {
+        "trade_count": 1067,
+        "decision_coverage": 0.7472,
+        "cumulative_pnl": -1.0958,
+        "mean_pnl_per_trade": -0.001027,
+        "std_pnl_per_trade": 0.049595,
+        "win_rate": 0.4302,
+        "loss_rate": 0.5698,
+        "scratch_rate": 0.0,
+        "profit_factor": 0.9412,
+        "max_drawdown": 3.833,
+        "sharpe_per_trade": -0.0207,
+        "sortino_per_trade": -0.0216
+      }
+    },
+    "Policy_2_Confidence_Gate": {
+      "fee_0bps": {
+        "trade_count": 439,
+        "decision_coverage": 0.3074,
+        "cumulative_pnl": 1.46,
+        "mean_pnl_per_trade": 0.003326,
+        "std_pnl_per_trade": 0.047555,
+        "win_rate": 0.4601,
+        "loss_rate": 0.369,
+        "scratch_rate": 0.1708,
+        "profit_factor": 1.2226,
+        "max_drawdown": 1.23,
+        "sharpe_per_trade": 0.0699,
+        "sortino_per_trade": 0.0612
+      },
+      "fee_5bps": {
+        "trade_count": 439,
+        "decision_coverage": 0.3074,
+        "cumulative_pnl": 1.2431,
+        "mean_pnl_per_trade": 0.002832,
+        "std_pnl_per_trade": 0.04754,
+        "win_rate": 0.4601,
+        "loss_rate": 0.5399,
+        "scratch_rate": 0.0,
+        "profit_factor": 1.1863,
+        "max_drawdown": 1.3228,
+        "sharpe_per_trade": 0.0596,
+        "sortino_per_trade": 0.0626
+      },
+      "fee_10bps": {
+        "trade_count": 439,
+        "decision_coverage": 0.3074,
+        "cumulative_pnl": 1.0263,
+        "mean_pnl_per_trade": 0.002338,
+        "std_pnl_per_trade": 0.047527,
+        "win_rate": 0.4601,
+        "loss_rate": 0.5399,
+        "scratch_rate": 0.0,
+        "profit_factor": 1.1513,
+        "max_drawdown": 1.4656,
+        "sharpe_per_trade": 0.0492,
+        "sortino_per_trade": 0.0514
+      }
+    },
+    "Policy_3_Spread_Gate": {
+      "fee_0bps": {
+        "trade_count": 1031,
+        "decision_coverage": 0.722,
+        "cumulative_pnl": 0.72,
+        "mean_pnl_per_trade": 0.000698,
+        "std_pnl_per_trade": 0.049801,
+        "win_rate": 0.4365,
+        "loss_rate": 0.4045,
+        "scratch_rate": 0.1591,
+        "profit_factor": 1.0422,
+        "max_drawdown": 2.92,
+        "sharpe_per_trade": 0.014,
+        "sortino_per_trade": 0.0126
+      },
+      "fee_5bps": {
+        "trade_count": 1031,
+        "decision_coverage": 0.722,
+        "cumulative_pnl": 0.2047,
+        "mean_pnl_per_trade": 0.000199,
+        "std_pnl_per_trade": 0.049777,
+        "win_rate": 0.4365,
+        "loss_rate": 0.5635,
+        "scratch_rate": 0.0,
+        "profit_factor": 1.0118,
+        "max_drawdown": 3.1817,
+        "sharpe_per_trade": 0.004,
+        "sortino_per_trade": 0.0042
+      },
+      "fee_10bps": {
+        "trade_count": 1031,
+        "decision_coverage": 0.722,
+        "cumulative_pnl": -0.3106,
+        "mean_pnl_per_trade": -0.000301,
+        "std_pnl_per_trade": 0.049756,
+        "win_rate": 0.4365,
+        "loss_rate": 0.5635,
+        "scratch_rate": 0.0,
+        "profit_factor": 0.9824,
+        "max_drawdown": 3.4434,
+        "sharpe_per_trade": -0.0061,
+        "sortino_per_trade": -0.0063
+      }
+    },
+    "Policy_4_Depth_Imbalance_Gate": {
+      "fee_0bps": {
+        "trade_count": 922,
+        "decision_coverage": 0.6457,
+        "cumulative_pnl": -0.24,
+        "mean_pnl_per_trade": -0.00026,
+        "std_pnl_per_trade": 0.047802,
+        "win_rate": 0.4154,
+        "loss_rate": 0.4154,
+        "scratch_rate": 0.1692,
+        "profit_factor": 0.9838,
+        "max_drawdown": 2.54,
+        "sharpe_per_trade": -0.0054,
+        "sortino_per_trade": -0.005
+      },
+      "fee_5bps": {
+        "trade_count": 922,
+        "decision_coverage": 0.6457,
+        "cumulative_pnl": -0.7006,
+        "mean_pnl_per_trade": -0.00076,
+        "std_pnl_per_trade": 0.04778,
+        "win_rate": 0.4154,
+        "loss_rate": 0.5846,
+        "scratch_rate": 0.0,
+        "profit_factor": 0.9537,
+        "max_drawdown": 2.8064,
+        "sharpe_per_trade": -0.0159,
+        "sortino_per_trade": -0.0172
+      },
+      "fee_10bps": {
+        "trade_count": 922,
+        "decision_coverage": 0.6457,
+        "cumulative_pnl": -1.1613,
+        "mean_pnl_per_trade": -0.00126,
+        "std_pnl_per_trade": 0.047759,
+        "win_rate": 0.4154,
+        "loss_rate": 0.5846,
+        "scratch_rate": 0.0,
+        "profit_factor": 0.9245,
+        "max_drawdown": 3.0728,
+        "sharpe_per_trade": -0.0264,
+        "sortino_per_trade": -0.0283
+      }
+    },
+    "Policy_5_Combined_Gate": {
+      "fee_0bps": {
+        "trade_count": 346,
+        "decision_coverage": 0.2423,
+        "cumulative_pnl": 1.75,
+        "mean_pnl_per_trade": 0.005058,
+        "std_pnl_per_trade": 0.042278,
+        "win_rate": 0.4653,
+        "loss_rate": 0.3439,
+        "scratch_rate": 0.1908,
+        "profit_factor": 1.4042,
+        "max_drawdown": 1.19,
+        "sharpe_per_trade": 0.1196,
+        "sortino_per_trade": 0.1101
+      },
+      "fee_5bps": {
+        "trade_count": 346,
+        "decision_coverage": 0.2423,
+        "cumulative_pnl": 1.5796,
+        "mean_pnl_per_trade": 0.004565,
+        "std_pnl_per_trade": 0.042266,
+        "win_rate": 0.4653,
+        "loss_rate": 0.5347,
+        "scratch_rate": 0.0,
+        "profit_factor": 1.3576,
+        "max_drawdown": 1.2758,
+        "sharpe_per_trade": 0.108,
+        "sortino_per_trade": 0.1229
+      },
+      "fee_10bps": {
+        "trade_count": 346,
+        "decision_coverage": 0.2423,
+        "cumulative_pnl": 1.4091,
+        "mean_pnl_per_trade": 0.004073,
+        "std_pnl_per_trade": 0.042256,
+        "win_rate": 0.4653,
+        "loss_rate": 0.5347,
+        "scratch_rate": 0.0,
+        "profit_factor": 1.3128,
+        "max_drawdown": 1.3616,
+        "sharpe_per_trade": 0.0964,
+        "sortino_per_trade": 0.1087
+      }
+    }
+  },
+  "temporal_breakdown": {
+    "Policy_0_Mid_Counterfactual": {
+      "period_1_early": {
+        "trade_count": 703,
+        "decision_coverage": 0.845,
+        "cumulative_pnl": 6.68,
+        "mean_pnl_per_trade": 0.009502,
+        "std_pnl_per_trade": 0.04867,
+        "win_rate": 0.5974,
+        "loss_rate": 0.3286,
+        "scratch_rate": 0.074,
+        "profit_factor": 1.784,
+        "max_drawdown": 1.185,
+        "sharpe_per_trade": 0.1952,
+        "sortino_per_trade": 0.181
+      },
+      "period_2_late": {
+        "trade_count": 364,
+        "decision_coverage": 0.6107,
+        "cumulative_pnl": 4.56,
+        "mean_pnl_per_trade": 0.012527,
+        "std_pnl_per_trade": 0.051507,
+        "win_rate": 0.5907,
+        "loss_rate": 0.2775,
+        "scratch_rate": 0.1319,
+        "profit_factor": 1.9373,
+        "max_drawdown": 0.52,
+        "sharpe_per_trade": 0.2432,
+        "sortino_per_trade": 0.213
+      }
+    },
+    "Policy_1_Unfiltered_Baseline": {
+      "period_1_early": {
+        "trade_count": 703,
+        "decision_coverage": 0.845,
+        "cumulative_pnl": -0.82,
+        "mean_pnl_per_trade": -0.001166,
+        "std_pnl_per_trade": 0.048576,
+        "win_rate": 0.4168,
+        "loss_rate": 0.4083,
+        "scratch_rate": 0.175,
+        "profit_factor": 0.9292,
+        "max_drawdown": 2.92,
+        "sharpe_per_trade": -0.024,
+        "sortino_per_trade": -0.0212
+      },
+      "period_2_late": {
+        "trade_count": 364,
+        "decision_coverage": 0.6107,
+        "cumulative_pnl": 0.79,
+        "mean_pnl_per_trade": 0.00217,
+        "std_pnl_per_trade": 0.051629,
+        "win_rate": 0.456,
+        "loss_rate": 0.4203,
+        "scratch_rate": 0.1236,
+        "profit_factor": 1.1223,
+        "max_drawdown": 1.01,
+        "sharpe_per_trade": 0.042,
+        "sortino_per_trade": 0.0391
+      }
+    },
+    "Policy_2_Confidence_Gate": {
+      "period_1_early": {
+        "trade_count": 284,
+        "decision_coverage": 0.3413,
+        "cumulative_pnl": 0.81,
+        "mean_pnl_per_trade": 0.002852,
+        "std_pnl_per_trade": 0.043381,
+        "win_rate": 0.4507,
+        "loss_rate": 0.3486,
+        "scratch_rate": 0.2007,
+        "profit_factor": 1.2201,
+        "max_drawdown": 0.79,
+        "sharpe_per_trade": 0.0657,
+        "sortino_per_trade": 0.0559
+      },
+      "period_2_late": {
+        "trade_count": 155,
+        "decision_coverage": 0.2601,
+        "cumulative_pnl": 0.65,
+        "mean_pnl_per_trade": 0.004194,
+        "std_pnl_per_trade": 0.054521,
+        "win_rate": 0.4774,
+        "loss_rate": 0.4065,
+        "scratch_rate": 0.1161,
+        "profit_factor": 1.2257,
+        "max_drawdown": 1.23,
+        "sharpe_per_trade": 0.0769,
+        "sortino_per_trade": 0.0707
+      }
+    },
+    "Policy_3_Spread_Gate": {
+      "period_1_early": {
+        "trade_count": 681,
+        "decision_coverage": 0.8185,
+        "cumulative_pnl": -0.34,
+        "mean_pnl_per_trade": -0.000499,
+        "std_pnl_per_trade": 0.048653,
+        "win_rate": 0.4214,
+        "loss_rate": 0.4038,
+        "scratch_rate": 0.1747,
+        "profit_factor": 0.969,
+        "max_drawdown": 2.58,
+        "sharpe_per_trade": -0.0103,
+        "sortino_per_trade": -0.0091
+      },
+      "period_2_late": {
+        "trade_count": 350,
+        "decision_coverage": 0.5872,
+        "cumulative_pnl": 1.06,
+        "mean_pnl_per_trade": 0.003029,
+        "std_pnl_per_trade": 0.051953,
+        "win_rate": 0.4657,
+        "loss_rate": 0.4057,
+        "scratch_rate": 0.1286,
+        "profit_factor": 1.1741,
+        "max_drawdown": 0.79,
+        "sharpe_per_trade": 0.0583,
+        "sortino_per_trade": 0.0538
+      }
+    },
+    "Policy_4_Depth_Imbalance_Gate": {
+      "period_1_early": {
+        "trade_count": 611,
+        "decision_coverage": 0.7344,
+        "cumulative_pnl": 0.14,
+        "mean_pnl_per_trade": 0.000229,
+        "std_pnl_per_trade": 0.047756,
+        "win_rate": 0.4173,
+        "loss_rate": 0.3977,
+        "scratch_rate": 0.1849,
+        "profit_factor": 1.0151,
+        "max_drawdown": 1.84,
+        "sharpe_per_trade": 0.0048,
+        "sortino_per_trade": 0.0044
+      },
+      "period_2_late": {
+        "trade_count": 311,
+        "decision_coverage": 0.5218,
+        "cumulative_pnl": -0.38,
+        "mean_pnl_per_trade": -0.001222,
+        "std_pnl_per_trade": 0.047956,
+        "win_rate": 0.4116,
+        "loss_rate": 0.4502,
+        "scratch_rate": 0.1383,
+        "profit_factor": 0.9318,
+        "max_drawdown": 1.12,
+        "sharpe_per_trade": -0.0255,
+        "sortino_per_trade": -0.0237
+      }
+    },
+    "Policy_5_Combined_Gate": {
+      "period_1_early": {
+        "trade_count": 227,
+        "decision_coverage": 0.2728,
+        "cumulative_pnl": 1.73,
+        "mean_pnl_per_trade": 0.007621,
+        "std_pnl_per_trade": 0.038173,
+        "win_rate": 0.4758,
+        "loss_rate": 0.304,
+        "scratch_rate": 0.2203,
+        "profit_factor": 1.816,
+        "max_drawdown": 0.5,
+        "sharpe_per_trade": 0.1996,
+        "sortino_per_trade": 0.2028
+      },
+      "period_2_late": {
+        "trade_count": 119,
+        "decision_coverage": 0.1997,
+        "cumulative_pnl": 0.02,
+        "mean_pnl_per_trade": 0.000168,
+        "std_pnl_per_trade": 0.048972,
+        "win_rate": 0.4454,
+        "loss_rate": 0.4202,
+        "scratch_rate": 0.1345,
+        "profit_factor": 1.009,
+        "max_drawdown": 1.19,
+        "sharpe_per_trade": 0.0034,
+        "sortino_per_trade": 0.003
+      }
+    }
+  }
+}
