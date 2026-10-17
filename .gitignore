@@ -8,3 +8,16 @@ venv/
 data/raw/
 data/processed/track_a/*.parquet
 data/processed/track_b/*.parquet
+node_modules/
+web/node_modules/
+worktrees/*/web/node_modules/
+dist/
+build/
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+.pytest_cache/
