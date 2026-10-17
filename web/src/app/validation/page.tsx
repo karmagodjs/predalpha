@@ -15,7 +15,6 @@ export default function ValidationPage() {
 
   return (
     <article className="space-y-12">
-      {/* 1. Header Hero Masthead */}
       <header className="rounded-3xl border border-paper-rule bg-paper-canvas/70 p-8 sm:p-10 relative overflow-hidden space-y-5">
         <div className="flex flex-wrap items-center gap-2 text-xs font-sans text-ink-muted">
           <span className="px-3 py-1 rounded-full bg-paper-surface border border-paper-rule text-ink-primary font-semibold text-[11px] uppercase tracking-wide">
@@ -46,7 +45,6 @@ export default function ValidationPage() {
         </div>
       </header>
 
-      {/* 2. Cohort Characteristics Panel with Visual Distribution Tracks */}
       <section className="rounded-2xl border border-paper-rule bg-paper-canvas/50 p-6 sm:p-8 space-y-6">
         <div className="space-y-1">
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-ink-primary font-sans">
@@ -58,7 +56,6 @@ export default function ValidationPage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-          {/* Class 0 */}
           <div className="rounded-xl border border-paper-rule/70 bg-paper-surface/50 p-5 space-y-3">
             <div className="flex items-center justify-between text-[11px] font-sans text-ink-muted">
               <span>Class 0 · Down (&lt; -θ)</span>
@@ -75,7 +72,6 @@ export default function ValidationPage() {
             </p>
           </div>
 
-          {/* Class 1 */}
           <div className="rounded-xl border border-paper-rule/70 bg-paper-surface/50 p-5 space-y-3">
             <div className="flex items-center justify-between text-[11px] font-sans text-ink-muted">
               <span>Class 1 · Stationary (|Δ| ≤ θ)</span>
@@ -92,7 +88,6 @@ export default function ValidationPage() {
             </p>
           </div>
 
-          {/* Class 2 */}
           <div className="rounded-xl border border-paper-rule/70 bg-paper-surface/50 p-5 space-y-3">
             <div className="flex items-center justify-between text-[11px] font-sans text-ink-muted">
               <span>Class 2 · Up (&gt; θ)</span>
@@ -115,7 +110,6 @@ export default function ValidationPage() {
         </p>
       </section>
 
-      {/* 3. Confusion Matrix & Directional Inversions */}
       <section className="rounded-2xl border border-paper-rule bg-paper-canvas/50 p-6 sm:p-8 space-y-6">
         <div className="space-y-1">
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-ink-primary font-sans">
@@ -126,7 +120,6 @@ export default function ValidationPage() {
           </p>
         </div>
 
-        {/* Model Checkpoint Switcher */}
         <div className="flex flex-wrap gap-2 text-xs font-sans">
           {CONFUSION_MATRICES.map((cm, idx) => (
             <button
@@ -166,7 +159,6 @@ export default function ValidationPage() {
         </div>
       </section>
 
-      {/* 4. Selective Classification Curve */}
       <section className="rounded-2xl border border-paper-rule bg-paper-canvas/50 p-6 sm:p-8 space-y-6">
         <div className="space-y-1">
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-ink-primary font-sans">
@@ -184,7 +176,6 @@ export default function ValidationPage() {
 
         <CoverageCurveChart />
 
-        {/* Progressive Disclosure for Turnover Trade-Off */}
         <ExpandableSection
           title="Analysis: The Precision vs. Turnover Trade-Off"
           summary="Why 85.7% selective accuracy does not guarantee commercial liquidity monetization"

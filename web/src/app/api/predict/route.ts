@@ -4,7 +4,6 @@ import path from "path";
 
 const INFERENCE_WORKER_URL = "http://127.0.0.1:8000/api/predict";
 
-// In-memory cache for deterministic scenario predictions
 const predictionCache = new Map<string, any>();
 
 let isSpawning = false;
@@ -21,7 +20,6 @@ function autoSpawnWorker() {
     });
     child.unref();
   } catch {
-    // Ignore spawn errors
   } finally {
     setTimeout(() => {
       isSpawning = false;
@@ -47,13 +45,11 @@ export async function POST(req: NextRequest) {
       custom_overrides ? JSON.stringify(custom_overrides) : "default"
     }`;
 
-    // Fast-path: Return cached prediction if available
     if (predictionCache.has(cacheKey)) {
       const cached = predictionCache.get(cacheKey);
       return NextResponse.json({ ...cached, cached: true });
     }
 
-    // 1. Primary: Forward to persistent high-performance PyTorch worker (< 2ms)
     try {
       const workerResponse = await fetch(INFERENCE_WORKER_URL, {
         method: "POST",
@@ -69,11 +65,9 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(data);
       }
     } catch {
-      // Worker offline or unreachable; attempt auto-spawn for subsequent requests
       autoSpawnWorker();
     }
 
-    // 2. High-speed verified fallback scenario data (deterministic microstructure profiles)
     const fallbackProbabilities: Record<
       string,
       { down: number; flat: number; up: number; label: "Down" | "Stationary" | "Up" }

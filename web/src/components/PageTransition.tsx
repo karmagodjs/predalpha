@@ -11,8 +11,6 @@ export function PageTransition({ children }: PageTransitionProps) {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Preserve expected scroll behavior: start cleanly at the top of the incoming page
-    // unless targeting an anchor fragment
     if (!window.location.hash) {
       window.scrollTo(0, 0);
     }

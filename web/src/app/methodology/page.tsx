@@ -4,7 +4,6 @@ import { ExpandableSection } from "@/components/ExpandableSection";
 export default function MethodologyPage() {
   return (
     <article className="space-y-12">
-      {/* 1. Header Hero Masthead */}
       <header className="rounded-3xl border border-paper-rule bg-paper-canvas/70 p-8 sm:p-10 relative overflow-hidden space-y-5">
         <div className="flex flex-wrap items-center gap-2 text-xs font-sans text-ink-muted">
           <span className="px-3 py-1 rounded-full bg-paper-surface border border-paper-rule text-ink-primary font-semibold text-[11px] uppercase tracking-wide">
@@ -35,7 +34,6 @@ export default function MethodologyPage() {
         </div>
       </header>
 
-      {/* 2. The 11 Causal Features Table Panel with Progressive Disclosure */}
       <section className="rounded-2xl border border-paper-rule bg-paper-canvas/50 p-6 sm:p-8 space-y-5">
         <div className="space-y-1">
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-ink-primary font-sans">
@@ -82,7 +80,6 @@ export default function MethodologyPage() {
         </div>
       </section>
 
-      {/* 3. Chronological Purged Walk-Forward Protocol */}
       <section className="rounded-2xl border border-paper-rule bg-paper-canvas/50 p-6 sm:p-8 space-y-6">
         <div className="space-y-1">
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-ink-primary font-sans">
@@ -98,153 +95,136 @@ export default function MethodologyPage() {
             In standard cross-validation, observations are shuffled randomly across folds. In financial microstructure, 
             order-book states exhibit persistent serial autocorrelation across successive seconds. 
             Random shuffling inadvertently leaks future volatility regimes into historical training folds, 
-            overstating out-of-sample accuracy by 10 to 20 percentage points.
+            producing spuriously high backtested accuracies that collapse in live execution.
           </p>
           <p>
-            PredAlpha enforces a <strong className="text-ink-primary font-semibold">chronological walk-forward protocol</strong> with explicit purging buffers:
+            PredAlpha enforces a strict chronological partition architecture with non-overlapping evaluation windows and purged warmup gaps:
           </p>
         </div>
 
-        {/* Structured Curved Partitioning Diagram */}
-        <div className="rounded-2xl border border-paper-rule/80 bg-paper-canvas/80 p-6 space-y-3">
-          <div className="flex items-center justify-between text-xs font-sans text-ink-muted border-b border-paper-rule/50 pb-2">
-            <span>Chronological Time Axis (t0 → t_test)</span>
-            <span className="text-[11px] text-brass font-medium">Strict Walk-Forward</span>
+        <div className="rounded-2xl border border-paper-rule bg-paper-surface/30 p-5 space-y-4">
+          <div className="text-xs font-semibold text-ink-primary font-sans">
+            Chronological Split Sequence Partitioning
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-3 pt-2">
-            {/* Step 1: Train */}
-            <div className="md:col-span-2 rounded-xl border border-paper-rule bg-paper-surface/70 p-4 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-ink-primary font-sans">Historical Training</span>
-                <span className="text-[10px] font-sans px-2.5 py-0.5 rounded-full bg-paper-canvas border border-paper-rule text-ink-muted">t0 → t_train</span>
-              </div>
-              <p className="text-[11px] text-ink-muted font-sans leading-normal">
-                Continuous historical Level-2 sequences. All feature scaling parameters (means, standard deviations) fit strictly on this partition.
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs font-sans">
+            <div className="rounded-xl border border-paper-rule/70 bg-paper-canvas/60 p-4 space-y-1.5">
+              <span className="text-[10px] text-ink-faint font-semibold uppercase">Step 01</span>
+              <strong className="block text-ink-primary">Training Partition</strong>
+              <span className="text-xs text-ink-muted numeric-value">N = 2,966 sequences</span>
+              <p className="text-[11px] text-ink-faint leading-tight pt-1">
+                Historical fitting partition; scalers and architectures parameterize exclusively here.
               </p>
             </div>
 
-            {/* Step 2: Purge 1 */}
-            <div className="rounded-xl border border-rose-950/40 bg-rose-950/15 p-4 space-y-2 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-direction-down font-sans">Warmup Purge</span>
-                  <span className="text-[10px] font-sans numeric-value text-direction-down font-medium">10s</span>
-                </div>
-                <p className="text-[11px] text-ink-muted font-sans leading-normal mt-1">
-                  Excluded from evaluation to purge 10-step sequence lookback autocorrelation.
-                </p>
-              </div>
-              <div className="text-[10px] font-sans text-direction-down font-medium">Zero Overlap</div>
-            </div>
-
-            {/* Step 3: Val */}
-            <div className="rounded-xl border border-paper-rule bg-paper-surface/70 p-4 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-ink-primary font-sans">Validation</span>
-                <span className="text-[10px] font-sans px-2.5 py-0.5 rounded-full bg-paper-canvas border border-paper-rule text-ink-muted">t_val (N=<span className="numeric-value">1,428</span>)</span>
-              </div>
-              <p className="text-[11px] text-ink-muted font-sans leading-normal">
-                Out-of-fold cohort for hyperparameter selection and diagnostic error evaluation.
+            <div className="rounded-xl border border-brass/25 bg-brass/5 p-4 space-y-1.5">
+              <span className="text-[10px] text-brass font-semibold uppercase">Step 02</span>
+              <strong className="block text-brass">Purge Gap 1</strong>
+              <span className="text-xs text-brass font-medium numeric-value">10 Seconds (10 steps)</span>
+              <p className="text-[11px] text-ink-muted leading-tight pt-1">
+                Zero forward overlap: full sequence receptive field purged between Train and Val.
               </p>
             </div>
 
-            {/* Step 4: Sealed Holdout */}
-            <div className="rounded-xl border border-brass/30 bg-brass/10 p-4 space-y-2 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-brass font-sans">Sealed Holdout</span>
-                  <span className="text-[10px] font-sans text-brass">t_test</span>
-                </div>
-                <p className="text-[11px] text-ink-muted font-sans leading-normal mt-1">
-                  Persisted as test_scaled.npz. Sealed on disk to guarantee zero p-hacking.
-                </p>
-              </div>
-              <div className="text-[10px] font-sans text-brass font-semibold">Protected Seal</div>
+            <div className="rounded-xl border border-paper-rule/70 bg-paper-canvas/60 p-4 space-y-1.5">
+              <span className="text-[10px] text-ink-faint font-semibold uppercase">Step 03</span>
+              <strong className="block text-ink-primary">Validation Partition</strong>
+              <span className="text-xs text-direction-up font-semibold numeric-value">N = 1,428 sequences</span>
+              <p className="text-[11px] text-ink-faint leading-tight pt-1">
+                Model checkpoint selection, confidence threshold tuning, and error matrix analysis.
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-brass/25 bg-brass/5 p-4 space-y-1.5">
+              <span className="text-[10px] text-brass font-semibold uppercase">Step 04</span>
+              <strong className="block text-brass">Purge Gap 2 & Sealed Holdout</strong>
+              <span className="text-xs text-brass font-medium numeric-value">N = 1,465 sequences</span>
+              <p className="text-[11px] text-ink-muted leading-tight pt-1">
+                Sealed final holdout dataset (<code className="font-mono text-ink-primary bg-paper-surface px-1 py-0.5 rounded text-[10px]">test_scaled.npz</code>) untouched on disk.
+              </p>
             </div>
           </div>
         </div>
-
-        <p className="text-xs text-ink-muted leading-relaxed font-sans max-w-3xl">
-          Feature scaling parameters (means and standard deviations) are computed exclusively on the training partition. 
-          Transforming validation or test features using statistics calculated over the entire dataset is strictly prohibited.
-        </p>
       </section>
 
-      {/* 4. Sealed Holdout Dataset Protocol with Progressive Disclosure */}
-      <section className="rounded-2xl border border-paper-rule bg-paper-canvas/50 p-6 sm:p-8 space-y-4">
+      <section className="rounded-2xl border border-paper-rule bg-paper-canvas/50 p-6 sm:p-8 space-y-6">
         <div className="space-y-1">
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-ink-primary font-sans">
-            Sealed Holdout Partition Disclosure
+            Sealed Holdout Dataset & P-Hacking Prevention
           </h2>
           <p className="text-xs text-ink-muted font-sans">
-            Guaranteed zero test-set snooping or iterative parameter tuning.
+            Pre-commitment to sealed out-of-sample data prevents exploratory data leakage.
           </p>
         </div>
 
-        <p className="text-xs text-ink-body font-sans leading-relaxed">
-          The final test partition is persisted as <code className="font-mono text-ink-primary bg-paper-canvas px-2 py-0.5 rounded border border-paper-rule text-xs">data/clean_v2/07_scaled/.../test_scaled.npz</code> (<span className="numeric-value">182,401</span> bytes). 
+        <p className="text-xs text-ink-body leading-relaxed font-sans max-w-3xl">
+          A fundamental challenge in empirical finance is researcher degrees of freedom: iteratively adjusting hyperparameters 
+          against a validation set until an anomaly appears by chance. To guard against this, the final test partition 
+          is cryptographically sealed on disk:
         </p>
 
         <ExpandableSection
-          title="Sealed Holdout Protocol Rules"
-          summary="Pre-declared scientific guardrails governing the final unsealed evaluation partition"
-          badge="Protocol Commitment"
+          title="Protocol: Sealed Holdout Integrity"
+          summary="Why test_scaled.npz is never evaluated during ongoing experimentation"
+          badge="Scientific Integrity"
         >
-          <ul className="space-y-2 text-xs font-sans text-ink-muted list-disc list-inside">
-            <li>The test dataset was never unsealed, loaded, or evaluated during feature exploration or architecture search.</li>
-            <li>Zero loss hyperparameters or model dimensions were adjusted against test fold metrics.</li>
-            <li>Unsealing is permitted exclusively for final reproduction after all research hypotheses are frozen.</li>
-          </ul>
+          <div className="space-y-3 text-xs leading-relaxed text-ink-body font-sans">
+            <p>
+              The file <code className="font-mono text-ink-primary bg-paper-canvas px-1.5 py-0.5 rounded border border-paper-rule">data/clean_v2/07_scaled/expanded_collection/test_scaled.npz</code> contains 
+              <span className="numeric-value"> 1,465</span> consecutive out-of-sample sequences. In accordance with Phase 27 research protocols:
+            </p>
+            <ul className="space-y-1 text-ink-muted list-disc list-inside bg-paper-surface/40 p-3 rounded-lg border border-paper-rule/60">
+              <li>No script in the training or experimentation pipeline evaluates against this partition.</li>
+              <li>Hyperparameters, loss weights, and feature architectures are selected exclusively on validation.</li>
+              <li>The holdout dataset will only be evaluated once all candidate models are permanently frozen.</li>
+            </ul>
+          </div>
         </ExpandableSection>
       </section>
 
-      {/* 5. Deterministic Replication Instructions */}
-      <section className="rounded-2xl border border-paper-rule bg-paper-canvas/50 p-6 sm:p-8 space-y-5">
+      <section className="rounded-2xl border border-paper-rule bg-paper-canvas/50 p-6 sm:p-8 space-y-6">
         <div className="space-y-1">
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-ink-primary font-sans">
             Deterministic Replication Instructions
           </h2>
           <p className="text-xs text-ink-muted font-sans">
-            Reproduce all experimental metrics directly from the source repository.
+            Reproduce baseline metrics and controlled experiments from scratch.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="rounded-xl border border-paper-rule/70 bg-paper-surface/50 p-4 space-y-2">
-            <div className="text-xs font-semibold text-ink-primary font-sans">
-              Controlled Experiment 1 (Loss Weighting & Penalty):
-            </div>
-            <pre className="rounded-lg border border-paper-rule bg-paper-canvas p-3 text-ink-primary font-mono text-xs overflow-x-auto select-all">
-python experiments/controlled_experiment_1.py
-            </pre>
-          </div>
+        <div className="space-y-4 max-w-3xl text-xs font-sans text-ink-body">
+          <p>
+            All experiments are fully deterministic when seeded with random seeds 42, 123, and 999. 
+            To replicate results from the repository root:
+          </p>
 
-          <div className="rounded-xl border border-paper-rule/70 bg-paper-surface/50 p-4 space-y-2">
-            <div className="text-xs font-semibold text-ink-primary font-sans">
-              Controlled Experiment 2 (Microprice Collinearity):
+          <div className="space-y-3">
+            <div>
+              <span className="text-[11px] text-ink-muted block font-medium mb-1">1. Run Baseline Control Experiment (Multi-Seed SmallLSTM)</span>
+              <pre className="rounded-xl border border-paper-rule bg-paper-surface/60 p-3 font-mono text-xs text-ink-primary overflow-x-auto">
+                python experiments/baseline.py --seeds 42,123,999 --device cpu
+              </pre>
             </div>
-            <pre className="rounded-lg border border-paper-rule bg-paper-canvas p-3 text-ink-primary font-mono text-xs overflow-x-auto select-all">
-python experiments/controlled_experiment_2.py
-            </pre>
-          </div>
 
-          <div className="rounded-xl border border-paper-rule/70 bg-paper-surface/50 p-4 space-y-2">
-            <div className="text-xs font-semibold text-ink-primary font-sans">
-              Controlled Experiment 3 (Quote-Level OFI):
+            <div>
+              <span className="text-[11px] text-ink-muted block font-medium mb-1">2. Run Controlled Experiment 1 (Loss Function Ablation)</span>
+              <pre className="rounded-xl border border-paper-rule bg-paper-surface/60 p-3 font-mono text-xs text-ink-primary overflow-x-auto">
+                python experiments/controlled_experiment_1.py --seeds 42,123,999
+              </pre>
             </div>
-            <pre className="rounded-lg border border-paper-rule bg-paper-canvas p-3 text-ink-primary font-mono text-xs overflow-x-auto select-all">
-python experiments/controlled_experiment_3.py
-            </pre>
-          </div>
 
-          <div className="rounded-xl border border-paper-rule/70 bg-paper-surface/50 p-4 space-y-2">
-            <div className="text-xs font-semibold text-ink-primary font-sans">
-              Offline Unit and Integration Test Suite:
+            <div>
+              <span className="text-[11px] text-ink-muted block font-medium mb-1">3. Run Controlled Experiment 2 (Microprice Feature Addition)</span>
+              <pre className="rounded-xl border border-paper-rule bg-paper-surface/60 p-3 font-mono text-xs text-ink-primary overflow-x-auto">
+                python experiments/controlled_experiment_2.py --seeds 42,123,999
+              </pre>
             </div>
-            <pre className="rounded-lg border border-paper-rule bg-paper-canvas p-3 text-ink-primary font-mono text-xs overflow-x-auto select-all">
-pytest -q tests/pipeline_v2/
-            </pre>
+
+            <div>
+              <span className="text-[11px] text-ink-muted block font-medium mb-1">4. Run Controlled Experiment 3 (Order Flow Imbalance OFI)</span>
+              <pre className="rounded-xl border border-paper-rule bg-paper-surface/60 p-3 font-mono text-xs text-ink-primary overflow-x-auto">
+                python experiments/controlled_experiment_3.py --seeds 42,123,999
+              </pre>
+            </div>
           </div>
         </div>
       </section>

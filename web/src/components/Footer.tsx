@@ -5,7 +5,6 @@ export function Footer() {
     <footer className="w-full border-t border-paper-rule bg-paper-bg py-8 sm:py-10 mt-14 sm:mt-16">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-          {/* Col 1: Wordmark & Provenance */}
           <div className="space-y-2 md:col-span-2">
             <div className="font-sans text-xs font-bold tracking-tight text-ink-primary">
               PREDALPHA
@@ -23,7 +22,6 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Col 2: Research Sections */}
           <div>
             <div className="font-sans text-[11px] font-semibold text-ink-primary uppercase tracking-wide mb-2.5">
               Research Sections
@@ -62,7 +60,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Col 3: Research Invariants */}
           <div>
             <div className="font-sans text-[11px] font-semibold text-ink-primary uppercase tracking-wide mb-2.5">
               Governance & Verification
@@ -77,7 +74,6 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Disclaimer Bar */}
         <div className="mt-8 border-t border-paper-rule/60 pt-4">
           <p className="text-[10px] leading-normal text-ink-faint font-sans">
             DISCLAIMER: All experimental evaluations, validation metrics, and simulated executions are intended exclusively 

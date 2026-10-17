@@ -163,7 +163,6 @@ export default function ModelLabPage() {
         ? `custom_${temperature}_${depthImbalance}_${spreadBps}_${midReturn5s}_${volatility5s}`
         : `${selectedScenario}_${temperature}`;
 
-    // Instant optimistic cache check
     const cached = cacheRef.current.get(cacheKey);
     if (cached) {
       setResult(cached);
@@ -175,7 +174,6 @@ export default function ModelLabPage() {
       clearTimeout(debounceTimerRef.current);
     }
 
-    // Immediate execution for preset buttons, 100ms debounce for continuous sliders
     const delay = selectedScenario === "custom" ? 100 : 0;
     debounceTimerRef.current = setTimeout(() => {
       fetchInference(selectedScenario, temperature, overrides);
@@ -188,10 +186,8 @@ export default function ModelLabPage() {
     };
   }, [selectedScenario, temperature, depthImbalance, spreadBps, midReturn5s, volatility5s, fetchInference]);
 
-  // Operational threshold check (tau >= 0.65 from empirical validation findings)
   const isGated = result ? result.prediction.confidence < 0.65 : false;
 
-  // Active touch queue parameters for Level-2 depth visualization
   const activeImbalance =
     selectedScenario === "custom"
       ? depthImbalance
@@ -217,7 +213,6 @@ export default function ModelLabPage() {
 
   return (
     <article className="space-y-10">
-      {/* 1. Workbench Header — Clean, open analytical workspace layout */}
       <header className="space-y-4 pb-6 border-b border-paper-rule">
         <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-ink-muted">
           <div className="flex items-center space-x-3">
@@ -248,7 +243,6 @@ export default function ModelLabPage() {
           </p>
         </div>
 
-        {/* Scientific Context Bar: Clear demarcation of synthetic vs historical data */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-lg border border-paper-rule bg-paper-canvas/50 text-xs">
           <div className="flex items-center space-x-2 text-ink-muted">
             <span className="font-medium text-ink-primary">Scientific Notice:</span>
@@ -260,11 +254,8 @@ export default function ModelLabPage() {
         </div>
       </header>
 
-      {/* 2. Analytical Workspace: 2-Column Split */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Column: Regime Navigator & Control Surface (5 cols) */}
         <section aria-label="Input Controls" className="lg:col-span-5 space-y-6">
-          {/* Regime Selector */}
           <div className="space-y-3">
             <div className="flex items-center justify-between text-xs">
               <span className="font-semibold uppercase tracking-wide text-[11px] text-ink-muted">
@@ -305,7 +296,6 @@ export default function ModelLabPage() {
             </div>
           </div>
 
-          {/* Temperature Scaling Control */}
           <div className="border border-paper-rule rounded-xl bg-paper-canvas/40 p-4 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-ink-primary">
@@ -338,7 +328,6 @@ export default function ModelLabPage() {
             </p>
           </div>
 
-          {/* Custom Feature Modulation Panel (only when custom scenario selected) */}
           {selectedScenario === "custom" && (
             <div className="border border-paper-rule rounded-xl bg-paper-canvas/50 p-4 space-y-4">
               <div className="flex items-baseline justify-between border-b border-paper-rule/60 pb-2">
@@ -349,7 +338,6 @@ export default function ModelLabPage() {
               </div>
 
               <div className="space-y-3.5 text-xs">
-                {/* Imbalance */}
                 <div className="space-y-1">
                   <div className="flex justify-between text-ink-body">
                     <span>Touch Queue Imbalance:</span>
@@ -373,7 +361,6 @@ export default function ModelLabPage() {
                   </div>
                 </div>
 
-                {/* Spread */}
                 <div className="space-y-1">
                   <div className="flex justify-between text-ink-body">
                     <span>Spread Width:</span>
@@ -392,7 +379,6 @@ export default function ModelLabPage() {
                   />
                 </div>
 
-                {/* 5s Return */}
                 <div className="space-y-1">
                   <div className="flex justify-between text-ink-body">
                     <span>5s Mid Return:</span>
@@ -411,7 +397,6 @@ export default function ModelLabPage() {
                   />
                 </div>
 
-                {/* 5s Volatility */}
                 <div className="space-y-1">
                   <div className="flex justify-between text-ink-body">
                     <span>5s Realized Volatility:</span>
@@ -438,7 +423,6 @@ export default function ModelLabPage() {
           </div>
         </section>
 
-        {/* Right Column: Model Inference Outputs & Diagnostic Instruments (7 cols) */}
         <section aria-label="Inference Outputs" className="lg:col-span-7 space-y-6">
           {error && (
             <div className="rounded-lg border border-direction-down/40 bg-direction-down/5 p-4 text-xs text-direction-down">
@@ -448,7 +432,6 @@ export default function ModelLabPage() {
 
           {result && (
             <div className="space-y-6">
-              {/* Primary Direction & Confidence Instrument */}
               <div className="border border-paper-rule rounded-xl bg-paper-canvas/50 p-6 space-y-5">
                 <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-paper-rule/60 pb-3">
                   <div className="text-[11px] uppercase tracking-wide font-semibold text-ink-muted">
@@ -496,7 +479,6 @@ export default function ModelLabPage() {
                   </div>
                 </div>
 
-                {/* Level-2 Order-Book Touch Depth Gauge */}
                 <div className="space-y-2 pt-2 border-t border-paper-rule/60">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-ink-muted font-medium text-[11px]">
@@ -532,7 +514,6 @@ export default function ModelLabPage() {
                 </p>
               </div>
 
-              {/* Ternary Probability Distribution Bar */}
               <div className="border border-paper-rule rounded-xl bg-paper-canvas/40 p-5 space-y-4">
                 <div className="flex items-baseline justify-between border-b border-paper-rule/60 pb-2">
                   <h3 className="text-xs font-semibold uppercase tracking-wide text-ink-muted text-[11px]">
@@ -550,7 +531,6 @@ export default function ModelLabPage() {
                 />
               </div>
 
-              {/* Information-Theoretic Diagnostics */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="border border-paper-rule rounded-xl bg-paper-canvas/40 p-4 space-y-1">
                   <div className="text-[11px] text-ink-faint uppercase tracking-wide">Shannon Entropy H(P)</div>
@@ -573,7 +553,6 @@ export default function ModelLabPage() {
                 </div>
               </div>
 
-              {/* Causal Input Sequence Tensor Table */}
               <ExpandableSection
                 title="Causal Input Sequence Tensor [1, 10, 11]"
                 summary="Inspect the 10 sequential 1-second snapshots unrolled into the LSTM cell"
@@ -609,7 +588,6 @@ export default function ModelLabPage() {
                 </div>
               </ExpandableSection>
 
-              {/* Research Interpretation Callout */}
               <div className="border border-paper-rule/80 rounded-xl bg-paper-canvas/30 p-4 space-y-1.5 text-xs text-ink-body leading-relaxed">
                 <div className="font-semibold text-ink-primary">
                   Microstructure Execution Interpretation

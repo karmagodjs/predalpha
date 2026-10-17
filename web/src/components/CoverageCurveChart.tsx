@@ -5,7 +5,6 @@ import { CONFIDENCE_ANALYSIS_TIERS } from "@/lib/research-data";
 export function CoverageCurveChart() {
   const tiers = CONFIDENCE_ANALYSIS_TIERS;
 
-  // Chart dimensions
   const width = 640;
   const height = 240;
   const padding = { top: 20, right: 30, bottom: 35, left: 45 };
@@ -37,15 +36,12 @@ export function CoverageCurveChart() {
         </div>
       </div>
 
-      {/* SVG Chart with curved container */}
       <div className="rounded-2xl border border-paper-rule bg-paper-surface/30 p-4 sm:p-6 overflow-hidden">
         <div className="relative w-full">
           <svg
             viewBox={`0 0 ${width} ${height}`}
             className="w-full h-auto text-ink-faint select-none"
           >
-
-            {/* Grid lines */}
             {[0, 25, 50, 75, 100].map((tick) => {
               const y = getY(tick);
               return (
@@ -71,7 +67,6 @@ export function CoverageCurveChart() {
               );
             })}
 
-            {/* X Axis */}
             {tiers.map((d) => {
               const x = getX(d.threshold);
               return (
@@ -96,7 +91,6 @@ export function CoverageCurveChart() {
               );
             })}
 
-            {/* Coverage Polyline */}
             <polyline
               fill="none"
               stroke="#8890a0"
@@ -117,7 +111,6 @@ export function CoverageCurveChart() {
               />
             ))}
 
-            {/* Accuracy Polyline */}
             <polyline
               fill="none"
               stroke="#d99b26"
@@ -141,7 +134,6 @@ export function CoverageCurveChart() {
         </div>
       </div>
 
-      {/* Accompanying Booktabs Table in curved container */}
       <div className="overflow-hidden rounded-2xl border border-paper-rule bg-paper-surface/30">
         <div className="overflow-x-auto">
           <table className="w-full text-left font-sans text-xs">

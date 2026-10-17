@@ -3,7 +3,6 @@ import { ExpandableSection } from "@/components/ExpandableSection";
 export default function LimitationsPage() {
   return (
     <article className="space-y-12">
-      {/* 1. Header Hero Masthead */}
       <header className="rounded-3xl border border-paper-rule bg-paper-canvas/70 p-8 sm:p-10 relative overflow-hidden space-y-5">
         <div className="flex flex-wrap items-center gap-2 text-xs font-sans text-ink-muted">
           <span className="px-3 py-1 rounded-full bg-paper-surface border border-paper-rule text-ink-primary font-semibold text-[11px] uppercase tracking-wide">
@@ -34,7 +33,6 @@ export default function LimitationsPage() {
         </div>
       </header>
 
-      {/* 2. Statistical Alpha vs Commercial Profitability */}
       <section className="rounded-2xl border border-paper-rule bg-paper-canvas/50 p-6 sm:p-8 space-y-5">
         <div className="space-y-1">
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-ink-primary font-sans">
@@ -64,7 +62,6 @@ export default function LimitationsPage() {
         </div>
       </section>
 
-      {/* 3. The Four Critical Execution Frictions */}
       <section className="rounded-2xl border border-paper-rule bg-paper-canvas/50 p-6 sm:p-8 space-y-6">
         <div className="space-y-1">
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-ink-primary font-sans">
@@ -76,7 +73,6 @@ export default function LimitationsPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          {/* Friction 1 */}
           <div className="rounded-xl border border-paper-rule/70 bg-paper-surface/50 p-6 space-y-3 hover:border-paper-border transition-colors">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-sans px-2.5 py-0.5 rounded-full bg-paper-canvas border border-paper-rule text-ink-faint uppercase font-semibold">
@@ -96,7 +92,6 @@ export default function LimitationsPage() {
             </p>
           </div>
 
-          {/* Friction 2 */}
           <div className="rounded-xl border border-paper-rule/70 bg-paper-surface/50 p-6 space-y-3 hover:border-paper-border transition-colors">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-sans px-2.5 py-0.5 rounded-full bg-paper-canvas border border-paper-rule text-ink-faint uppercase font-semibold">
@@ -115,7 +110,6 @@ export default function LimitationsPage() {
             </p>
           </div>
 
-          {/* Friction 3 */}
           <div className="rounded-xl border border-paper-rule/70 bg-paper-surface/50 p-6 space-y-3 hover:border-paper-border transition-colors">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-sans px-2.5 py-0.5 rounded-full bg-paper-canvas border border-paper-rule text-ink-faint uppercase font-semibold">
@@ -134,7 +128,6 @@ export default function LimitationsPage() {
             </p>
           </div>
 
-          {/* Friction 4 */}
           <div className="rounded-xl border border-paper-rule/70 bg-paper-surface/50 p-6 space-y-3 hover:border-paper-border transition-colors">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-sans px-2.5 py-0.5 rounded-full bg-paper-canvas border border-paper-rule text-ink-faint uppercase font-semibold">
@@ -155,7 +148,6 @@ export default function LimitationsPage() {
         </div>
       </section>
 
-      {/* 4. Demonstrated Findings vs Open Questions */}
       <section className="rounded-2xl border border-paper-rule bg-paper-canvas/50 p-6 sm:p-8 space-y-6">
         <div className="space-y-1">
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-ink-primary font-sans">
@@ -167,7 +159,6 @@ export default function LimitationsPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Demonstrated */}
           <div className="rounded-xl border border-direction-up/25 bg-paper-surface/60 p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-direction-up/20 pb-3">
               <h3 className="text-xs font-sans uppercase tracking-wide text-direction-up font-semibold">
@@ -197,7 +188,6 @@ export default function LimitationsPage() {
             </ul>
           </div>
 
-          {/* Uncertain */}
           <div className="rounded-xl border border-brass/25 bg-paper-surface/60 p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-brass/20 pb-3">
               <h3 className="text-xs font-sans uppercase tracking-wide text-brass font-semibold">
@@ -229,7 +219,6 @@ export default function LimitationsPage() {
         </div>
       </section>
 
-      {/* 5. Institutional Governance & Non-Trading Mandate */}
       <section className="rounded-2xl border border-rose-950/30 bg-rose-950/10 p-6 sm:p-8 space-y-3">
         <div className="text-direction-down font-semibold font-sans text-xs uppercase tracking-wide">
           Institutional Governance & Non-Trading Mandate

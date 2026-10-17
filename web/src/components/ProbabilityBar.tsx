@@ -48,7 +48,6 @@ export function ProbabilityBar({
 
   return (
     <div className="space-y-4">
-      {/* Horizontal Stacked Bar Representation with Smooth Curves */}
       <div className="space-y-1.5">
         <div className="flex h-3.5 w-full overflow-hidden bg-paper-canvas rounded-full border border-paper-rule p-0.5">
           {items.map((item) => (
@@ -62,7 +61,6 @@ export function ProbabilityBar({
         </div>
       </div>
 
-      {/* Numerical Rows */}
       <div className="divide-y divide-paper-rule/60 border-t border-b border-paper-rule">
         {items.map((item) => (
           <div

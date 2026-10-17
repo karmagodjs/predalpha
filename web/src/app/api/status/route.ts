@@ -15,7 +15,6 @@ export async function GET() {
       return NextResponse.json(data);
     }
   } catch {
-    // FastAPI offline or unreachable
   }
 
   return NextResponse.json({

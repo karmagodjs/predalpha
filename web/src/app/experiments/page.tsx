@@ -9,7 +9,6 @@ import { ExpandableSection } from "@/components/ExpandableSection";
 export default function ExperimentsPage() {
   return (
     <article className="space-y-12">
-      {/* 1. Header in Rounded-3xl Panel */}
       <header className="rounded-3xl border border-paper-rule bg-paper-canvas/70 p-8 sm:p-10 space-y-5">
         <div className="flex flex-wrap items-center gap-2 text-xs font-sans text-ink-muted">
           <span className="px-3 py-1 rounded-full bg-paper-surface border border-paper-rule text-ink-primary font-semibold text-[11px] uppercase tracking-wide">
@@ -40,7 +39,6 @@ export default function ExperimentsPage() {
         </div>
       </header>
 
-      {/* 2. Canonical 6-Arm Summary Table in Rounded-2xl Frame with Visual Delta Bars */}
       <section className="space-y-4">
         <div className="space-y-1">
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-ink-primary font-sans">
@@ -98,14 +96,14 @@ export default function ExperimentsPage() {
                               ? "text-direction-up"
                               : row.deltaBps < 0
                               ? "text-direction-down"
-                              : "text-ink-faint"
+                              : "text-ink-muted"
                           }`}
                         >
-                          {row.deltaBps > 0 ? `+${row.deltaBps}` : row.deltaBps}
+                          {row.deltaBps > 0 ? `+${row.deltaBps}` : row.deltaBps === 0 ? "0" : row.deltaBps}
                         </span>
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-xs font-sans text-ink-muted">
+                    <td className="py-3 px-4 whitespace-nowrap font-sans text-xs">
                       {row.status === "BASELINE" && (
                         <span className="text-ink-primary font-medium px-2.5 py-0.5 rounded-full bg-paper-surface border border-paper-rule">
                           Validated Benchmark
@@ -135,7 +133,6 @@ export default function ExperimentsPage() {
         </p>
       </section>
 
-      {/* 3. Study 1: Loss Formulations */}
       <section className="rounded-2xl border border-paper-rule bg-paper-canvas/50 p-6 sm:p-8 space-y-6">
         <div className="space-y-1">
           <div className="flex items-center space-x-2 text-xs font-sans uppercase tracking-wide text-brass font-semibold">
@@ -170,7 +167,6 @@ export default function ExperimentsPage() {
           </p>
         </div>
 
-        {/* Exp 1 Progressive Disclosure Seed Table */}
         <ExpandableSection
           title="Multi-Seed Verification Breakdown (Seeds 42, 123, 999)"
           summary="Per-seed accuracy, Macro-F1, inversion counts, and class-wise F1 metrics"
@@ -209,7 +205,6 @@ export default function ExperimentsPage() {
         </ExpandableSection>
       </section>
 
-      {/* 4. Study 2: Microprice Collinearity */}
       <section className="rounded-2xl border border-paper-rule bg-paper-canvas/50 p-6 sm:p-8 space-y-6">
         <div className="space-y-1">
           <div className="flex items-center space-x-2 text-xs font-sans uppercase tracking-wide text-direction-down font-semibold">
@@ -238,7 +233,6 @@ export default function ExperimentsPage() {
           </p>
         </div>
 
-        {/* Exp 2 Progressive Disclosure Seed Table */}
         <ExpandableSection
           title="Multi-Seed Verification Breakdown (Seeds 42, 123, 999)"
           summary="Per-seed comparison between 11-feature Baseline and 12-feature Microprice arm"
@@ -271,7 +265,6 @@ export default function ExperimentsPage() {
         </ExpandableSection>
       </section>
 
-      {/* 5. Study 3: Order Flow Imbalance */}
       <section className="rounded-2xl border border-paper-rule bg-paper-canvas/50 p-6 sm:p-8 space-y-6">
         <div className="space-y-1">
           <div className="flex items-center space-x-2 text-xs font-sans uppercase tracking-wide text-direction-down font-semibold">
@@ -299,7 +292,6 @@ export default function ExperimentsPage() {
           </p>
         </div>
 
-        {/* Exp 3 Progressive Disclosure Seed Table */}
         <ExpandableSection
           title="Multi-Seed Verification Breakdown (Seeds 42, 123, 999)"
           summary="Per-seed comparison across Baseline, OFI Addition (12D), and OFI Substitution (11D)"

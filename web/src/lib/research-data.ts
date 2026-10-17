@@ -1,13 +1,3 @@
-/**
- * Canonical, verified research data and metrics for PredAlpha.
- * Sourced directly from verified repository artifacts:
- * - data/models/experiment1_accuracy/controlled_experiment_1_results.json
- * - data/models/experiment2_features/controlled_experiment_2_results.json
- * - data/models/experiment3_ofi/controlled_experiment_3_results.json
- * - data/models/phase19/recurrent/recurrent_results.json
- * - data/models/phase20/diagnostic_results.json
- */
-
 export interface ExperimentSummaryRow {
   experiment: string;
   arm: string;
@@ -239,7 +229,7 @@ export const CONFIDENCE_ANALYSIS_TIERS: ConfidenceTier[] = [
 export interface ConfusionMatrixData {
   seed: number;
   name: string;
-  matrix: number[][]; // [Actual][Predicted] -> [[Down], [Flat], [Up]]
+  matrix: number[][];
 }
 
 export const CONFUSION_MATRICES: ConfusionMatrixData[] = [

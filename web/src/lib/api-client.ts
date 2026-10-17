@@ -1,8 +1,3 @@
-/**
- * API client for PredAlpha Research Website.
- * Connects to the local FastAPI backend (http://127.0.0.1:8000) or internal Next.js routes.
- */
-
 export interface PredictionResult {
   probabilities: {
     "Down (0)": number;
@@ -55,10 +50,8 @@ export async function fetchEngineStatus(): Promise<EngineStatusResponse> {
       return data;
     }
   } catch {
-    // Backend offline or unavailable
   }
 
-  // Graceful fallback status
   return {
     engine: "Offline Mode (PyTorch Backend Inactive)",
     artifact_status: {

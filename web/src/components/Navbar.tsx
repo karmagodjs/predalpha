@@ -23,7 +23,6 @@ export function Navbar() {
     setPendingHref(null);
   }, [pathname]);
 
-  // Gently scroll active tab into view on mobile without shifting window
   useEffect(() => {
     if (navRef.current && activeLinkRef.current) {
       const nav = navRef.current;
@@ -44,10 +43,8 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-paper-rule bg-paper-bg/95 backdrop-blur-sm">
       <div className="mx-auto flex h-13 max-w-6xl items-center justify-between px-4 sm:px-6">
-        {/* Left spacer on desktop to counterbalance right GitHub icon and ensure centered navigation */}
         <div className="hidden md:block w-9 shrink-0" aria-hidden="true" />
 
-        {/* Navigation Links: Centered on desktop, horizontally scrollable on mobile */}
         <nav
           ref={navRef}
           className="flex items-center space-x-1.5 sm:space-x-2 md:space-x-3 lg:space-x-5 overflow-x-auto no-scrollbar py-1 flex-1 md:flex-initial justify-start md:justify-center min-w-0"
@@ -74,7 +71,6 @@ export function Navbar() {
           })}
         </nav>
 
-        {/* Right GitHub Icon Link */}
         <div className="flex items-center shrink-0 pl-2.5 sm:pl-3 md:pl-0 w-9 md:w-9 justify-end border-l border-paper-rule/50 md:border-l-0 ml-1.5 md:ml-0">
           <a
             href="https://github.com/karmagodjs/predalpha"

@@ -4,7 +4,6 @@ import { CANONICAL_EXPERIMENT_SUMMARY } from "@/lib/research-data";
 export default function HomePage() {
   return (
     <article className="space-y-16">
-      {/* 1. Scholarly Editorial Masthead — Open, intentional layout without floating card wrapping */}
       <header className="space-y-6 pb-10 border-b border-paper-rule">
         <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-ink-muted">
           <div className="flex items-center space-x-3">
@@ -32,7 +31,6 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* Technical Metadata Strip */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-6 border-t border-paper-rule/70 text-xs">
           <div>
             <span className="text-ink-faint block text-[11px] uppercase tracking-wide mb-1">Target Instrument</span>
@@ -53,7 +51,6 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* 2. Executive Research Briefing — Integrated telemetry panel rather than repetitive cards */}
       <section aria-labelledby="benchmark-summary" className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
           <div>
@@ -69,9 +66,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Integrated Data Panel with Subtle Internal Grid Dividers */}
         <div className="border border-paper-rule bg-paper-canvas/60 rounded-xl overflow-hidden divide-y divide-paper-rule sm:divide-y-0 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:divide-x sm:divide-paper-rule">
-          {/* Stat 1: Primary Accuracy */}
           <div className="p-6 space-y-2">
             <div className="flex items-baseline justify-between">
               <span className="text-xs uppercase tracking-wide font-medium text-ink-muted">Ternary Accuracy</span>
@@ -85,7 +80,6 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Stat 2: Macro-F1 */}
           <div className="p-6 space-y-2">
             <div className="flex items-baseline justify-between">
               <span className="text-xs uppercase tracking-wide font-medium text-ink-muted">Macro-F1 Score</span>
@@ -99,7 +93,6 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Stat 3: Directional Inversions */}
           <div className="p-6 space-y-2">
             <div className="flex items-baseline justify-between">
               <span className="text-xs uppercase tracking-wide font-medium text-ink-muted">Inversion Flips</span>
@@ -113,7 +106,6 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Stat 4: Network Capacity */}
           <div className="p-6 space-y-2">
             <div className="flex items-baseline justify-between">
               <span className="text-xs uppercase tracking-wide font-medium text-ink-muted">Capacity</span>
@@ -129,7 +121,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3. Model Architecture & Pipeline Topology — Dedicated full-width diagram with exact mathematical derivation */}
       <section aria-labelledby="architecture-heading" className="space-y-6 pt-2">
         <div className="space-y-1">
           <h2 id="architecture-heading" className="text-lg sm:text-xl font-bold tracking-tight text-ink-primary">
@@ -140,7 +131,6 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* Technical Architecture Schematic */}
         <div className="border border-paper-rule bg-paper-canvas/40 rounded-xl p-5 sm:p-6 overflow-x-auto">
           <svg
             viewBox="0 0 760 178"
@@ -160,7 +150,6 @@ export default function HomePage() {
               </marker>
             </defs>
 
-            {/* Stage 1: Input Sequence */}
             <g transform="translate(14, 10)">
               <rect
                 x="0"
@@ -186,10 +175,8 @@ export default function HomePage() {
               <text x="18" y="145" fill="#575e6d" fontSize="9" fontFamily="var(--font-mono), 'JetBrains Mono', monospace">Snapshots t-9 ... t0</text>
             </g>
 
-            {/* Connector 1 */}
             <line x1="174" y1="88" x2="202" y2="88" stroke="#d99b26" strokeWidth="1.5" markerEnd="url(#arch-arrowhead)" />
 
-            {/* Stage 2: Recurrent Core */}
             <g transform="translate(204, 10)">
               <rect
                 x="0"
@@ -215,10 +202,8 @@ export default function HomePage() {
               <text x="18" y="145" fill="#575e6d" fontSize="9" fontFamily="var(--font-inter), -apple-system, sans-serif">Terminal state h_10</text>
             </g>
 
-            {/* Connector 2 */}
             <line x1="364" y1="88" x2="392" y2="88" stroke="#d99b26" strokeWidth="1.5" markerEnd="url(#arch-arrowhead)" />
 
-            {/* Stage 3: Regularization & Projection */}
             <g transform="translate(394, 10)">
               <rect
                 x="0"
@@ -244,10 +229,8 @@ export default function HomePage() {
               <text x="18" y="145" fill="#575e6d" fontSize="9" fontFamily="var(--font-mono), 'JetBrains Mono', monospace">Logits: z ∈ ℝ³</text>
             </g>
 
-            {/* Connector 3 */}
             <line x1="554" y1="88" x2="582" y2="88" stroke="#d99b26" strokeWidth="1.5" markerEnd="url(#arch-arrowhead)" />
 
-            {/* Stage 4: Softmax Classification */}
             <g transform="translate(584, 10)">
               <rect
                 x="0"
@@ -285,7 +268,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. Comparative Scientific Findings — Editorial narrative balancing validated results vs rejected hypotheses */}
       <section aria-labelledby="findings-heading" className="space-y-6 pt-4">
         <div className="space-y-1">
           <h2 id="findings-heading" className="text-lg sm:text-xl font-bold tracking-tight text-ink-primary">
@@ -297,7 +279,6 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Column A: What Works */}
           <div className="space-y-6 border-t border-direction-up/30 pt-4">
             <div className="flex items-center justify-between text-xs">
               <span className="font-semibold text-direction-up uppercase tracking-wide text-[11px]">
@@ -336,7 +317,6 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Column B: What Fails / Structural Caveats */}
           <div className="space-y-6 border-t border-paper-rule pt-4">
             <div className="flex items-center justify-between text-xs">
               <span className="font-semibold text-brass uppercase tracking-wide text-[11px]">
@@ -377,7 +357,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 5. Canonical 6-Arm Experiment Results Table */}
       <section aria-labelledby="experiment-table-heading" className="space-y-4 pt-4">
         <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
           <div>
@@ -459,7 +438,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 6. Analytical Model Lab Gateway — Restrained invitation without generic marketing boxes */}
       <section className="pt-6 pb-4 border-t border-paper-rule">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-xl">

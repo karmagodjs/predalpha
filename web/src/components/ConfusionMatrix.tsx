@@ -1,5 +1,5 @@
 interface ConfusionMatrixProps {
-  matrix: number[][]; // [Actual][Predicted]: 3x3
+  matrix: number[][];
   title?: string;
 }
 
@@ -27,7 +27,6 @@ export function ConfusionMatrix({ matrix, title }: ConfusionMatrixProps) {
         </div>
       )}
 
-      {/* Scientific Table Layout with curved container */}
       <div className="overflow-hidden rounded-2xl border border-paper-rule bg-paper-surface/30">
         <div className="overflow-x-auto">
           <table className="w-full text-left font-sans text-xs">
@@ -86,7 +85,6 @@ export function ConfusionMatrix({ matrix, title }: ConfusionMatrixProps) {
         </div>
       </div>
 
-      {/* Explanatory Annotations inside curved panel */}
       <div className="rounded-xl border border-paper-rule/70 bg-paper-surface/20 p-3.5 space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-y-2 text-xs text-ink-muted font-sans">
           <div>
@@ -100,9 +98,6 @@ export function ConfusionMatrix({ matrix, title }: ConfusionMatrixProps) {
             <span className="text-ink-faint"> (<span className="numeric-value">{inversionPct.toFixed(1)}%</span> of cohort)</span>
           </div>
         </div>
-        <p className="text-[11px] text-ink-faint leading-normal font-sans">
-          * Shaded rose cells represent severe directional inversions: predicting Up when the market moves Down, or Down when the market moves Up.
-        </p>
       </div>
     </div>
   );
