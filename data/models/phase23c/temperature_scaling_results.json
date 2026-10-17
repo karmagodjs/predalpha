@@ -1,0 +1,166 @@
+{
+  "metadata": {
+    "experiment": "Phase 23C \u2014 Multiclass Temperature Scaling & Probability Calibration",
+    "model_type": "SmallLSTM",
+    "checkpoint_path": "C:\\Users\\karma\\OneDrive\\Desktop\\predalpha\\data\\models\\phase19\\recurrent\\best_lstm.pt",
+    "val_data_path": "C:\\Users\\karma\\OneDrive\\Desktop\\predalpha\\data\\clean_v2\\07_scaled\\expanded_collection\\validation_scaled.npz",
+    "phase20_preds_path": "C:\\Users\\karma\\OneDrive\\Desktop\\predalpha\\data\\models\\phase20\\validation_predictions.npz",
+    "output_directory": "C:\\Users\\karma\\OneDrive\\Desktop\\predalpha\\data\\models\\phase23c",
+    "provenance_hashes": {
+      "checkpoint_sha256": "d8b75bdbaffbb7f2c4b398beea484f83d851b37380bccd93ca07199a3d9c025d",
+      "validation_data_sha256": "69b97fd243bec2d2b65757ab209faa72e48c2d26a1bf6c4d1f78d6697ad62138",
+      "phase20_predictions_sha256": "2b14b14af433b36262b0a05f8c3030bced2bce518ab690d6a1b8d09a5871519d"
+    },
+    "weight_fingerprint_unchanged": true
+  },
+  "split": {
+    "total_samples": 1428,
+    "cal_samples": 832,
+    "eval_samples": 596,
+    "purged_samples": 0,
+    "cal_start_ts": 1791291910000,
+    "cal_end_ts": 1791293029000,
+    "eval_start_ts": 1791293110000,
+    "eval_end_ts": 1791294206000,
+    "actual_purge_gap_ms": 81000,
+    "required_purge_gap_ms": 22000,
+    "purge_satisfied": true,
+    "cal_class_distribution": {
+      "DOWN": 378,
+      "FLAT": 75,
+      "UP": 379
+    },
+    "eval_class_distribution": {
+      "DOWN": 238,
+      "FLAT": 120,
+      "UP": 238
+    }
+  },
+  "calibration_fit": {
+    "fitted_temperature": 0.7951177539388515,
+    "optimizer": "scipy.optimize.minimize_scalar(bounded)",
+    "bounds": [
+      0.01,
+      10.0
+    ],
+    "convergence_status": true,
+    "iterations": 17,
+    "message": "Solution found.",
+    "calibration_subset_nll_before": 0.893856189617828,
+    "calibration_subset_nll_after": 0.8871323667659626,
+    "calibration_subset_delta_nll": -0.0067238228518653465,
+    "calibration_subset_brier_before": 0.5395358296193102,
+    "calibration_subset_brier_after": 0.5355542085272501,
+    "calibration_subset_ece_before": 0.07053251285105946,
+    "calibration_subset_ece_after": 0.0496890289494051
+  },
+  "evaluation_metrics": {
+    "sample_count": 596,
+    "uncalibrated_baseline": {
+      "nll": 0.9006217696901936,
+      "brier_score": 0.5471529077701655,
+      "ece": 0.049435920763335785,
+      "mean_confidence": 0.554757833480835,
+      "median_confidence": 0.5343433618545532,
+      "accuracy": 0.5889,
+      "balanced_accuracy": 0.5729,
+      "macro_f1": 0.5832,
+      "weighted_f1": 0.588,
+      "per_class": {
+        "DOWN": {
+          "precision": 0.5875,
+          "recall": 0.5924,
+          "f1": 0.59,
+          "support": 238
+        },
+        "FLAT": {
+          "precision": 0.6484,
+          "recall": 0.4917,
+          "f1": 0.5592,
+          "support": 120
+        },
+        "UP": {
+          "precision": 0.5698,
+          "recall": 0.6345,
+          "f1": 0.6004,
+          "support": 238
+        }
+      },
+      "confusion_matrix": [
+        [
+          141,
+          15,
+          82
+        ],
+        [
+          29,
+          59,
+          32
+        ],
+        [
+          70,
+          17,
+          151
+        ]
+      ]
+    },
+    "calibrated": {
+      "nll": 0.9047368029570855,
+      "brier_score": 0.549632140239161,
+      "ece": 0.05670038455684712,
+      "mean_confidence": 0.5980502367019653,
+      "median_confidence": 0.5786629915237427,
+      "accuracy": 0.5889,
+      "balanced_accuracy": 0.5729,
+      "macro_f1": 0.5832,
+      "weighted_f1": 0.588,
+      "per_class": {
+        "DOWN": {
+          "precision": 0.5875,
+          "recall": 0.5924,
+          "f1": 0.59,
+          "support": 238
+        },
+        "FLAT": {
+          "precision": 0.6484,
+          "recall": 0.4917,
+          "f1": 0.5592,
+          "support": 120
+        },
+        "UP": {
+          "precision": 0.5698,
+          "recall": 0.6345,
+          "f1": 0.6004,
+          "support": 238
+        }
+      },
+      "confusion_matrix": [
+        [
+          141,
+          15,
+          82
+        ],
+        [
+          29,
+          59,
+          32
+        ],
+        [
+          70,
+          17,
+          151
+        ]
+      ]
+    },
+    "differences": {
+      "delta_nll": 0.004115033266891888,
+      "delta_brier": 0.002479232468995507,
+      "delta_ece": 0.007264463793511332,
+      "delta_mean_confidence": 0.04329240322113037,
+      "delta_accuracy": 0.0,
+      "delta_balanced_accuracy": 0.0,
+      "delta_macro_f1": 0.0,
+      "argmax_invariant": true
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "protocol_version": "1.2",
+  "protocol_status": "PREDECLARED_FROZEN",
+  "amendment_version": "1.2",
+  "model_architecture": "SmallLSTM (input 11, hidden 32, num_layers 1, classes 3)",
+  "model_checkpoint": "data/models/phase19/recurrent/best_lstm.pt",
+  "amendment_v1_2_rules": {
+    "primary_evaluation_cohort": "Intention-to-Treat (ITT) Master Ledger pooling ALL completed trades from all prospective sessions (completed, degraded, and aborted).",
+    "eligible_completed_session_definition": "Session reaches nominal duration (300s), session_status == COMPLETE, zero hard stops, zero buffer/queue drops, dual books initialized.",
+    "session_quota_target": 5,
+    "two_tier_circuit_breakers": {
+      "intra_session_loss_limit": 8,
+      "global_strategy_rejection_limit_v1_1": 3,
+      "session_008_classification": "Infrastructure-Invalidated Abort (zero trading risk, measurement bug, patched in causal buffer). Does not count toward strategy abort quota.",
+      "session_009_standing": "Strategy Abort #1 of 3 under v1.1+ causal code (2 strategy aborts remaining in budget)."
+    },
+    "filter_prohibitions": {
+      "contract_price_filter_rejected": "Proposed 0.15-0.85 filter formally rejected due to empirical counter-evidence and protocol freezing.",
+      "fee_hurdle_filters": "Prohibited in Phase 26; deferred to Phase 27.",
+      "entry_throttling": "Prohibited in Phase 26; deferred to Phase 27."
+    },
+    "opposing_position_handling": "Frozen unconstrained entry; offline reporting of concurrent opposing positions and synthetic spread drag."
+  },
+  "predeclared_regime_gates": {
+    "confidence_threshold": 0.55,
+    "scaled_spread_threshold": -0.08966752318678373,
+    "abs_scaled_depth_imbalance_threshold": 1.3681085005226963,
+    "max_quote_age_ms": 2000.0,
+    "max_inter_burst_gap_ms": 5000.0
+  },
+  "target_observation_requirements": {
+    "min_total_trades": 500,
+    "min_distinct_bursts": 50,
+    "min_effective_sample_size_N_eff": 40,
+    "min_prospective_sessions": 5
+  },
+  "predeclared_acceptance_criteria": {
+    "min_mean_net_pnl_per_trade": 0.002,
+    "min_win_rate": 0.45,
+    "min_profit_factor": 1.15,
+    "max_drawdown_units": 2.0,
+    "min_cluster_robust_t_statistic": 2.0,
+    "stress_fee_schedule_bps": 5.0
+  },
+  "hard_stopping_abort_triggers": {
+    "max_drawdown_stop_loss_units": 2.5,
+    "consecutive_losses_limit": 8,
+    "max_missing_quote_rate_pct": 25.0,
+    "max_average_quote_staleness_ms": 2000.0
+  },
+  "statistical_dependence_methodology": {
+    "clustering_unit": "recording_burst_id",
+    "bootstrap_method": "Stationary block bootstrap (block_size=5 observations, 1000 resamples)",
+    "standard_error_adjustment": "Newey-West HAC / Cluster-Robust SE",
+    "full_observation_accounting": true
+  },
+  "current_prospective_data_availability": {
+    "has_forward_shadow_data_collected": true,
+    "status_statement": "Prospective shadow data collection underway under Protocol Amendment v1.2 with full ITT observation accounting."
+  }
+}

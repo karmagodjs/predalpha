@@ -16,8 +16,14 @@ from pipeline_v2.models.recurrent_models import SmallLSTM
 
 ROOT = Path(__file__).resolve().parents[2]
 
-TRAIN_PATH = ROOT / "data/clean_v2/07_scaled/expanded_collection/train_scaled.npz"
-VAL_PATH = ROOT / "data/clean_v2/07_scaled/expanded_collection/validation_scaled.npz"
+TRAIN_PATH = (
+    ROOT
+    / "data/clean_v2/07_scaled/expanded_collection/train_scaled.npz"
+)
+VAL_PATH = (
+    ROOT
+    / "data/clean_v2/07_scaled/expanded_collection/validation_scaled.npz"
+)
 
 OUT_DIR = ROOT / "data/models/phase21"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -46,10 +52,9 @@ def set_seed(seed):
 
 
 def load_data(path):
-    z = np.load(path, allow_pickle=False)
-
-    X = z["X_imputed"].astype(np.float32)
-    y_raw = z["y"].astype(str)
+    with np.load(path, allow_pickle=False) as data:
+        X = data["X_imputed"].astype(np.float32)
+        y_raw = data["y"].astype(str)
 
     y = np.array(
         [LABEL_TO_ID[label] for label in y_raw],
@@ -60,7 +65,6 @@ def load_data(path):
 
 
 def train_one(X_train, y_train, X_val, y_val, weights, seed):
-
     set_seed(seed)
 
     model = SmallLSTM(
@@ -74,6 +78,7 @@ def train_one(X_train, y_train, X_val, y_val, weights, seed):
         weight_decay=1e-4,
         batch_size=256,
         max_epochs=150,
+        class_weight=np.array(weights, dtype=np.float32) if weights is not None else None,
     )
 
     model.fit(
@@ -90,23 +95,27 @@ def train_one(X_train, y_train, X_val, y_val, weights, seed):
         logits = model.model(
             torch.from_numpy(X_val)
         )
-
         predictions = logits.argmax(dim=1).cpu().numpy()
 
     accuracy = accuracy_score(y_val, predictions)
+
     balanced_accuracy = balanced_accuracy_score(
         y_val,
         predictions,
     )
+
     macro_f1 = f1_score(
         y_val,
         predictions,
+        labels=[0, 1, 2],
         average="macro",
+        zero_division=0,
     )
 
     cm = confusion_matrix(
         y_val,
         predictions,
+        labels=[0, 1, 2],
     )
 
     return {
@@ -120,7 +129,6 @@ def train_one(X_train, y_train, X_val, y_val, weights, seed):
 
 
 def main():
-
     print("=" * 70)
     print("PHASE 21 — CLASS-WEIGHTED LSTM")
     print("=" * 70)
@@ -137,7 +145,6 @@ def main():
     current = 0
 
     for name, weights in WEIGHTS.items():
-
         print("\n" + "=" * 70)
         print(f"EXPERIMENT: {name}")
         print(f"Class weights: {weights}")
@@ -146,7 +153,6 @@ def main():
         experiment_results = []
 
         for seed in SEEDS:
-
             current += 1
 
             print(
@@ -164,14 +170,16 @@ def main():
             )
 
             experiment_results.append(result)
+
             all_results.append({
                 "experiment": name,
                 **result,
             })
 
             print(
-                f"Accuracy: {result['accuracy']*100:.2f}% | "
-                f"Balanced: {result['balanced_accuracy']*100:.2f}% | "
+                f"Accuracy: {result['accuracy'] * 100:.2f}% | "
+                f"Balanced: "
+                f"{result['balanced_accuracy'] * 100:.2f}% | "
                 f"Macro F1: {result['macro_f1']:.4f}"
             )
 
@@ -197,33 +205,27 @@ def main():
 
         print("\nAGGREGATE")
         print(
-            f"Accuracy: "
-            f"{mean_accuracy*100:.2f}% ± "
-            f"{std_accuracy*100:.2f}%"
+            f"Accuracy: {mean_accuracy * 100:.2f}% ± "
+            f"{std_accuracy * 100:.2f}%"
         )
 
         print(
-            f"Balanced Accuracy: "
-            f"{mean_balanced*100:.2f}%"
+            f"Balanced Accuracy: {mean_balanced * 100:.2f}%"
         )
 
         print(
-            f"Macro F1: "
-            f"{mean_macro_f1:.4f} ± "
+            f"Macro F1: {mean_macro_f1:.4f} ± "
             f"{std_macro_f1:.4f}"
         )
 
-    # ----------------------------------------------------------
-    # SUMMARY
-    # ----------------------------------------------------------
-
+    # Build the final validation summary.
     summary = []
 
     for name in WEIGHTS:
-
         rows = [
-            r for r in all_results
-            if r["experiment"] == name
+            result
+            for result in all_results
+            if result["experiment"] == name
         ]
 
         summary.append({
@@ -249,7 +251,7 @@ def main():
         })
 
     summary.sort(
-        key=lambda x: x["mean_macro_f1"],
+        key=lambda result: result["mean_macro_f1"],
         reverse=True,
     )
 
@@ -257,13 +259,13 @@ def main():
     print("PHASE 21 FINAL VALIDATION COMPARISON")
     print("=" * 70)
 
-    for rank, row in enumerate(summary, 1):
-
+    for rank, result in enumerate(summary, start=1):
         print(
-            f"{rank}. {row['experiment']:12s} | "
-            f"Acc={row['mean_accuracy']*100:.2f}% | "
-            f"BalAcc={row['mean_balanced_accuracy']*100:.2f}% | "
-            f"MacroF1={row['mean_macro_f1']:.4f}"
+            f"{rank}. {result['experiment']:12s} | "
+            f"Acc={result['mean_accuracy'] * 100:.2f}% | "
+            f"BalAcc="
+            f"{result['mean_balanced_accuracy'] * 100:.2f}% | "
+            f"MacroF1={result['mean_macro_f1']:.4f}"
         )
 
     results = {
@@ -274,19 +276,13 @@ def main():
         "summary_ranked_by_macro_f1": summary,
     }
 
-    with open(
-        OUT_DIR / "class_weighted_results.json",
-        "w",
-        encoding="utf-8",
-    ) as f:
-        json.dump(
-            results,
-            f,
-            indent=2,
-        )
+    output_path = OUT_DIR / "class_weighted_results.json"
+
+    with open(output_path, "w", encoding="utf-8") as file:
+        json.dump(results, file, indent=2)
 
     print("\nArtifact:")
-    print(OUT_DIR / "class_weighted_results.json")
+    print(output_path)
 
     print("\n" + "=" * 70)
     print("PHASE 21 COMPLETE")

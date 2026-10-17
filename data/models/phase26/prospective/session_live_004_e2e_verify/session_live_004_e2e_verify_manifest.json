@@ -1,0 +1,8 @@
+{
+  "run_id": "session_live_004_e2e_verify",
+  "total_records": 196,
+  "log_file": "session_live_004_e2e_verify_observations.jsonl",
+  "log_sha256": "a62b6e01e6e558795e4cab0eb02985f9a8e3124f372dd8e918edc684b32b4f85",
+  "rolling_chain_hash": "c9089f9e90301d207f3cca4f3c9628a3fea85b7d91b4d2f7763a3f8e3bdd4339",
+  "closed_at_utc": "2026-10-10T04:23:35.610355+00:00"
+}

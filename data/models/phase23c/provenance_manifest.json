@@ -1,0 +1,17 @@
+{
+  "manifest_version": "1.0",
+  "phase": "Phase 23C",
+  "generated_artifacts": {
+    "temperature_scaling_results.json": "8e34a594d525f7ee43e74efc13bffb602dedcf4882013695cea361a788a3e01f",
+    "metrics_comparison.csv": "1f3e8342514b85ffe4b581dac1e5ea2d2968aa14a644a367ec0bff9b51025c13",
+    "reliability_bins.csv": "95dd2f62bfaa63e9b4df452e31fb62ad016886d8c0eb9b9471824b0010705cd2"
+  },
+  "input_artifacts": {
+    "checkpoint_sha256": "d8b75bdbaffbb7f2c4b398beea484f83d851b37380bccd93ca07199a3d9c025d",
+    "validation_data_sha256": "69b97fd243bec2d2b65757ab209faa72e48c2d26a1bf6c4d1f78d6697ad62138",
+    "phase20_predictions_sha256": "2b14b14af433b36262b0a05f8c3030bced2bce518ab690d6a1b8d09a5871519d"
+  },
+  "checkpoint_weights_frozen": true,
+  "locked_test_set_accessed": false,
+  "chronological_split_verified": true
+}

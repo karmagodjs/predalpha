@@ -1,0 +1,9 @@
+Metric,Baseline (Uncalibrated),Calibrated (T=0.7951),Delta (Calibrated - Baseline),Notes
+Negative Log-Likelihood (NLL),0.900622,0.904737,+0.004115,Lower is better
+Brier Score,0.547153,0.549632,+0.002479,Lower is better
+Expected Calibration Error (ECE),0.049436,0.056700,+0.007264,"Lower is better, 10 bins"
+Mean Confidence,0.554758,0.598050,+0.043292,Mean max-probability
+Median Confidence,0.534343,0.578663,+0.044320,Median max-probability
+Accuracy,0.5889,0.5889,+0.0000,Order-preserving invariant
+Balanced Accuracy,0.5729,0.5729,+0.0000,Order-preserving invariant
+Macro F1,0.5832,0.5832,+0.0000,Order-preserving invariant

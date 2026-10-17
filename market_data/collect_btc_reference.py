@@ -56,6 +56,25 @@ def fetch_klines(start_ms: int, end_ms: int) -> list:
                     f"Retrying in {wait} seconds... (attempt {attempt})"
                 )
                 time.sleep(wait)
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         response.raise_for_status()
         batch = response.json()
 

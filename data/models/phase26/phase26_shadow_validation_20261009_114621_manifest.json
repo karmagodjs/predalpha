@@ -1,0 +1,8 @@
+{
+  "run_id": "phase26_shadow_validation_20261009_114621",
+  "total_records": 1428,
+  "log_file": "phase26_shadow_validation_20261009_114621_observations.jsonl",
+  "log_sha256": "29a70300e4fdbc65698a64b6a3ecfe84c11267894b202585e77511558d159c33",
+  "rolling_chain_hash": "68b03fa9207be6583a2e2756f5b34e41927b402bb013765944ab6bf31ca85e35",
+  "closed_at_utc": "2026-10-09T11:46:23.799342+00:00"
+}

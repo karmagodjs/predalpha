@@ -1,0 +1,7 @@
+Policy,Total Decisions,Executed Trades,Skipped Flat,Rejected Missing Quotes,Gated by Filter,Execution Coverage Pct
+Policy_0_Mid_Counterfactual,1428,1067,118,243,0,74.72
+Policy_1_Unfiltered_Baseline,1428,1067,118,243,0,74.72
+Policy_2_Confidence_Gate,1428,439,118,243,628,30.74
+Policy_3_Spread_Gate,1428,1031,118,243,36,72.2
+Policy_4_Depth_Imbalance_Gate,1428,922,118,243,145,64.57
+Policy_5_Combined_Gate,1428,346,118,243,721,24.23

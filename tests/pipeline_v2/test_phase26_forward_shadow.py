@@ -34,6 +34,7 @@ from pipeline_v2.models.phase26_forward_shadow import (
     PREDECLARED_CONFIDENCE_THRESHOLD,
     TRAIN_SPREAD_THRESHOLD,
     TRAIN_DEPTH_IMBALANCE_P90,
+    EMPTY_FILE_SHA256,
 )
 
 
@@ -372,11 +373,12 @@ def test_forward_shadow_logger_rejects_reused_run_id_after_closure():
 
 
 def test_protocol_amendment_v1_1_definition():
-    """Verify Protocol Amendment v1.1 version, documented metric definitions, and hard stops."""
+    """Verify Protocol Amendment version, documented metric definitions, and hard stops."""
     protocol = define_prospective_protocol()
-    assert protocol["protocol_version"] == "1.1"
-    assert protocol["amendment_version"] == "1.1"
+    assert protocol["protocol_version"] == "1.2"
+    assert protocol["amendment_version"] == "1.2"
     assert "amendment_metric_definitions" in protocol
+    assert "amendment_v1_2_rules" in protocol
 
     defs = protocol["amendment_metric_definitions"]
     assert "missing_quote_rate" in defs
@@ -389,3 +391,30 @@ def test_protocol_amendment_v1_1_definition():
     assert triggers["consecutive_losses_limit"] == 8
     assert triggers["max_missing_quote_rate_pct"] == 25.0
     assert triggers["max_average_quote_staleness_ms"] == 2000.0
+
+    rules = protocol["amendment_v1_2_rules"]
+    assert "primary_evaluation_cohort" in rules
+    assert "eligible_completed_session_definition" in rules
+    assert "two_tier_circuit_breakers" in rules
+    assert rules["two_tier_circuit_breakers"]["global_strategy_rejection_limit_v1_1"] == 3
+
+
+def test_forward_shadow_logger_zero_observation_durability():
+    """Verify that a zero-record logger produces an empty file with standard SHA-256."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_path = Path(tmp_dir)
+        run_id = "test_zero_records"
+        logger = ForwardShadowLogger(output_dir=tmp_path, run_id=run_id)
+
+        # Observation file exists immediately upon initialization
+        log_file = tmp_path / f"{run_id}_observations.jsonl"
+        assert log_file.exists(), "Observation log file must exist immediately upon logger init."
+        assert log_file.stat().st_size == 0, "Observation log file must be 0 bytes for zero records."
+
+        # Finalize without logging records
+        manifest = logger.close()
+        assert manifest["total_records"] == 0
+        assert manifest["log_file"] == f"{run_id}_observations.jsonl"
+        assert manifest["log_sha256"] == EMPTY_FILE_SHA256
+        assert manifest["rolling_chain_hash"] == EMPTY_FILE_SHA256
+        assert sha256_file(log_file) == EMPTY_FILE_SHA256

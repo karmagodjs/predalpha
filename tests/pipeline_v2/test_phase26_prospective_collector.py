@@ -15,10 +15,13 @@ Verifies:
 """
 
 import asyncio
-from pathlib import Path
 import json
+import logging
+from pathlib import Path
 import tempfile
+import time
 import numpy as np
+import pandas as pd
 import pytest
 import torch
 import websockets
@@ -27,18 +30,22 @@ from websockets.asyncio.client import connect
 from websockets.protocol import State as WebSocketState
 from websockets.exceptions import ConnectionClosed, ConnectionClosedOK, ConnectionClosedError
 
+from pipeline_v2.resampling.point_in_time_grid import PointInTimeResampler
 from pipeline_v2.models.phase26_prospective_collector import (
     LiveTokenOrderBook,
     OnlineCausalFeatureEngine,
     ProspectiveShadowSession,
+    PointInTimeEventBuffer,
+    BufferedMarketEvent,
     classify_and_parse_ws_message,
     get_current_5m_slot,
     is_connection_closed,
+    setup_utc_logging,
     MODEL_PATH,
     LOCKED_TEST_PATH,
     SCALER_PARAMS_PATH,
 )
-from pipeline_v2.models.phase26_forward_shadow import sha256_file
+from pipeline_v2.models.phase26_forward_shadow import sha256_file, EMPTY_FILE_SHA256
 
 
 def test_locked_test_isolation_in_prospective():
@@ -1607,7 +1614,7 @@ def test_manifest_and_health_report_metrics_amendment_v1_1():
             manifest = session._finalize_session()
 
             # Verify manifest keys and values
-            assert manifest["protocol_version"] == "1.1"
+            assert manifest["protocol_version"] in ("1.1", "1.2")
             assert manifest["eligible_grid_steps_count"] == 3
             assert manifest["unquotable_quotes_count"] == 1
             assert pytest.approx(manifest["missing_quote_rate"], abs=1e-4) == 1.0 / 3.0
@@ -1623,7 +1630,7 @@ def test_manifest_and_health_report_metrics_amendment_v1_1():
             assert report_path.exists()
             content = report_path.read_text(encoding="utf-8")
             assert "Protocol Version" in content
-            assert "1.1" in content
+            assert "1.2" in content or "1.1" in content
             assert "Eligible Grid Steps (Quote Validation)" in content
             assert "Unquotable / Crossed Quotes" in content
             assert "Missing Quote Rate" in content
@@ -1946,3 +1953,807 @@ def test_missing_down_book_fails_closed_and_settles_due_positions_incomplete():
             assert session.trades_executed == 0
 
     asyncio.run(_test())
+
+
+def test_setup_utc_logging_formatter():
+    """Verify that setup_utc_logging configures time.gmtime and outputs UTC timestamps."""
+    setup_utc_logging(level=logging.INFO)
+    assert logging.Formatter.converter == time.gmtime
+
+    record = logging.LogRecord(
+        name="test_logger",
+        level=logging.INFO,
+        pathname=__file__,
+        lineno=10,
+        msg="Test message",
+        args=(),
+        exc_info=None,
+    )
+    formatter = logging.Formatter(
+        fmt="%(asctime)s UTC [%(levelname)s] %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+    formatted = formatter.format(record)
+    assert "UTC [INFO] Test message" in formatted
+    utc_now = time.gmtime(record.created)
+    expected_prefix = time.strftime("%Y-%m-%d %H:%M:%S", utc_now)
+    assert formatted.startswith(expected_prefix)
+
+
+def test_unquotable_diagnostics_durable_and_distinguishes_causes():
+    """
+    Verify that structured diagnostics distinguish all quote failure causes:
+    - Missing or non-positive bid/ask
+    - Crossed or locked quotes (bid >= ask)
+    - Invalid or missing timestamps
+    - Grid timestamp earlier than book update (sub-second or future-dated)
+    And that diagnostics survive into session_manifest.json and collector_health_report.md.
+    """
+    async def _test():
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            session = ProspectiveShadowSession(
+                output_base_dir=Path(tmp_dir),
+                session_id="test_unquotable_diag_suite",
+            )
+            down_book = LiveTokenOrderBook("down_token")
+            down_book.apply_book_event({
+                "bids": [{"price": "0.49", "size": "100.0"}],
+                "asks": [{"price": "0.50", "size": "100.0"}],
+            }, timestamp_ms=1000)
+
+            # 1. Missing bid
+            b1 = LiveTokenOrderBook("t1")
+            b1.apply_book_event({"bids": [], "asks": [{"price": "0.51", "size": "100.0"}]}, timestamp_ms=1000)
+            await session._process_grid_step(b1, "m", "t", 2000, down_book=down_book)
+            d1 = session.unquotable_diagnostics[-1]
+            assert d1["validation_flags"]["missing_or_nonpositive_bid"] is True
+            assert "MISSING_OR_NONPOSITIVE_BID" in d1["failure_reasons"]
+
+            # 2. Missing ask
+            b2 = LiveTokenOrderBook("t1")
+            b2.apply_book_event({"bids": [{"price": "0.50", "size": "100.0"}], "asks": []}, timestamp_ms=2000)
+            await session._process_grid_step(b2, "m", "t", 3000, down_book=down_book)
+            d2 = session.unquotable_diagnostics[-1]
+            assert d2["validation_flags"]["missing_or_nonpositive_ask"] is True
+            assert "MISSING_OR_NONPOSITIVE_ASK" in d2["failure_reasons"]
+
+            # 3. Non-positive bid (0.00)
+            b3 = LiveTokenOrderBook("t1")
+            b3.apply_book_event({"bids": [{"price": "0.00", "size": "100.0"}], "asks": [{"price": "0.51", "size": "100.0"}]}, timestamp_ms=3000)
+            await session._process_grid_step(b3, "m", "t", 4000, down_book=down_book)
+            d3 = session.unquotable_diagnostics[-1]
+            assert d3["validation_flags"]["missing_or_nonpositive_bid"] is True
+
+            # 4. Crossed quote (bid > ask)
+            b4 = LiveTokenOrderBook("t1")
+            b4.apply_book_event({"bids": [{"price": "0.55", "size": "100.0"}], "asks": [{"price": "0.50", "size": "100.0"}]}, timestamp_ms=4000)
+            await session._process_grid_step(b4, "m", "t", 5000, down_book=down_book)
+            d4 = session.unquotable_diagnostics[-1]
+            assert d4["validation_flags"]["crossed_or_locked_quotes"] is True
+            assert "CROSSED_OR_LOCKED_QUOTES" in d4["failure_reasons"]
+
+            # 5. Locked quote (bid == ask)
+            b5 = LiveTokenOrderBook("t1")
+            b5.apply_book_event({"bids": [{"price": "0.50", "size": "100.0"}], "asks": [{"price": "0.50", "size": "100.0"}]}, timestamp_ms=5000)
+            await session._process_grid_step(b5, "m", "t", 6000, down_book=down_book)
+            d5 = session.unquotable_diagnostics[-1]
+            assert d5["validation_flags"]["crossed_or_locked_quotes"] is True
+
+            # 6. Invalid / zero timestamp (last_update_ms = 0)
+            b6 = LiveTokenOrderBook("t1")
+            b6.apply_book_event({"bids": [{"price": "0.50", "size": "100.0"}], "asks": [{"price": "0.51", "size": "100.0"}]}, timestamp_ms=0)
+            b6.last_update_ms = 0
+            await session._process_grid_step(b6, "m", "t", 7000, down_book=down_book)
+            d6 = session.unquotable_diagnostics[-1]
+            assert d6["validation_flags"]["invalid_or_missing_timestamp"] is True
+            assert "INVALID_OR_MISSING_TIMESTAMP" in d6["failure_reasons"]
+
+            # 7. Sub-second book update near grid boundary (grid_ts = 8000, book_ts = 8450)
+            b7 = LiveTokenOrderBook("t1")
+            b7.apply_book_event({"bids": [{"price": "0.50", "size": "100.0"}], "asks": [{"price": "0.51", "size": "100.0"}]}, timestamp_ms=8450)
+            await session._process_grid_step(b7, "m", "t", 8000, down_book=down_book)
+            d7 = session.unquotable_diagnostics[-1]
+            assert d7["validation_flags"]["grid_earlier_than_book_update"] is True
+            assert "GRID_EARLIER_THAN_BOOK_UPDATE" in d7["failure_reasons"]
+            assert d7["grid_timestamp_ms"] == 8000
+            assert d7["book_last_update_ms"] == 8450
+
+            # 8. Truly future-dated timestamp (grid_ts = 9000, book_ts = 50000)
+            b8 = LiveTokenOrderBook("t1")
+            b8.apply_book_event({"bids": [{"price": "0.50", "size": "100.0"}], "asks": [{"price": "0.51", "size": "100.0"}]}, timestamp_ms=50000)
+            await session._process_grid_step(b8, "m", "t", 9000, down_book=down_book)
+            d8 = session.unquotable_diagnostics[-1]
+            assert d8["validation_flags"]["grid_earlier_than_book_update"] is True
+            assert "GRID_EARLIER_THAN_BOOK_UPDATE" in d8["failure_reasons"]
+
+            assert len(session.unquotable_diagnostics) == 8
+
+            # Finalize session and verify persistence in manifest and health report
+            manifest = session._finalize_session()
+            assert manifest["unquotable_diagnostics_count"] == 8
+            assert manifest["first_unquotable_diagnostic"] is not None
+            assert manifest["first_unquotable_diagnostic"]["failure_reasons"] == ["MISSING_OR_NONPOSITIVE_BID"]
+
+            report_path = session.session_dir / "collector_health_report.md"
+            assert report_path.exists()
+            content = report_path.read_text(encoding="utf-8")
+            assert "Unquotable Quote Diagnostics" in content
+            assert "MISSING_OR_NONPOSITIVE_BID" in content
+            assert "GRID_EARLIER_THAN_BOOK_UPDATE" in content
+            assert "CROSSED_OR_LOCKED_QUOTES" in content
+
+    asyncio.run(_test())
+
+
+def test_zero_observation_session_produces_durable_artifacts_and_valid_hash():
+    """
+    Verify that a session aborting on step 1 with zero decisions logged
+    produces a deterministic empty .jsonl artifact, standard SHA-256 hash,
+    and durable diagnostics surviving immediate abort.
+    """
+    async def _test():
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            session = ProspectiveShadowSession(
+                output_base_dir=Path(tmp_dir),
+                session_id="test_zero_obs_durability",
+            )
+            # Dual books initialized
+            down_book = LiveTokenOrderBook("down_token")
+            down_book.apply_book_event({
+                "bids": [{"price": "0.49", "size": "100.0"}],
+                "asks": [{"price": "0.50", "size": "100.0"}],
+            }, timestamp_ms=1000)
+
+            # UP book has sub-second update ahead of grid_timestamp (like session 008)
+            up_book = LiveTokenOrderBook("up_token")
+            up_book.apply_book_event({
+                "bids": [{"price": "0.50", "size": "100.0"}],
+                "asks": [{"price": "0.51", "size": "100.0"}],
+            }, timestamp_ms=1450)
+
+            # Step 1: grid_timestamp_ms = 1000 < 1450
+            await session._process_grid_step(
+                up_book=up_book,
+                market_id="btc-updown-5m-test",
+                asset_id="up_token",
+                grid_timestamp_ms=1000,
+                down_book=down_book,
+            )
+
+            # 1 / 1 = 100% missing quote rate -> hard stop triggers immediately
+            assert session.is_hard_stopped is True
+            assert "MISSING_QUOTE_RATE_LIMIT" in session.hard_stop_reason
+
+            manifest = session._finalize_session()
+            assert manifest["session_status"] == "ABORTED_HARD_STOP"
+            assert manifest["total_observations_logged"] == 0
+            assert manifest["trades_executed"] == 0
+
+            # 1. Observation log file must genuinely exist on disk and be 0 bytes
+            log_path = session.session_dir / manifest["log_file"]
+            assert log_path.exists(), "Observation log must exist on disk even with 0 observations."
+            assert log_path.stat().st_size == 0
+
+            # 2. SHA-256 hash in manifest and on disk must match EMPTY_FILE_SHA256
+            assert manifest["log_sha256"] == EMPTY_FILE_SHA256
+            assert sha256_file(log_path) == EMPTY_FILE_SHA256
+
+            # 3. Health report must be generated and reference EMPTY_FILE_SHA256
+            report_path = session.session_dir / "collector_health_report.md"
+            assert report_path.exists()
+            content = report_path.read_text(encoding="utf-8")
+            assert EMPTY_FILE_SHA256[:16] in content
+            assert "ABORTED (HARD STOP TRIGGERED)" in content
+            assert "Initial Unquotable Diagnostic" in content
+            assert "GRID_EARLIER_THAN_BOOK_UPDATE" in content
+
+    asyncio.run(_test())
+
+
+def test_no_new_entries_and_unchanged_thresholds_after_hard_stop():
+    """
+    Verify that existing hard-stop thresholds remain bitwise unchanged
+    and that no new hypothetical entries can be opened after hard-stop activation.
+    """
+    async def _test():
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            session = ProspectiveShadowSession(
+                output_base_dir=Path(tmp_dir),
+                session_id="test_threshold_invariance",
+            )
+            # Threshold invariants from frozen protocol
+            assert session.max_missing_quote_rate_threshold == 0.25
+            assert session.max_average_staleness_threshold_ms == 2000.0
+            assert session.consecutive_losses_limit == 8
+            assert session.max_drawdown_stop_loss_units == 2.5
+
+            # Activate hard stop manually
+            session.is_hard_stopped = True
+            session.hard_stop_reason = "MISSING_QUOTE_RATE_LIMIT (1.0000 > 0.25)"
+
+            down_book = LiveTokenOrderBook("down_token")
+            down_book.apply_book_event({
+                "bids": [{"price": "0.49", "size": "100.0"}],
+                "asks": [{"price": "0.50", "size": "100.0"}],
+            }, timestamp_ms=1000)
+
+            # UP book is valid and warmed up
+            up_book = LiveTokenOrderBook("up_token")
+            up_book.apply_book_event({
+                "bids": [{"price": "0.50", "size": "100.0"}],
+                "asks": [{"price": "0.51", "size": "100.0"}],
+            }, timestamp_ms=1000)
+
+            # Attempt 15 grid steps with perfect quotes while hard-stopped
+            for step in range(15):
+                ts = 2000 + step * 1000
+                up_book.last_update_ms = ts - 100
+                await session._process_grid_step(
+                    up_book=up_book,
+                    market_id="m",
+                    asset_id="up_token",
+                    grid_timestamp_ms=ts,
+                    down_book=down_book,
+                )
+
+            # Strictly 0 trades executed or pending
+            assert session.trades_executed == 0
+            assert len(session.pending_positions) == 0
+
+    asyncio.run(_test())
+
+
+def test_intra_second_event_staging_and_delayed_application():
+    """
+    Test 1: Verify that events arriving intra-second (t_recv > T) remain staged
+    in PointInTimeEventBuffer at boundary T without mutating the order book,
+    and are cleanly drained and applied at boundary T + 1000 ms.
+    """
+    async def _test():
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            session = ProspectiveShadowSession(
+                output_base_dir=Path(tmp_dir),
+                session_id="test_intra_second_staging",
+            )
+            up_book = LiveTokenOrderBook("up_token")
+            down_book = LiveTokenOrderBook("down_token")
+
+            # Initialize books at t=10000 ms (bid 0.50, ask 0.55)
+            up_snap = {"event_type": "book", "asset_id": "up_token", "bids": [{"price": "0.50", "size": "100.0"}], "asks": [{"price": "0.55", "size": "100.0"}]}
+            down_snap = {"event_type": "book", "asset_id": "down_token", "bids": [{"price": "0.45", "size": "100.0"}], "asks": [{"price": "0.50", "size": "100.0"}]}
+            session.event_buffer.push(receipt_timestamp_ms=10000, data=up_snap)
+            session.event_buffer.push(receipt_timestamp_ms=10000, data=down_snap)
+
+            # Step 1: boundary T = 10000 ms
+            await session.process_buffered_grid_step(
+                grid_timestamp_ms=10000,
+                up_book=up_book,
+                down_book=down_book,
+                market_id="btc-updown-5m-test",
+                asset_id="up_token",
+            )
+            assert up_book.is_initialized is True
+            assert up_book.best_bid == 0.50
+            assert up_book.best_ask == 0.55
+            assert len(session.event_buffer) == 0
+
+            # Enqueue two intra-second price changes occurring between 11000 and 12000
+            # Event 1 at 11200 ms: bid moves to 0.52
+            ch1 = {"event_type": "price_change", "price_changes": [{"asset_id": "up_token", "price": "0.52", "size": "120.0", "side": "BUY", "best_bid": "0.52", "best_ask": "0.55"}]}
+            # Event 2 at 11850 ms: bid moves to 0.53
+            ch2 = {"event_type": "price_change", "price_changes": [{"asset_id": "up_token", "price": "0.53", "size": "150.0", "side": "BUY", "best_bid": "0.53", "best_ask": "0.55"}]}
+            session.event_buffer.push(receipt_timestamp_ms=11200, data=ch1)
+            session.event_buffer.push(receipt_timestamp_ms=11850, data=ch2)
+
+            assert len(session.event_buffer) == 2
+
+            # Step 2: boundary T = 11000 ms
+            # Since both events have t_recv > 11000, NEITHER must be applied at boundary 11000
+            await session.process_buffered_grid_step(
+                grid_timestamp_ms=11000,
+                up_book=up_book,
+                down_book=down_book,
+                market_id="btc-updown-5m-test",
+                asset_id="up_token",
+            )
+            # Order book reflects ONLY state at or before 11000 (best_bid is still 0.50)
+            assert up_book.best_bid == 0.50
+            assert up_book.best_ask == 0.55
+            assert len(session.event_buffer) == 2
+
+            # Step 3: boundary T = 12000 ms
+            # Both events have t_recv <= 12000, so BOTH are drained and applied
+            await session.process_buffered_grid_step(
+                grid_timestamp_ms=12000,
+                up_book=up_book,
+                down_book=down_book,
+                market_id="btc-updown-5m-test",
+                asset_id="up_token",
+            )
+            assert len(session.event_buffer) == 0
+            assert up_book.best_bid == 0.53
+            assert up_book.best_ask == 0.55
+            assert up_book.bid_size == 150.0
+            assert up_book.last_update_ms == 11850
+            assert session.buffered_events_drained_count == 4  # 2 snapshots + 2 changes
+            assert len(session.unquotable_diagnostics) == 0
+
+    asyncio.run(_test())
+
+
+def test_causal_non_negative_age_invariant_across_grid_ticks():
+    """
+    Test 2: Assert across all simulated grid ticks that grid_timestamp_ms >= last_update_ms
+    and quote_age_ms >= 0 strictly holds with zero occurrences of GRID_EARLIER_THAN_BOOK_UPDATE.
+    """
+    async def _test():
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            session = ProspectiveShadowSession(
+                output_base_dir=Path(tmp_dir),
+                session_id="test_non_negative_age_invariant",
+            )
+            up_book = LiveTokenOrderBook("up_token")
+            down_book = LiveTokenOrderBook("down_token")
+
+            # Initial snapshots at 10000 with wide spread
+            session.event_buffer.push(10000, {"event_type": "book", "asset_id": "up_token", "bids": [{"price": "0.40", "size": "100"}], "asks": [{"price": "0.60", "size": "100"}]})
+            session.event_buffer.push(10000, {"event_type": "book", "asset_id": "down_token", "bids": [{"price": "0.40", "size": "100"}], "asks": [{"price": "0.60", "size": "100"}]})
+
+            # Sub-second events spread across 10-25 seconds (all bids well below ask 0.60)
+            timestamps = [
+                10150, 10720, 10999, 11050, 11500, 11950, 12200, 12850,
+                13400, 14100, 15300, 15990, 16250, 17800, 19200, 20100,
+            ]
+            for i, ts in enumerate(timestamps):
+                p = 0.40 + (i % 5) * 0.01  # 0.40 to 0.44
+                ev = {
+                    "event_type": "price_change",
+                    "price_changes": [{
+                        "asset_id": "up_token",
+                        "price": f"{p:.2f}",
+                        "size": "100.0",
+                        "side": "BUY",
+                        "best_bid": f"{p:.2f}",
+                        "best_ask": "0.60",
+                    }],
+                }
+                session.event_buffer.push(ts, ev)
+
+            # Step through grid from 10000 to 25000 (16 integer-second ticks)
+            for sec in range(10, 26):
+                grid_ts = sec * 1000
+                await session.process_buffered_grid_step(
+                    grid_timestamp_ms=grid_ts,
+                    up_book=up_book,
+                    down_book=down_book,
+                    market_id="btc-updown-5m-test",
+                    asset_id="up_token",
+                )
+                # Hard invariant: book update timestamp NEVER exceeds grid boundary
+                assert up_book.last_update_ms <= grid_ts, f"Violation at grid {grid_ts}: last_update_ms={up_book.last_update_ms}"
+                assert grid_ts - up_book.last_update_ms >= 0
+
+            # Zero GRID_EARLIER_THAN_BOOK_UPDATE diagnostics recorded
+            assert len(session.unquotable_diagnostics) == 0
+            assert session.unquotable_quotes_count == 0
+            assert session.missing_quote_rate == 0.0
+
+    asyncio.run(_test())
+
+
+def test_quiet_second_aging_and_staleness_hard_stop():
+    """
+    Test 3: Verify that when no events are enqueued, quote_age_ms increases by exactly
+    1000 ms per second, consecutive quiet seconds increment cumulative staleness,
+    and hard stops trigger when average staleness > 2000 ms is exceeded.
+    """
+    async def _test():
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            session = ProspectiveShadowSession(
+                output_base_dir=Path(tmp_dir),
+                session_id="test_quiet_second_aging",
+            )
+            up_book = LiveTokenOrderBook("up_token")
+            down_book = LiveTokenOrderBook("down_token")
+
+            # Initial snapshots at 10000
+            session.event_buffer.push(10000, {"event_type": "book", "asset_id": "up_token", "bids": [{"price": "0.50", "size": "100"}], "asks": [{"price": "0.52", "size": "100"}]})
+            session.event_buffer.push(10000, {"event_type": "book", "asset_id": "down_token", "bids": [{"price": "0.48", "size": "100"}], "asks": [{"price": "0.50", "size": "100"}]})
+
+            # T = 10000: age = 0 ms
+            await session.process_buffered_grid_step(10000, up_book, down_book, "m", "up_token")
+            assert session.valid_staleness_observation_count == 1
+            assert session.total_quote_age_ms == 0.0
+
+            # T = 11000: age = 1000 ms
+            await session.process_buffered_grid_step(11000, up_book, down_book, "m", "up_token")
+            assert session.valid_staleness_observation_count == 2
+            assert session.total_quote_age_ms == 1000.0
+
+            # T = 12000: age = 2000 ms
+            await session.process_buffered_grid_step(12000, up_book, down_book, "m", "up_token")
+            assert session.valid_staleness_observation_count == 3
+            assert session.total_quote_age_ms == 3000.0
+            assert session.is_hard_stopped is False
+
+            # T = 13000: age = 3000 ms (single-step stale event tracked)
+            await session.process_buffered_grid_step(13000, up_book, down_book, "m", "up_token")
+            assert session.stale_quotes_count == 1
+
+            # T = 14000: age = 4000 ms; cumulative sum = 0 + 1000 + 2000 + 3000 + 4000 = 10000 ms; average = 2000.0 ms <= 2000.0 ms
+            await session.process_buffered_grid_step(14000, up_book, down_book, "m", "up_token")
+            assert session.average_quote_age_ms == 2000.0
+            assert session.is_hard_stopped is False
+
+            # T = 15000: age = 5000 ms; cumulative sum = 15000 ms; average = 2500.0 ms > 2000.0 ms
+            # Hard stop must trigger immediately!
+            await session.process_buffered_grid_step(15000, up_book, down_book, "m", "up_token")
+            assert session.is_hard_stopped is True
+            assert "MAX_STALENESS_LIMIT" in session.hard_stop_reason
+
+    asyncio.run(_test())
+
+
+def test_offline_replay_parity_with_point_in_time_resampler():
+    """
+    Test 4: Replay a deterministic sequence of events through both Option 2's buffered
+    collector and PointInTimeResampler. Assert bitwise equality of sampled bids,
+    asks, source timestamps, and quote ages.
+    """
+    async def _test():
+        # 1. Generate synthetic canonical events for PointInTimeResampler
+        raw_events = [
+            {"timestamp_ms": 10200, "sequence_id": 1, "market_id": "m1", "asset_id": "up_token", "bid": 0.50, "ask": 0.52, "bid_size": 100.0, "ask_size": 100.0},
+            {"timestamp_ms": 10850, "sequence_id": 2, "market_id": "m1", "asset_id": "up_token", "bid": 0.51, "ask": 0.52, "bid_size": 120.0, "ask_size": 100.0},
+            {"timestamp_ms": 11400, "sequence_id": 3, "market_id": "m1", "asset_id": "up_token", "bid": 0.51, "ask": 0.53, "bid_size": 120.0, "ask_size": 150.0},
+            {"timestamp_ms": 11950, "sequence_id": 4, "market_id": "m1", "asset_id": "up_token", "bid": 0.52, "ask": 0.53, "bid_size": 140.0, "ask_size": 150.0},
+            {"timestamp_ms": 12700, "sequence_id": 5, "market_id": "m1", "asset_id": "up_token", "bid": 0.53, "ask": 0.54, "bid_size": 160.0, "ask_size": 180.0},
+            {"timestamp_ms": 13100, "sequence_id": 6, "market_id": "m1", "asset_id": "up_token", "bid": 0.53, "ask": 0.55, "bid_size": 160.0, "ask_size": 200.0},
+        ]
+        df_events = pd.DataFrame(raw_events)
+
+        resampler = PointInTimeResampler(max_stale_ms=5000, grid_interval_ms=1000)
+        resampled_df = resampler.resample_partition(df_events)
+
+        # 2. Replay identical events through ProspectiveShadowSession event buffer
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            session = ProspectiveShadowSession(
+                output_base_dir=Path(tmp_dir),
+                session_id="test_offline_replay_parity",
+            )
+            up_book = LiveTokenOrderBook("up_token")
+            down_book = LiveTokenOrderBook("down_token")
+
+            # DOWN token snapshot
+            session.event_buffer.push(10000, {"event_type": "book", "asset_id": "down_token", "bids": [{"price": "0.48", "size": "100"}], "asks": [{"price": "0.50", "size": "100"}]})
+
+            # Initial UP snapshot corresponding to first event
+            ev1 = raw_events[0]
+            session.event_buffer.push(
+                ev1["timestamp_ms"],
+                {"event_type": "book", "asset_id": "up_token", "bids": [{"price": str(ev1["bid"]), "size": str(ev1["bid_size"])}], "asks": [{"price": str(ev1["ask"]), "size": str(ev1["ask_size"])}]},
+            )
+
+            # Subsequent UP updates as price changes with explicit best_bid / best_ask
+            for ev in raw_events[1:]:
+                session.event_buffer.push(
+                    ev["timestamp_ms"],
+                    {
+                        "event_type": "price_change",
+                        "price_changes": [
+                            {
+                                "asset_id": "up_token",
+                                "price": str(ev["bid"]),
+                                "size": str(ev["bid_size"]),
+                                "side": "BUY",
+                                "best_bid": str(ev["bid"]),
+                                "best_ask": str(ev["ask"]),
+                            },
+                            {
+                                "asset_id": "up_token",
+                                "price": str(ev["ask"]),
+                                "size": str(ev["ask_size"]),
+                                "side": "SELL",
+                                "best_bid": str(ev["bid"]),
+                                "best_ask": str(ev["ask"]),
+                            },
+                        ],
+                    },
+                )
+
+            # Compare sampled state at every grid timestamp generated by PointInTimeResampler
+            for _, row in resampled_df.iterrows():
+                grid_ts = int(row["grid_timestamp_ms"])
+                await session.process_buffered_grid_step(
+                    grid_timestamp_ms=grid_ts,
+                    up_book=up_book,
+                    down_book=down_book,
+                    market_id="m1",
+                    asset_id="up_token",
+                )
+
+                # Assert bitwise parity with PointInTimeResampler
+                assert up_book.best_bid == pytest.approx(row["bid"], abs=1e-6)
+                assert up_book.best_ask == pytest.approx(row["ask"], abs=1e-6)
+                assert up_book.last_update_ms == int(row["source_timestamp_ms"])
+                assert (grid_ts - up_book.last_update_ms) == int(row["event_age_ms"])
+
+    asyncio.run(_test())
+
+
+def test_dual_book_drain_synchronization_and_position_settlement():
+    """
+    Test 5: Feed asymmetric UP and DOWN event timestamps. Verify that at boundary T,
+    both books drain strictly up to T, and due hypothetical positions settle safely
+    using the synchronized book states.
+    """
+    async def _test():
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            session = ProspectiveShadowSession(
+                output_base_dir=Path(tmp_dir),
+                session_id="test_dual_book_sync_settlement",
+            )
+            up_book = LiveTokenOrderBook("up_token")
+            down_book = LiveTokenOrderBook("down_token")
+
+            # Snapshots at 9000 ms (wide spread to avoid crossing)
+            session.event_buffer.push(9000, {"event_type": "book", "asset_id": "up_token", "bids": [{"price": "0.50", "size": "100"}], "asks": [{"price": "0.55", "size": "100"}]})
+            session.event_buffer.push(9000, {"event_type": "book", "asset_id": "down_token", "bids": [{"price": "0.45", "size": "100"}], "asks": [{"price": "0.50", "size": "100"}]})
+
+            # Asymmetric events:
+            # UP at 10200; DOWN at 10800
+            session.event_buffer.push(10200, {"event_type": "price_change", "price_changes": [{"asset_id": "up_token", "price": "0.51", "size": "100", "side": "BUY", "best_bid": "0.51", "best_ask": "0.55"}]})
+            session.event_buffer.push(10800, {"event_type": "price_change", "price_changes": [{"asset_id": "down_token", "price": "0.46", "size": "100", "side": "BUY", "best_bid": "0.46", "best_ask": "0.50"}]})
+            # UP at 11300; DOWN at 11700
+            session.event_buffer.push(11300, {"event_type": "price_change", "price_changes": [{"asset_id": "up_token", "price": "0.52", "size": "100", "side": "BUY", "best_bid": "0.52", "best_ask": "0.55"}]})
+            session.event_buffer.push(11700, {"event_type": "price_change", "price_changes": [{"asset_id": "down_token", "price": "0.47", "size": "100", "side": "BUY", "best_bid": "0.47", "best_ask": "0.50"}]})
+
+            # Create in-flight position opening at 10000 with horizon 15000
+            pos = {
+                "event_timestamp_ms": 10000,
+                "market_id": "m1",
+                "asset_id": "up_token",
+                "quote_timestamp_ms": 10000,
+                "bid_entry": 0.50,
+                "ask_entry": 0.55,
+                "depth_imbalance": 0.0,
+                "scaled_spread": -0.1,
+                "abs_scaled_depth_imbal": 0.5,
+                "model_probs": (0.1, 0.1, 0.8),
+                "predicted_class": 2,
+                "confidence": 0.80,
+                "burst_id": 0,
+                "data_gap_ms": 1000.0,
+                "target_exit_ms": 15000,
+                "bid_exit": None,
+                "ask_exit": None,
+                "exit_timestamp_ms": None,
+            }
+            session.pending_positions.append(pos)
+
+            # Step T = 10000: snapshots drained, asymmetric changes queued
+            await session.process_buffered_grid_step(10000, up_book, down_book, "m1", "up_token", "down_token")
+            assert len(session.event_buffer) == 4
+
+            # Step T = 11000: events at 10200 and 10800 drained; events at 11300 and 11700 remain
+            await session.process_buffered_grid_step(11000, up_book, down_book, "m1", "up_token", "down_token")
+            assert up_book.best_bid == 0.51
+            assert down_book.best_bid == 0.46
+            assert len(session.event_buffer) == 2
+            assert len(session.pending_positions) == 1  # Not due yet (11000 < 15000)
+
+            # Step T = 12000: remaining events at 11300 and 11700 drained
+            await session.process_buffered_grid_step(12000, up_book, down_book, "m1", "up_token", "down_token")
+            assert up_book.best_bid == 0.52
+            assert down_book.best_bid == 0.47
+            assert len(session.event_buffer) == 0
+
+            # Advance to horizon T = 15000
+            await session.process_buffered_grid_step(13000, up_book, down_book, "m1", "up_token", "down_token")
+            await session.process_buffered_grid_step(14000, up_book, down_book, "m1", "up_token", "down_token")
+            await session.process_buffered_grid_step(15000, up_book, down_book, "m1", "up_token", "down_token")
+
+            # Position safely settled using synchronized book state
+            assert len(session.pending_positions) == 0
+            manifest = session._finalize_session()
+            log_path = session.session_dir / manifest["log_file"]
+            with open(log_path, "r", encoding="utf-8") as f:
+                records = [json.loads(line) for line in f]
+            completed_trade = [r for r in records if r.get("outcome_status") == "COMPLETED"]
+            assert len(completed_trade) == 1
+            assert completed_trade[0]["exit_timestamp_ms"] == 15000
+            assert completed_trade[0]["bid_exit"] == 0.52
+
+    asyncio.run(_test())
+
+
+def test_point_in_time_event_buffer_validation_and_bounding():
+    """
+    Test 6: Verify PointInTimeEventBuffer rejects invalid/future-dated timestamps
+    without lookahead leakage, enforces capacity limits, and clears on rollover.
+    """
+    buffer = PointInTimeEventBuffer(maxsize=5, future_tolerance_ms=3000)
+
+    # 1. Non-positive or NaN receipt timestamp rejected
+    assert buffer.push(0, {"data": 1}) is False
+    assert buffer.push(-100, {"data": 2}) is False
+    assert buffer.invalid_timestamp_rejected_count == 2
+
+    # 2. Future-dated event relative to receipt timestamp + tolerance rejected
+    # receipt_ts = 10000, source_ts = 15000 (> 10000 + 3000)
+    assert buffer.push(10000, {"timestamp": 15000, "data": 3}) is False
+    assert buffer.future_dated_rejected_count == 1
+
+    # 3. Valid events pushed in non-monotonic order are kept sorted
+    assert buffer.push(12000, {"data": "second"}) is True
+    assert buffer.push(11000, {"data": "first"}) is True
+    assert buffer.push(13000, {"data": "third"}) is True
+    assert len(buffer) == 3
+
+    # Draining up to 11500 yields strictly the 11000 event
+    drained = buffer.drain_up_to(11500)
+    assert len(drained) == 1
+    assert drained[0].receipt_timestamp_ms == 11000
+    assert drained[0].data["data"] == "first"
+    assert len(buffer) == 2
+
+    # 4. Capacity limit enforced
+    buffer.push(14000, {"data": 4})
+    buffer.push(15000, {"data": 5})
+    buffer.push(16000, {"data": 6})
+    assert len(buffer) == 5  # at maxsize 5
+    assert buffer.push(17000, {"data": 7}) is False
+    assert buffer.overflow_count == 1
+
+    # 5. Clear buffer on rollover
+    cleared = buffer.clear()
+    assert cleared == 5
+    assert len(buffer) == 0
+
+
+def test_point_in_time_event_buffer_future_dated_list_wrapped():
+    """
+    Regression test for Bug 1: Verify PointInTimeEventBuffer detects future-dated
+    source timestamps in list-wrapped payloads (e.g. batch updates / price_change lists).
+    """
+    buffer = PointInTimeEventBuffer(maxsize=10, future_tolerance_ms=3000)
+
+    # 1. Normal list payload within tolerance (receipt=10000, source=12000 <= 10000 + 3000)
+    normal_payload = [
+        {"event_type": "price_change", "timestamp": 12000, "price": "0.50"},
+    ]
+    assert buffer.push(receipt_timestamp_ms=10000, data=normal_payload) is True
+    assert buffer.future_dated_rejected_count == 0
+    assert len(buffer) == 1
+
+    # 2. Future-dated list payload (receipt=10000, source=15000 > 10000 + 3000)
+    future_payload = [
+        {"event_type": "price_change", "timestamp": 15000, "price": "0.55"},
+    ]
+    assert buffer.push(receipt_timestamp_ms=10000, data=future_payload) is False
+    assert buffer.future_dated_rejected_count == 1
+    assert len(buffer) == 1  # Not appended
+
+    # 3. Multi-element list where one element is future-dated (receipt=10000, timestamps=[11000, 16000])
+    mixed_payload = [
+        {"event_type": "price_change", "timestamp": 11000, "price": "0.51"},
+        {"event_type": "price_change", "timestamp": 16000, "price": "0.52"},
+    ]
+    assert buffer.push(receipt_timestamp_ms=10000, data=mixed_payload) is False
+    assert buffer.future_dated_rejected_count == 2
+    assert len(buffer) == 1  # Not appended
+
+    # 4. Multi-element list where all elements are within tolerance
+    valid_batch = [
+        {"event_type": "price_change", "timestamp_ms": 11000, "price": "0.51"},
+        {"event_type": "price_change", "timestamp_ms": 12500, "price": "0.52"},
+    ]
+    assert buffer.push(receipt_timestamp_ms=10000, data=valid_batch) is True
+    assert buffer.future_dated_rejected_count == 2
+    assert len(buffer) == 2
+
+
+def test_event_buffer_overflow_independent_from_message_queue_overflow():
+    """
+    Regression test for Bug 2: Verify ProspectiveShadowSession tracks event-buffer
+    overflows independently from message-queue overflows, and always marks
+    is_book_degraded=True (fails closed).
+    """
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        session = ProspectiveShadowSession(
+            output_base_dir=Path(tmp_dir),
+            session_id="test_buffer_overflow_independent",
+            queue_maxsize=10,
+        )
+        up_book = LiveTokenOrderBook("up_token")
+        down_book = LiveTokenOrderBook("down_token")
+
+        # Simulate prior message_queue overflow drops (e.g. 5 drops during network burst)
+        session.queue_overflow_count = 5
+        assert session.event_buffer_overflow_count == 0
+
+        # Restrict event_buffer to small maxsize for test
+        session.event_buffer = PointInTimeEventBuffer(maxsize=2, future_tolerance_ms=5000)
+
+        # Enqueue 3 JSON messages into message_queue
+        msg1 = json.dumps({"event_type": "book", "asset_id": "up_token", "bids": [{"price": "0.50", "size": "100"}], "asks": [{"price": "0.55", "size": "100"}]})
+        msg2 = json.dumps({"event_type": "book", "asset_id": "down_token", "bids": [{"price": "0.45", "size": "100"}], "asks": [{"price": "0.50", "size": "100"}]})
+        msg3 = json.dumps({"event_type": "price_change", "asset_id": "up_token", "price_changes": []})
+
+        session.message_queue.put_nowait((msg1, 10000))
+        session.message_queue.put_nowait((msg2, 10100))
+        session.message_queue.put_nowait((msg3, 10200))
+
+        # Reset degradation to verify it gets triggered specifically by the buffer overflow
+        session.is_book_degraded = False
+
+        # Drain message queue into buffer: msg1 and msg2 fit (len=2), msg3 overflows (capacity=2)
+        drained = session._drain_message_queue_into_buffer("slug", up_book, down_book)
+        assert drained == 3
+        assert len(session.event_buffer) == 2
+
+        # Verify independent tracking and fail-closed state
+        assert session.event_buffer.overflow_count == 1
+        assert session.event_buffer_overflow_count == 1  # Tracked independently despite queue_overflow_count == 5
+        assert session.queue_overflow_count == 5  # Undisturbed
+        assert session.invalid_events_rejected == 0  # NOT misclassified as invalid
+        assert session.is_book_degraded is True  # Marked degraded (fail closed)
+
+
+def test_point_in_time_event_buffer_out_of_order_receipt_timestamps_stability():
+    """
+    Verify PointInTimeEventBuffer handles out-of-order receipt timestamps stably:
+    - Events arriving earlier than the tail trigger a stable resort.
+    - FIFO arrival order is preserved for same-timestamp events.
+    """
+    buffer = PointInTimeEventBuffer(maxsize=10, future_tolerance_ms=5000)
+
+    # Push sequence with non-monotonic receipt timestamps and ties:
+    # 1. 10500 ("A")
+    # 2. 10200 ("B") -> earlier than A
+    # 3. 10100 ("C1") -> earlier than B
+    # 4. 10100 ("C2") -> same timestamp as C1, arrives second
+    # 5. 10800 ("D") -> monotonic after A
+    assert buffer.push(10500, {"id": "A"}) is True
+    assert buffer.push(10200, {"id": "B"}) is True
+    assert buffer.push(10100, {"id": "C1"}) is True
+    assert buffer.push(10100, {"id": "C2"}) is True
+    assert buffer.push(10800, {"id": "D"}) is True
+
+    assert len(buffer) == 5
+
+    # Drain up to 10300: should yield C1, C2 (preserving arrival order), then B
+    drained_10300 = buffer.drain_up_to(10300)
+    assert len(drained_10300) == 3
+    assert [ev.data["id"] for ev in drained_10300] == ["C1", "C2", "B"]
+    assert [ev.receipt_timestamp_ms for ev in drained_10300] == [10100, 10100, 10200]
+
+    # Drain up to 11000: should yield A, then D
+    drained_11000 = buffer.drain_up_to(11000)
+    assert len(drained_11000) == 2
+    assert [ev.data["id"] for ev in drained_11000] == ["A", "D"]
+    assert [ev.receipt_timestamp_ms for ev in drained_11000] == [10500, 10800]
+
+    assert len(buffer) == 0
+
+
+def test_protocol_amendment_v1_2_specifications():
+    """
+    Verify Protocol Amendment v1.2 specification:
+    - protocol_version is 1.2
+    - session manifest records protocol_version == 1.2
+    - health report header certifies Protocol Amendment v1.2
+    """
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        session = ProspectiveShadowSession(
+            output_base_dir=Path(tmp_dir),
+            session_id="test_v1_2_spec",
+        )
+        assert session.protocol_version == "1.2"
+        manifest = session._finalize_session()
+        assert manifest["protocol_version"] == "1.2"
+
+        report_path = session.session_dir / "collector_health_report.md"
+        assert report_path.exists()
+        content = report_path.read_text(encoding="utf-8")
+        assert "Protocol Amendment v1.2" in content
